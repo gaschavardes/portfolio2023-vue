@@ -5,6 +5,7 @@
 
 <script>
 // import store from './assets/js/store'
+// import '../src/assets/fonts/stylesheet.css'
 import Home from './pages/home'
 export default {
   name: 'App',
@@ -17,6 +18,14 @@ export default {
 </script>
 
 <style>
+
+@font-face {
+	font-family: "unbounded";
+	src: url("~@/assets/fonts/Unbounded-VariableFont_wght.woff2") format("woff2 supports variations"),
+		url("~@/assets/fonts/Unbounded-VariableFont_wght.woff2") format("woff2-variations");
+	font-weight: 100 1000;
+
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

@@ -3,7 +3,7 @@
 		<section class="intro"></section>
 		<section class="projects">
 			<Counter/>
-			<ProjectItem v-for="(el, id) in projects" :data='el' :key='id'/>
+			<ProjectItem v-for="(el, id) in projects" :data='el' :key='id' ref='projects'/>
 		</section>
 	</section>
   </template>
@@ -12,6 +12,10 @@
   import './style.less'
   import ProjectItem from '../../components/ProjectItem'
   import Counter from '../../components/Counter'
+  import gsap from 'gsap'
+  import ScrollTrigger from 'gsap/ScrollTrigger'
+
+  gsap.registerPlugin(ScrollTrigger)
   export default {
 	name: 'Home-page',
 	data() {
@@ -23,7 +27,7 @@
 					link: 'https://crosswire.unseen.co/'
 				},
 				{
-					name: 'crosswire',
+					name: 'Visionnaries Club',
 					agency: 'Unseen Studio',
 					link: 'https://visionaries.vc/'
 				},
@@ -101,7 +105,30 @@
 	},
 	methods: {
 		setScrollTrigger() {
+			this.$refs.projects.forEach(el => {
+				this.scrollTl = ScrollTrigger.create({
+				// yes, we can add it to an entire timeline!
+				trigger: el.$el,
+				// pin: true,   // pin the trigger element while active
+				start: "top top", // when the top of the trigger hits the top of the viewport
+				end: "bottom top", // end after scrolling 500px beyond the start
+				scrub: 1, // smooth scrubbing, takes 1 second to "catch up" to the scrollbar
+				onEnter: () => {
+					el.enter()
+				},
+				onLeave: () => {
+					el.leave()
+				},
+				onEnterBack: () => {
+					el.enter()
 
+				},
+				onLeaveBack: () => {
+					el.leave()
+				}
+			});
+			})
+			
 		}
 	}
   }
