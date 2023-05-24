@@ -81,6 +81,7 @@ export default class Letter extends Group {
 					break
 			}
 			// const centerVectorArray = []
+			console.log('EL', el)
 			for (let i = 0; i < el.geometry.attributes.position.array.length; i = i + 3) {
 				position.push(el.geometry.attributes.position.array[i] + el.position.x * 0.01)
 				position.push(el.geometry.attributes.position.array[i + 1])
@@ -284,7 +285,6 @@ export default class Letter extends Group {
 		// 		this.item.geometry.getAttribute('progress').array[i] = Math.max(0, Math.sin(store.WebGL.globalUniforms.uTime.value * 0.4) * 0.1)
 		// 	}
 		// })
-		this.item.geometry.getAttribute('progress').needsUpdate = true
 
 		this.GlassMaterial.uniforms.uTime.value = store.WebGL.globalUniforms.uTime.value
 
@@ -330,6 +330,7 @@ export default class Letter extends Group {
 		models.forEach(el => {
 			store.AssetLoader.loadFbx((`/models/${el}.fbx`)).then(gltf => {
 				// this.pieces = gltf.children
+				console.log(gltf)
 				this.letters[el] = gltf
 			})
 		})
