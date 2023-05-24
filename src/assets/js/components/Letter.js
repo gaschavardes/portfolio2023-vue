@@ -81,7 +81,6 @@ export default class Letter extends Group {
 					break
 			}
 			// const centerVectorArray = []
-			console.log('EL', el)
 			for (let i = 0; i < el.geometry.attributes.position.array.length; i = i + 3) {
 				position.push(el.geometry.attributes.position.array[i] + el.position.x * 0.01)
 				position.push(el.geometry.attributes.position.array[i + 1])
@@ -330,7 +329,6 @@ export default class Letter extends Group {
 		models.forEach(el => {
 			store.AssetLoader.loadFbx((`/models/${el}.fbx`)).then(gltf => {
 				// this.pieces = gltf.children
-				console.log(gltf)
 				this.letters[el] = gltf
 			})
 		})
