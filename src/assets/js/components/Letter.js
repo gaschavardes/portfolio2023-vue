@@ -2,7 +2,8 @@ import { GlassMaterial, BackFaceMaterial } from '../materials'
 import { Mesh, WebGLRenderTarget, PlaneGeometry, Group, BufferGeometry, BufferAttribute, Vector3, Box3 } from 'three/src/Three'
 import store from '../store'
 import gsap from 'gsap'
-
+import ScrollTrigger from 'gsap/ScrollTrigger'
+gsap.registerPlugin(ScrollTrigger)
 export default class Letter extends Group {
 	constructor(options) {
 		super(options)
@@ -15,6 +16,8 @@ export default class Letter extends Group {
 		store.RAFCollection.add(this.animate, 4)
 		this.centers = {}
 		// this.parent = options.parent
+		this.intro = document.querySelector('.intro')
+		console.log(this.intro)
 	}
 
 	build() {
@@ -26,6 +29,16 @@ export default class Letter extends Group {
 		this.item = new Group()
 		this.scale.setScalar(0.1)
 		this.fboCreate()
+
+		this.scrollTrigger = ScrollTrigger.create({
+			trigger: this.intro, 
+			start: "top top",
+			end: "bottom top",
+			onUpdate: () => {
+				this.GlassMaterial.uniforms.uProgress.value = this.scrollTrigger.progress * 50 - 20
+				this.backfaceMaterial.uniforms.uProgress.value = this.scrollTrigger.progress * 50 - 20
+			}
+		})
 	}
 
 	fboCreate = () => {
@@ -225,19 +238,19 @@ export default class Letter extends Group {
 		this.item.geometry = geometry
 		this.item.geometry.computeBoundingSphere()
 		this.item.geometry.boundingSphere.radius *= 10
-		gsap.to(this, {
-			explodeProgress: 25,
-			yoyo: true,
-			repeat: -1,
-			repeatDelay: 2,
-			delay: 2,
-			duration: 4,
-			ease: 'power2.easeInOut',
-			onUpdate: () => {
-				this.GlassMaterial.uniforms.uProgress.value = this.explodeProgress
-				this.backfaceMaterial.uniforms.uProgress.value = this.explodeProgress
-			}
-		})
+		// gsap.to(this, {
+		// 	explodeProgress: 25,
+		// 	yoyo: true,
+		// 	repeat: -1,
+		// 	repeatDelay: 2,
+		// 	delay: 2,
+		// 	duration: 4,
+		// 	ease: 'power2.easeInOut',
+		// 	onUpdate: () => {
+		// 		this.GlassMaterial.uniforms.uProgress.value = this.explodeProgress
+		// 		this.backfaceMaterial.uniforms.uProgress.value = this.explodeProgress
+		// 	}
+		// })
 		gsap.fromTo(this, { appearProgress: 0 }, {
 			appearProgress: 1.4,
 			yoyo: true,
