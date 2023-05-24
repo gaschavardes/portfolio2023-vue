@@ -109,7 +109,7 @@ void main() {
 
 	vec4 worldPosition = modelMatrix * vec4( pos, 1.0);
 
-	#ifndef REFRACT
+	// #ifndef REFRACT
 		vec3 cameraToVertex;
 		if ( isOrthographic ) {
 			cameraToVertex = normalize( vec3( - viewMatrix[ 0 ][ 2 ], - viewMatrix[ 1 ][ 2 ], - viewMatrix[ 2 ][ 2 ] ) );
@@ -119,11 +119,11 @@ void main() {
 		}
 		vec3 reflectNormal = inverseTransformDirection( transformedNormal, viewMatrix );
 		vReflect = reflect( cameraToVertex, reflectNormal );
-	#endif
+	// #endif
 
 	eyeVector = normalize(worldPosition.xyz - cameraPosition);
 	worldNormal = normalize( modelViewMatrix * vec4(objectNormal, 0.0)).xyz;
 	
 	gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-	vBackface = clamp(progressVal * 20., 0., 1.);
+	vBackface = clamp(progressVal * 10., 0., 1.);
 }

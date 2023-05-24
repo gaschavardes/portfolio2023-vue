@@ -137,5 +137,4 @@ void main() {
 
 	gl_FragColor = vec4(final.rgb, 1.0);
 	gl_FragColor = vec4(refractCol, 1.);	
-	// gl_FragColor = vec4(vec3(1.), 1.);
 	}

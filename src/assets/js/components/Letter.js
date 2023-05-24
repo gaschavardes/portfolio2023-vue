@@ -19,8 +19,8 @@ export default class Letter extends Group {
 
 	build() {
 		this.envFbo = new WebGLRenderTarget(
-			store.window.w * store.window.dpr,
-			store.window.h * store.window.dpr
+			store.window.w,
+			store.window.h
 		)
 		// this.quad = this.createBackground()
 		this.item = new Group()
@@ -287,7 +287,6 @@ export default class Letter extends Group {
 
 		this.GlassMaterial.uniforms.uTime.value = store.WebGL.globalUniforms.uTime.value
 
-		this.fullItem.visible = true
 
 		store.WebGL.renderer.setRenderTarget(store.envFbo)
 		store.WebGL.renderer.render(store.MainScene, store.MainScene.activeCamera)
@@ -299,6 +298,8 @@ export default class Letter extends Group {
 		store.WebGL.renderer.render(store.MainScene, store.MainScene.activeCamera)
 
 		this.item.visible = false
+		this.fullItem.visible = true
+
 		store.WebGL.renderer.setRenderTarget(null)
 		this.fullItem.material = this.backfaceMaterial
 		store.WebGL.renderer.setRenderTarget(this.backfaceFbo)

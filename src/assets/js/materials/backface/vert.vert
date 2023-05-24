@@ -77,22 +77,16 @@ void main() {
     transformedNormal = normalMatrix*transformedNormal;
 
 	vec3 translatePos = vec3(0.);
-	// translatePos.z += random.z * clamp(sign(center.z + 2.) * random.z, -1., 1.) * progress * 6. + sin(uTime - uStartingTime) * progress * clamp(random.z - 10., -.1, .1) ;
-	// translatePos.x += (random.x ) * sin(sign(letter.x) * random.x ) * progress * 10. + sin(uTime - uStartingTime) * progress * clamp(random.z - 10., -.1, .1);
-	// translatePos.y += (random.y ) * cos(sign(center.y) * random.y ) * progress * 10. + sin(uTime - uStartingTime) * progress * clamp(random.z - 10., -.1, .1);
-
 	translatePos.z += progressVal * random.z * sin(sign(center.z) * random.z ) * 0.1;
 	translatePos.x += progressVal * random.x * sin(sign(letterCenter.x) * random.x ) * 0.01;
 	translatePos.y += progressVal * random.y * 0.05;
+
 	if(center.x > 0. || center.x < 0.){
 		pos = position - center;
 
 		// pos = rotate(pos, center, progressVal);
 		pos = rotate(pos, center, progressVal * 0.02);
 		objectNormal = rotate(objectNormal, center, progressVal * 0.02);
-
-		pos = scale(pos, clamp(translatePos.z + 4., 0., 1.) );
-		objectNormal = scale(objectNormal, clamp(translatePos.z + 4., 0., 1.) );
 		pos += center;
 	}
 
@@ -115,7 +109,7 @@ void main() {
 
 	vec4 worldPosition = modelMatrix * vec4( pos, 1.0);
 
-	#ifndef REFRACT
+	// #ifndef REFRACT
 		vec3 cameraToVertex;
 		if ( isOrthographic ) {
 			cameraToVertex = normalize( vec3( - viewMatrix[ 0 ][ 2 ], - viewMatrix[ 1 ][ 2 ], - viewMatrix[ 2 ][ 2 ] ) );
@@ -125,11 +119,11 @@ void main() {
 		}
 		vec3 reflectNormal = inverseTransformDirection( transformedNormal, viewMatrix );
 		vReflect = reflect( cameraToVertex, reflectNormal );
-	#endif
+	// #endif
 
 	eyeVector = normalize(worldPosition.xyz - cameraPosition);
 	worldNormal = normalize( modelViewMatrix * vec4(objectNormal, 0.0)).xyz;
 	
 	gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-	vBackface = progress * 20.;
+	vBackface = clamp(progressVal * 10., 0., 1.);
 }

@@ -82,8 +82,8 @@ export default class MainScene extends Scene {
 
 	createFbo() {
 		store.envFbo = new WebGLRenderTarget(
-			store.window.w * store.window.dpr,
-			store.window.h * store.window.dpr
+			store.window.w,
+			store.window.h
 		)
 		store.simFbo = new WebGLRenderTarget(
 			store.window.w * store.window.dpr,

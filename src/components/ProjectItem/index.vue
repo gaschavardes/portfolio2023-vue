@@ -29,20 +29,20 @@
 	},
 	methods: {
 		split() {
-			this.$refs.title.split = new SplitText(this.$refs.title, {type:'chars', charsClass:'char'})
-			this.$refs.agency.split = new SplitText(this.$refs.agency, {type:'chars', charsClass:'char'})
+			this.$refs.title.split = new SplitText(this.$refs.title, {type:'chars, words', charsClass:'char'})
+			this.$refs.agency.split = new SplitText(this.$refs.agency, {type:'chars, words', charsClass:'char'})
 			this.splits = [this.$refs.title.split, this.$refs.agency.split ]
 
 			this.tlIn = gsap.timeline({ paused: true})
 			this.splits.forEach(el => {
-				this.tlIn.to(el.chars, {opacity: 1, duration: 0.4, stagger: 0.02}, 0)
-				.to(el.chars, {fontWeight: 900, duration: 0.4, stagger: 0.02}, 0.1)
-				.to(el.chars, {fontWeight: 500, duration: 0.4, stagger: 0.02}, 0.2)
+				this.tlIn.to(el.chars, {opacity: 1, duration: 0.6, stagger: 0.02}, 0)
+				.to(el.chars, {fontWeight: 900, duration: 0.6, stagger: 0.01}, 0.1)
+				.to(el.chars, {fontWeight: 400, duration: 0.6, stagger: 0.01}, 0.3)
 			})
 
 			this.tlOut = gsap.timeline({ paused: true})
 			this.splits.forEach(el => {
-				this.tlOut.to(el.chars, {opacity: 0, fontWeight: 100, duration: 0.4, stagger: 0.02}, 0)
+				this.tlOut.to(el.chars, {opacity: 0, fontWeight: 100, duration: 0.4, stagger: 0.01}, 0)
 			})
 		},
 		enter() {

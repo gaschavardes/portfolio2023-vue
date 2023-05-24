@@ -26,6 +26,11 @@ export default {
 	font-weight: 100 1000;
 
 }
+#gl{
+	position: fixed;
+	top: 0;
+	left: 0;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

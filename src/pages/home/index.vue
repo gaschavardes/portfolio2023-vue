@@ -22,7 +22,7 @@
 		return{
 			projects: [
 				{
-					name: 'crosswire',
+					name: 'Crosswire',
 					agency: 'Unseen Studio',
 					link: 'https://crosswire.unseen.co/'
 				},
@@ -72,6 +72,7 @@
 					name: "Jeu de paume",
 					// "media": "jeudepaume",
 					// "type": "video",
+					agency: "Hands Agency",
 					link: "https://jeudepaume.org/",
 					"content": {
 
@@ -80,6 +81,7 @@
 				{
 					name: "Lab 1",
 					// "image": "furidays.png",
+					agency: "Lab",
 					link: "https://reverent-neumann-6228ac.netlify.app/",
 					"content": {
 
@@ -88,6 +90,7 @@
 				{
 					name: "Lab 2",
 					// "image": "mobius.png",
+					agency: 'Lab',
 					link: "https://mystifying-aryabhata-929c52.netlify.app/",
 					"content": {
 
