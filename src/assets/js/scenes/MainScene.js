@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Background from '../components/Background'
 // import Hello from '../components/Hello'
 import Letter from '../components/Letter'
+import Projects from '../components/Projects'
 import store from '../store'
 import { E } from '../utils'
 import GlobalEvents from '../utils/GlobalEvents'
@@ -58,7 +59,8 @@ export default class MainScene extends Scene {
 		this.components = {
 			// sim: new Sim(),
 			background: new Background(),
-			letter: new Letter()
+			letter: new Letter(),
+			projects: new Projects()
 		}
 
 		this.load()

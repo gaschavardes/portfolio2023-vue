@@ -13,6 +13,7 @@ export default class BasicMaterial extends RawShaderMaterial {
 					envFbo: { value: null },
 					uMap: { value: null },
 					resolution: { value: new Vector2(store.window.w, store.window.h) },
+					uTime: store.WebGL.globalUniforms.uTime
 				},
 				defines: {
 				}

@@ -1,9 +1,10 @@
 import { GlassMaterial, BackFaceMaterial } from '../materials'
-import { Mesh, WebGLRenderTarget, PlaneGeometry, Group, BufferGeometry, BufferAttribute, Vector3, Box3 } from 'three/src/Three'
+import { Mesh, WebGLRenderTarget, PlaneGeometry, Group, BufferGeometry, BufferAttribute, Vector3, Box3, Vector2 } from 'three/src/Three'
 import store from '../store'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger)
+
 export default class Letter extends Group {
 	constructor(options) {
 		super(options)
@@ -15,6 +16,9 @@ export default class Letter extends Group {
 		store.landing = this
 		store.RAFCollection.add(this.animate, 4)
 		this.centers = {}
+		this.easedMouse = new Vector2()
+		this.easedMouseTemp = new Vector2()
+		this.easedScroll = 0
 		// this.parent = options.parent
 		this.intro = document.querySelector('.intro')
 		console.log(this.intro)
@@ -34,10 +38,6 @@ export default class Letter extends Group {
 			trigger: this.intro, 
 			start: "top top",
 			end: "bottom top",
-			onUpdate: () => {
-				this.GlassMaterial.uniforms.uProgress.value = this.scrollTrigger.progress * 50 - 20
-				this.backfaceMaterial.uniforms.uProgress.value = this.scrollTrigger.progress * 50 - 20
-			}
 		})
 	}
 
@@ -49,9 +49,10 @@ export default class Letter extends Group {
 			resolution: [store.window.w * store.window.dpr, store.window.h * store.window.dpr],
 			backfaceMapBroken: this.backfaceFboBroken.texture,
 			backfaceMap: this.backfaceFbo.texture,
+			matcap: this.matcap,
 			progress: 0,
-			fresnelVal: 0,
-			refractPower: 2
+			fresnelVal: 1,
+			refractPower: 0
 		})
 		this.backfaceMaterial = new BackFaceMaterial()
 		this.item = new Mesh(new BufferGeometry(), this.GlassMaterial)
@@ -251,17 +252,18 @@ export default class Letter extends Group {
 		// 		this.backfaceMaterial.uniforms.uProgress.value = this.explodeProgress
 		// 	}
 		// })
-		gsap.fromTo(this, { appearProgress: 0 }, {
-			appearProgress: 1.4,
-			yoyo: true,
-			repeat: 3,
-			duration: 2,
-			ease: 'power1.easeInOut',
-			onUpdate: () => {
-				this.GlassMaterial.uniforms.uAppear.value = this.appearProgress
-				this.backfaceMaterial.uniforms.uAppear.value = this.appearProgress
-			}
-		})
+
+		// gsap.fromTo(this, { appearProgress: 0 }, {
+		// 	appearProgress: 1.4,
+		// 	yoyo: true,
+		// 	repeat: 3,
+		// 	duration: 2,
+		// 	ease: 'power1.easeInOut',
+		// 	onUpdate: () => {
+		// 		this.GlassMaterial.uniforms.uAppear.value = this.appearProgress
+		// 		this.backfaceMaterial.uniforms.uAppear.value = this.appearProgress
+		// 	}
+		// })
 	}
 
 	explode() {
@@ -292,11 +294,21 @@ export default class Letter extends Group {
 
 	animate = () => {
 		if (!this.item) return
-		// this.item.geometry.getAttribute('index').array.forEach((el, i) => {
-		// 	if (el > 30) {
-		// 		this.item.geometry.getAttribute('progress').array[i] = Math.max(0, Math.sin(store.WebGL.globalUniforms.uTime.value * 0.4) * 0.1)
-		// 	}
-		// })
+
+		// Ease Mouse movement
+		this.easedMouseTemp.subVectors(store.pointer.glNormalized, this.easedMouse)
+		this.easedMouseTemp.multiplyScalar(0.1)
+		this.easedMouse.addVectors(this.easedMouseTemp, this.easedMouse)
+		this.GlassMaterial.uniforms.uMouse.value = this.easedMouse
+		this.backfaceMaterial.uniforms.uMouse.value = this.easedMouse
+		////
+
+		// Ease Scroll
+		this.easedScroll += (this.scrollTrigger.progress - this.easedScroll) * 0.1
+		this.GlassMaterial.uniforms.uProgress.value = this.easedScroll * 60 - 20
+		this.backfaceMaterial.uniforms.uProgress.value = this.easedScroll * 60 - 20
+		////
+	
 
 		this.GlassMaterial.uniforms.uTime.value = store.WebGL.globalUniforms.uTime.value
 
@@ -347,8 +359,8 @@ export default class Letter extends Group {
 			})
 		})
 
-		store.AssetLoader.loadTexture('/textures/landing.png').then(texture => {
-			this.visionariesTexture = texture
+		store.AssetLoader.loadTexture('/textures/iridescent32.png').then(texture => {
+			this.matcap = texture
 		})
 
 		store.AssetLoader.loadTexture('/textures/background.jpeg').then(texture => {

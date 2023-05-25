@@ -1,9 +1,12 @@
+#include <defaultFrag>
+#include <dynamicBaseFragPars>
 uniform sampler2D envMap;
 uniform sampler2D textureMap;
 uniform sampler2D normalMap;
 uniform sampler2D backfaceMapBroken;
 uniform sampler2D backfaceMap;
 uniform sampler2D matCapMap;
+uniform sampler2D uMatcap;
 uniform vec2 resolution;
 uniform float uProgress;
 uniform float uFresnelVal;
@@ -133,8 +136,56 @@ void main() {
 	refractCol.rgb = mix(refractCol.rgb, fogColor, thickness * diffuse);
 	// mix the refraction color and reflection color
 	refractCol.rgb = mix(refractCol.rgb, matCap.rgb, f * uFresnelVal);
+
+	vec3 viewDir = normalize( vViewPosition );
+
+	#ifdef USE_MATCAP
+		vec3 x = normalize( vec3( viewDir.z, 0.0, - viewDir.x ) );
+		vec3 y = cross( viewDir, x );
+		vec2 uvMat = vec2( dot( x, normal ), dot( y, normal ) ) * 0.5 + 0.5; // 0.495 to remove artifacts caused by undersized matcap disks
+
+		vec4 matcapColor = texture2D( uMatcap, uvMat );
+
+		#ifdef USE_MATCAP_EXTRA
+			vec4 extraMatcap = texture2D( tMatcapExtra, uvMat );
+		#endif
+	#else
+		vec4 matcapColor = vec4(1.); // default if matcap is missing
+	#endif
+
+	#ifdef USE_MATCAP
+
+		vec3 outgoingLight;
+
+		if(uBlendMode == 0) {
+			outgoingLight = blendSoftLight(refractCol.rgb, matcapColor.rgb, uDiffuseMatcapBlend);
+		} else if(uBlendMode == 1){
+			outgoingLight = blendLinearLight(refractCol.rgb, matcapColor.rgb, uDiffuseMatcapBlend);
+		} else if(uBlendMode == 2){
+			outgoingLight = blendLighten(refractCol.rgb, matcapColor.rgb, uDiffuseMatcapBlend);
+		} else if(uBlendMode == 3){
+			outgoingLight = blendOverlay(refractCol.rgb, matcapColor.rgb, uDiffuseMatcapBlend);
+		} else if(uBlendMode == 4){
+			outgoingLight = blendAdd(refractCol.rgb, matcapColor.rgb, uDiffuseMatcapBlend);
+		} else {
+			outgoingLight = blendMultiply(refractCol.rgb, matcapColor.rgb, uDiffuseMatcapBlend);
+		}
+
+		#ifdef USE_MATCAP_EXTRA
+			outgoingLight = blendSoftLight(outgoingLight, extraMatcap.rgb, uMatcapExtraBlend);
+		#endif
+
+		#ifdef USE_SHADOW
+			outgoingLight = blendMultiply(outgoingLight, shadowOverlay.rgb, uShadowBlend);
+		#endif
+
+		// vec3 outgoingLight = blendAdd(blendSoftLight(diffuseColor.rgb, matcapColor.rgb, uDiffuseMatcapBlend), specular, uEnvMapBlend);
+		// vec3 outgoingLight = blendAdd(blendOverlay(diffuseColor.rgb, matcapColor.rgb, uDiffuseMatcapBlend), specular, uEnvMapBlend);
+	#else
+		// vec3 outgoingLight = refractCol.rgb;
+	#endif
 	
 
 	gl_FragColor = vec4(final.rgb, 1.0);
-	gl_FragColor = vec4(refractCol, 1.);	
-	}
+	gl_FragColor = vec4(outgoingLight, 1.);	
+}

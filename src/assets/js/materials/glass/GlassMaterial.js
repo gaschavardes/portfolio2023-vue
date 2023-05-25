@@ -21,10 +21,15 @@ export default class GlassMaterial extends ShaderMaterial {
 				uBackfaceTest: { value: 0 },
 				uFresnelVal: { value: options.fresnelVal },
 				uStartingTime: { value: 0 },
-				uRefractPower: { value: options.refractPower }
+				uRefractPower: { value: options.refractPower },
+				uBlendMode: { value: 1},
+				uDiffuseMatcapBlend: { value : 0.6},
+				uMatcap: {value: options.matcap}
 			},
 			defines: {
-				REFRACT: options.refract
+				REFRACT: options.refract,
+				USE_NORMAL: true,
+				USE_MATCAP: true,
 			}
 		})
 	}

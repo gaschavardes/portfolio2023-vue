@@ -1,5 +1,5 @@
-import { ShaderMaterial, BackSide } from 'three'
-import vertexShader from './vert.vert'
+import { ShaderMaterial, BackSide, Vector2 } from 'three'
+import vertexShader from '../glass/vert.glsl'
 import fragmentShader from './frag.frag'
 
 export default class BackFaceMaterial extends ShaderMaterial {
@@ -12,7 +12,8 @@ export default class BackFaceMaterial extends ShaderMaterial {
 				uTime: { value: 0 },
 				uProgress: { value: 0 },
 				uStartingTime: { value: 0 },
-				uAppear: { value: 0 }
+				uAppear: { value: 0 },
+				uMouse: { value: Vector2}
 			}
 		})
 	}
