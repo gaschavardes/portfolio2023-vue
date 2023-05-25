@@ -10,6 +10,7 @@ export default class GlassMaterial extends ShaderMaterial {
 			fragmentShader,
 			uniforms: {
 				envMap: { value: options.envMap },
+				uMap: {value: options.uMap},
 				uMouse: { value: new Vector2() },
 				resolution: { value: new Vector2(options.resolution[0], options.resolution[1]) },
 				backfaceMapBroken: { value: options.backfaceMapBroken },

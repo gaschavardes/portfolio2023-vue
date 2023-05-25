@@ -1,6 +1,7 @@
 #include <defaultFrag>
 #include <dynamicBaseFragPars>
 uniform sampler2D envMap;
+uniform sampler2D uMap;
 uniform sampler2D textureMap;
 uniform sampler2D normalMap;
 uniform sampler2D backfaceMapBroken;
@@ -185,7 +186,14 @@ void main() {
 		// vec3 outgoingLight = refractCol.rgb;
 	#endif
 	
+	vec4 map = texture2D(uMap, vUv);
+	// gl_FragColor = map;	
+	outgoingLight = mix(map.rgb, outgoingLight, 1.);
 
 	gl_FragColor = vec4(final.rgb, 1.0);
-	gl_FragColor = vec4(outgoingLight, 1.);	
+	gl_FragColor = vec4(outgoingLight, 1.);
+	// gl_FragColor = vec4(vec2(vUv), 1., 1.);	
+
+	
+
 }

@@ -52,7 +52,8 @@ export default class Letter extends Group {
 			matcap: this.matcap,
 			progress: 0,
 			fresnelVal: 1,
-			refractPower: 0
+			refractPower: 0,
+			uMap: store.MainScene.backgroundTexture
 		})
 		this.backfaceMaterial = new BackFaceMaterial()
 		this.item = new Mesh(new BufferGeometry(), this.GlassMaterial)
@@ -144,6 +145,7 @@ export default class Letter extends Group {
 		const progress = []
 		const letters = []
 		const letterCenter = []
+		const uv = []
 		let indexVal = 0
 		const geometry = new BufferGeometry()
 		for (const key in this.letters) {
@@ -179,6 +181,9 @@ export default class Letter extends Group {
 			const center = new Vector3()
 			new Box3().setFromArray(centerVectorArray).getCenter(center)
 			this.centers[key] = center
+			if(key === 'e') {
+				console.log(pieces)
+			}
 			pieces.forEach((piece) => {
 				if (piece.geometry) {
 					piece.geometry.computeBoundingBox()
@@ -213,6 +218,10 @@ export default class Letter extends Group {
 						normal.push(piece.geometry.attributes.normal.array[i + 1])
 						normal.push(piece.geometry.attributes.normal.array[i + 2])
 					}
+					for (let i = 0; i < piece.geometry.attributes.uv.array.length; i = i + 2) {
+						uv.push(piece.geometry.attributes.uv.array[i])
+						uv.push(piece.geometry.attributes.uv.array[i + 1])
+					}
 					indexVal++
 				}
 			})
@@ -224,6 +233,7 @@ export default class Letter extends Group {
 		const centroidArray = new Float32Array(centroidVal)
 		const randomArray = new Float32Array(random)
 		const lettersArray = new Float32Array(letters)
+		const uvArray = new Float32Array(uv)
 		this.letterCenterArray = new Float32Array(letterCenter)
 		this.progressArray = new Float32Array(progress)
 		geometry.setAttribute('position', new BufferAttribute(positionArray, 3))
@@ -235,7 +245,7 @@ export default class Letter extends Group {
 		geometry.setAttribute('letter', new BufferAttribute(lettersArray, 1))
 		geometry.setAttribute('letterCenter', new BufferAttribute(this.letterCenterArray, 3))
 
-		geometry.setAttribute( 'uv', new BufferAttribute( normalArray, 2 ) )
+		geometry.setAttribute( 'uv', new BufferAttribute( uvArray, 2 ) )
 		this.item.geometry = geometry
 		this.item.geometry.computeBoundingSphere()
 		this.item.geometry.boundingSphere.radius *= 10
