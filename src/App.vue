@@ -1,5 +1,6 @@
 <template>
   <canvas id="gl"></canvas>
+  <canvas id="texture"></canvas>
 	<Home/>
 </template>
 
@@ -26,10 +27,11 @@ export default {
 	font-weight: 100 1000;
 
 }
-#gl{
+#gl, #texture{
 	position: fixed;
 	top: 0;
 	left: 0;
+	pointer-events: none;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

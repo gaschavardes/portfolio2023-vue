@@ -14,6 +14,8 @@ import BackFaceMaterial from './backface/BackFaceMaterial'
 import GlassMaterial from './glass/GlassMaterial'
 import GradientMaterial from './gradient/GradientMaterial'
 import BackgroundMaterial from './background/BackgroundMaterial'
+import ProjectMaterial from './project/ProjectMaterial'
+import ParticleMaterial from './particle/ParticleMaterial'
 
 // materials
 import BasicMaterial from './basic/BasicMaterial'
@@ -39,5 +41,7 @@ export {
 	BackFaceMaterial,
 	GlassMaterial,
 	GradientMaterial,
-	BackgroundMaterial
+	BackgroundMaterial,
+	ProjectMaterial,
+	ParticleMaterial
 }

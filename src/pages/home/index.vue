@@ -1,8 +1,8 @@
 <template>
 	<section class="home">
 		<section class="intro"></section>
-		<section class="projects">
-			<Counter/>
+		<section class="projects" ref="projectContainer">
+			<Counter :number="projects.length" :progress="this.projectProgress" />
 			<ProjectItem v-for="(el, id) in projects" :data='el' :key='id' ref='projects'/>
 		</section>
 	</section>
@@ -14,12 +14,14 @@
   import Counter from '../../components/Counter'
   import gsap from 'gsap'
   import ScrollTrigger from 'gsap/ScrollTrigger'
+  import store from '../../assets/js/store'
 
   gsap.registerPlugin(ScrollTrigger)
   export default {
 	name: 'Home-page',
 	data() {
 		return{
+			projectProgress: 0,
 			projects: [
 				{
 					name: 'Crosswire',
@@ -105,11 +107,16 @@
 	},
 	mounted() {
 		this.setScrollTrigger()
+		store.projects = this.projects
+		// E.on('projectsCreated', () => {
+		// 	console.log('COUCOU')
+		// 	console.log(store.MainScene.components.projects)
+		// })
 	},
 	methods: {
 		setScrollTrigger() {
 			this.$refs.projects.forEach(el => {
-				this.scrollTl = ScrollTrigger.create({
+				this.projectsTl = ScrollTrigger.create({
 				// yes, we can add it to an entire timeline!
 				trigger: el.$el,
 				// pin: true,   // pin the trigger element while active
@@ -131,6 +138,21 @@
 				}
 			});
 			})
+
+			const that = this
+			this.containerTl =  ScrollTrigger.create({
+				trigger: this.$refs.projectContainer,
+				start: "top top", // when the top of the trigger hits the top of the viewport
+				end: "bottom top", // end after scrolling 500px beyond the start
+				scrub: 1, // smooth scrubbing, takes 1 second to "catch up" to the scrollbar,
+				onUpdate: function(self) {
+					that.projectProgress = self.progress
+					if(store.MainScene) {
+						store.MainScene.components.projects.progress = self.progress
+					}
+				}
+			})
+
 			
 		}
 	}

@@ -3,6 +3,8 @@ import { Mesh, WebGLRenderTarget, PlaneGeometry, Group, BufferGeometry, BufferAt
 import store from '../store'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
+import { E } from '../utils'
+import GlobalEvents from '../utils/GlobalEvents'
 gsap.registerPlugin(ScrollTrigger)
 
 export default class Letter extends Group {
@@ -22,6 +24,7 @@ export default class Letter extends Group {
 		// this.parent = options.parent
 		this.intro = document.querySelector('.intro')
 		console.log(this.intro)
+		E.on(GlobalEvents.RESIZE, this.onResize)
 	}
 
 	build() {
@@ -33,6 +36,7 @@ export default class Letter extends Group {
 		this.item = new Group()
 		this.scale.setScalar(0.1)
 		this.fboCreate()
+
 
 		this.scrollTrigger = ScrollTrigger.create({
 			trigger: this.intro, 
@@ -52,7 +56,7 @@ export default class Letter extends Group {
 			matcap: this.matcap,
 			progress: 0,
 			fresnelVal: 1,
-			refractPower: 0,
+			refractPower: 2,
 			uMap: store.MainScene.backgroundTexture
 		})
 		this.backfaceMaterial = new BackFaceMaterial()
@@ -385,5 +389,12 @@ export default class Letter extends Group {
 
 	dispose() {
 		// E.on('fboCreated', this.fboCreate)
+	}
+
+	onResize = () => {
+		this.backfaceFboBroken.setSize(store.window.w * store.window.dpr, store.window.h * store.window.dpr)
+		this.backfaceFbo.setSize(store.window.w * store.window.dpr, store.window.h * store.window.dpr)
+		this.GlassMaterial.uniforms.resolution.value = [store.window.w * store.window.dpr, store.window.h * store.window.dpr]
+		// this.backfaceMaterial.uniforms.resolution.value = [store.window.w * store.window.dpr, store.window.h * store.window.dpr]
 	}
 }
