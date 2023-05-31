@@ -40,13 +40,13 @@
 					console.log(el.elements[0].getBoundingClientRect().width)
 
 				})
-				this.tlOut.fromTo(el.chars,  {fontWeight: 400, opacity: 1}, {opacity: 0, fontWeight: 100, duration: 0.4, stagger: 0.01}, 0)
+				this.tlOut.fromTo(el.chars,  { '--wght': 400, opacity: 1}, {opacity: 0,  '--wght': 200, duration: 0.4, stagger: 0.01}, 0)
 
 				this.tlIn
-				// .set(el.chars, {opacity: 0, fontWeight: 100})
-				.fromTo(el.chars, {opacity: 0, fontWeight: 100}, {opacity: 1, duration: 0.6, stagger: 0.02}, 0)
-				.to(el.chars, {fontWeight: 900, duration: 0.6, stagger: 0.01}, 0.1)
-				.to(el.chars, {fontWeight: 400, duration: 0.6, stagger: 0.01}, 0.3)
+				// .set(el.chars, {opacity: 0,  '--wght': 100})
+				.fromTo(el.chars, {opacity: 0,  '--wght': 200}, {opacity: 1, duration: 0.6, stagger: 0.02}, 0)
+				.to(el.chars, { '--wght': 900, duration: 0.6, stagger: 0.01}, 0.1)
+				.to(el.chars, { '--wght': 400, duration: 0.6, stagger: 0.01}, 0.3)
 			})
 
 		},

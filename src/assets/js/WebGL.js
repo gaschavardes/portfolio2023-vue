@@ -1,4 +1,4 @@
-import { ClampToEdgeWrapping, Clock, LinearEncoding, LinearFilter, LinearMipmapLinearFilter, Texture, WebGLRenderer } from 'three'
+import { ClampToEdgeWrapping, Clock, LinearFilter, LinearMipmapLinearFilter, Texture, WebGLRenderer } from 'three'
 import { setupShaderChunks } from './materials'
 import store from './store'
 import { E, qs } from './utils'
@@ -60,7 +60,7 @@ export default class WebGL {
 		texture.magFilter = options.magFilter || LinearFilter
 		texture.wrapS = texture.wrapT = options.wrapping || ClampToEdgeWrapping
 		texture.flipY = options.flipY !== undefined ? options.flipY : true
-		texture.encoding = options.encoding || LinearEncoding
+		// texture.encoding = options.colorSpace || LinearEncoding
 		this.renderer.initTexture(texture)
 		return texture
 	}

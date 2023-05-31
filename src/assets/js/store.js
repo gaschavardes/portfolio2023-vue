@@ -6,7 +6,7 @@ const store = {
 	window: {
 		w: window.innerWidth,
 		h: window.innerHeight,
-		dpr: window.devicePixelRatio
+		dpr: Math.max(window.devicePixelRatio, 2)
 	},
 	isTouch: false,
 	isSafari: !!navigator.userAgent.match(/Safari/i) && !navigator.userAgent.match(/Chrome/i),

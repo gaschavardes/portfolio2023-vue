@@ -1,6 +1,7 @@
 <template>
 	<section class="home">
-		<section class="intro"></section>
+		<section class="intro">
+		</section>
 		<section class="projects" ref="projectContainer">
 			<Counter :number="projects.length" :progress="this.projectProgress" />
 			<ProjectItem v-for="(el, id) in projects" :data='el' :key='id' ref='projects'/>
@@ -106,12 +107,12 @@
 		Counter
 	},
 	mounted() {
-		this.setScrollTrigger()
 		store.projects = this.projects
 		// E.on('projectsCreated', () => {
 		// 	console.log('COUCOU')
 		// 	console.log(store.MainScene.components.projects)
 		// })
+		gsap.delayedCall(1, this.setScrollTrigger)
 	},
 	methods: {
 		setScrollTrigger() {
@@ -140,6 +141,7 @@
 			})
 
 			const that = this
+			
 			this.containerTl =  ScrollTrigger.create({
 				trigger: this.$refs.projectContainer,
 				start: "top top", // when the top of the trigger hits the top of the viewport
@@ -148,10 +150,12 @@
 				onUpdate: function(self) {
 					that.projectProgress = self.progress
 					if(store.MainScene) {
+						console.log()
 						store.MainScene.components.projects.progress = self.progress
 					}
 				}
 			})
+			console.log(this.containerTl)
 
 			
 		}

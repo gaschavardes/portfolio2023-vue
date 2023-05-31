@@ -34,7 +34,7 @@ export default class Letter extends Group {
 		)
 		// this.quad = this.createBackground()
 		this.item = new Group()
-		this.scale.setScalar(0.1)
+		this.scale.setScalar(store.isMobile ? 0.05 : 0.1)
 		this.fboCreate()
 
 
@@ -43,14 +43,15 @@ export default class Letter extends Group {
 			start: "top top",
 			end: "bottom top",
 		})
+		console.log(this.scrollTrigger)
 	}
 
 	fboCreate = () => {
-		this.backfaceFboBroken = new WebGLRenderTarget(store.window.w * store.window.dpr, store.window.h * store.window.dpr)
-		this.backfaceFbo = new WebGLRenderTarget(store.window.w * store.window.dpr, store.window.h * store.window.dpr)
+		this.backfaceFboBroken = new WebGLRenderTarget(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
+		this.backfaceFbo = new WebGLRenderTarget(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
 		this.GlassMaterial = new GlassMaterial({
 			envMap: store.envFbo.texture,
-			resolution: [store.window.w * store.window.dpr, store.window.h * store.window.dpr],
+			resolution: [store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio()],
 			backfaceMapBroken: this.backfaceFboBroken.texture,
 			backfaceMap: this.backfaceFbo.texture,
 			matcap: this.matcap,
@@ -322,39 +323,40 @@ export default class Letter extends Group {
 		this.GlassMaterial.uniforms.uProgress.value = this.easedScroll * 60 - 20
 		this.backfaceMaterial.uniforms.uProgress.value = this.easedScroll * 60 - 20
 		////
-	
 
 		this.GlassMaterial.uniforms.uTime.value = store.WebGL.globalUniforms.uTime.value
 
-
-		store.WebGL.renderer.setRenderTarget(store.envFbo)
-		store.WebGL.renderer.render(store.MainScene, store.MainScene.activeCamera)
-		store.WebGL.renderer.clearDepth()
-		// render cube backfaces to fbo
-
-		this.item.material = this.backfaceMaterial
-		store.WebGL.renderer.setRenderTarget(this.backfaceFboBroken)
-		store.WebGL.renderer.render(store.MainScene, store.MainScene.activeCamera)
-
-		this.item.visible = false
-		this.fullItem.visible = true
-
-		store.WebGL.renderer.setRenderTarget(null)
-		this.fullItem.material = this.backfaceMaterial
-		store.WebGL.renderer.setRenderTarget(this.backfaceFbo)
-
-		store.WebGL.renderer.clearDepth()
-		store.WebGL.renderer.render(store.MainScene, store.MainScene.activeCamera)
-
-		// render env to screen
-		store.WebGL.renderer.setRenderTarget(null)
-		// store.WebGL.renderer.render(this, this.store.MainScene.activeCamera)
-		store.WebGL.renderer.clearDepth()
-		this.fullItem.visible = false
-		this.item.visible = true
-		// render cube with refraction material to screen
-		this.item.material = this.GlassMaterial
-		// store.WebGL.renderer.render(this.parent, this.camera)
+		if(this.easedScroll < 0.9) {
+			store.WebGL.renderer.setRenderTarget(store.envFbo)
+			store.WebGL.renderer.render(store.MainScene, store.MainScene.activeCamera)
+			store.WebGL.renderer.clearDepth()
+			// render cube backfaces to fbo
+	
+			this.item.material = this.backfaceMaterial
+			store.WebGL.renderer.setRenderTarget(this.backfaceFboBroken)
+			store.WebGL.renderer.render(store.MainScene, store.MainScene.activeCamera)
+	
+			this.item.visible = false
+			this.fullItem.visible = true
+	
+			store.WebGL.renderer.setRenderTarget(null)
+			this.fullItem.material = this.backfaceMaterial
+			store.WebGL.renderer.setRenderTarget(this.backfaceFbo)
+	
+			store.WebGL.renderer.clearDepth()
+			store.WebGL.renderer.render(store.MainScene, store.MainScene.activeCamera)
+	
+			// render env to screen
+			store.WebGL.renderer.setRenderTarget(null)
+			// store.WebGL.renderer.render(this, this.store.MainScene.activeCamera)
+			store.WebGL.renderer.clearDepth()
+			this.fullItem.visible = false
+			this.item.visible = true
+			// render cube with refraction material to screen
+			this.item.material = this.GlassMaterial
+			// store.WebGL.renderer.render(this.parent, this.camera)
+		}
+		
 	}
 
 	load() {
@@ -392,9 +394,9 @@ export default class Letter extends Group {
 	}
 
 	onResize = () => {
-		this.backfaceFboBroken.setSize(store.window.w * store.window.dpr, store.window.h * store.window.dpr)
-		this.backfaceFbo.setSize(store.window.w * store.window.dpr, store.window.h * store.window.dpr)
-		this.GlassMaterial.uniforms.resolution.value = [store.window.w * store.window.dpr, store.window.h * store.window.dpr]
-		// this.backfaceMaterial.uniforms.resolution.value = [store.window.w * store.window.dpr, store.window.h * store.window.dpr]
+		this.backfaceFboBroken.setSize(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
+		this.backfaceFbo.setSize(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
+		this.GlassMaterial.uniforms.resolution.value = [store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio()]
+		// this.backfaceMaterial.uniforms.resolution.value = [store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio()]
 	}
 }

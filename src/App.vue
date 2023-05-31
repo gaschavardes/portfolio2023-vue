@@ -1,20 +1,56 @@
 <template>
-  <canvas id="gl"></canvas>
-  <canvas id="texture"></canvas>
-	<Home/>
+	<canvas id="gl"></canvas>
+	<canvas id="texture"></canvas>
+	<div ref="scrollContainer" class="scroll-container" >
+		<Home ref="home"/>
+  </div>
 </template>
 
 <script>
 // import store from './assets/js/store'
 // import '../src/assets/fonts/stylesheet.css'
 import Home from './pages/home'
+import Lenis from '@studio-freight/lenis'
+import store from './assets/js/store'
+import gsap from 'gsap'
+import ScrollTrigger from 'gsap/ScrollTrigger'
 export default {
   name: 'App',
   components: {
 	Home
   },
-  mounted() {
+  created() {
+
   },
+  mounted() {
+	const vh = store.window.h * 0.01
+	document.documentElement.style.setProperty('--vh', `${vh}px`)
+	
+	store.Lenis = new Lenis({ wrapper: this.$refs.scrollContainer, content: this.$refs.home.$el })
+	store.Lenis.start()
+	store.Lenis.on('scroll', () => {
+		ScrollTrigger.update()
+		console.log('scroll')
+	})
+
+	ScrollTrigger.defaults({
+		scroller: this.$refs.scrollContainer
+	})
+	// ScrollTrigger.scrollerProxy(this.$refs.scrollContainer)
+
+	gsap.ticker.add((time)=>{
+		store.Lenis.raf(time * 1000)
+		ScrollTrigger.update()
+	})
+
+	store.isMobile = store.window.w < 900
+  },
+  methods: {
+	raf() {
+		// this.Lenis.raf(time)
+		requestAnimationFrame(this.raf)
+	}
+  }
 }
 </script>
 
@@ -24,7 +60,7 @@ export default {
 	font-family: "unbounded";
 	src: url("~@/assets/fonts/Unbounded-VariableFont_wght.woff2") format("woff2 supports variations"),
 		url("~@/assets/fonts/Unbounded-VariableFont_wght.woff2") format("woff2-variations");
-	font-weight: 100 1000;
+	font-weight: 200 1000;
 
 }
 #gl, #texture{
@@ -32,6 +68,10 @@ export default {
 	top: 0;
 	left: 0;
 	pointer-events: none;
+	touch-action: none;
+}
+#texture{
+	opacity: 0;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -39,11 +79,25 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  z-index: 100;
 }
 body{
-    overscroll-behavior: none;
-    touch-action: none;
-    height: calc(var(--vh, 1vh) * 100);
+    /* overscroll-behavior: none; */
+    /* touch-action: none; */
+    /* height: calc(var(--vh, 1vh) * 100); */
+}
+.scroll-container{
+	scroll-behavior: none;
+	height: 100vh;
+	height: calc(var(--vh, 1vh) * 100) !important;
+	overflow-y: hidden;
+	overflow-x: hidden;
+	position: relative;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	overscroll-behavior: none;
+	overflow-y: auto;
+	z-index: 10;
 }
 .canvas-container{
     position: fixed;

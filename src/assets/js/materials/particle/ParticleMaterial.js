@@ -1,6 +1,6 @@
-import { Color, RawShaderMaterial } from 'three'
+import { Color, RawShaderMaterial, Vector2 } from 'three'
 import { mergeDeep } from '../../utils'
-
+import store from '../../store'
 import vertexShader from './vert.glsl'
 import fragmentShader from './frag.glsl'
 
@@ -10,7 +10,8 @@ export default class BasicMaterial extends RawShaderMaterial {
 			{
 				uniforms: {
 					uColor: { value: new Color(0xffffff) },
-					uResolution: options.uniforms.resolution
+					uResolution: {value: new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())},
+					uTime: store.WebGL.globalUniforms.uTime
 				},
 				defines: {
 				}

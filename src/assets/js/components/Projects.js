@@ -2,7 +2,8 @@ import { Group, PlaneGeometry, Color, Mesh, Vector2, Object3D, InstancedMesh, Ve
 import { ProjectMaterial, ParticleMaterial } from '../materials'
 import store from '../store'
 import gsap from 'gsap'
-import { qs } from '../utils'
+import { E, qs } from '../utils'
+import GlobalEvents from '../utils/GlobalEvents'
 // import { copyObjectDataTransforms } from '../utils'
 
 export default class Projects extends Group {
@@ -17,13 +18,14 @@ export default class Projects extends Group {
 		this.progress = 0
 		this.load()
 		store.RAFCollection.add(this.animate, 4)
-		this.yPos = 0
+		E.on(GlobalEvents.RESIZE, this.onResize)
+		this.yPos = -10
 
 	}
 
 	build() {
 		// store.projects.forEach(el => {
-		this.createPlane()
+		// this.createPlane()
 		this.createParticle()
 		// })
 		this.createTimeline()
@@ -38,7 +40,7 @@ export default class Projects extends Group {
 			}, globalUniforms: this.globalUniforms })
 		)
 		this.add(mesh)
-		mesh.position.set(0, 0, 0)
+		mesh.position.set(0, 10, 0)
 		this.mesh = mesh
 	}
 
@@ -49,7 +51,7 @@ export default class Projects extends Group {
 		this.canvas = qs('canvas#texture')
 		this.ctx = this.canvas.getContext("2d")
 		console.log(this.canvas)
-		const size = new Vector2(image.width * 0.1, image.height * 0.1)
+		const size = new Vector2(image.width * 0.8, image.height * 0.8)
 		this.canvas.width = size.x ;
 		this.canvas.height = size.y ;
 		this.ctx.translate(0, size.y)
@@ -73,29 +75,32 @@ export default class Projects extends Group {
 		}
 		console.log(particles)
 		const color = []
+		const random = []
 		this.instance = new InstancedMesh(
 			new PlaneGeometry(1, 1),
 			new ParticleMaterial({
 				uniforms: {
-					resolution: { value: new Vector2(store.window.w, store.window.h)},
+					resolution: { value: new Vector2(store.window.w * store.window.dpr, store.window.h * store.window.dpr)},
 				}
 			}),
 			particles.length
 		)
-		let scale = 0.068
+		let scale = 0.0062 * 2
 		this.dummy.scale.set(scale,scale,1)
 		
 		particles.forEach((el, i) => {
 			this.dummy.position.set(el.x * scale, el.y * scale, 0)
 			this.dummy.updateMatrix()
 			color.push(...[el.color.x, el.color.y, el.color.z] )
+			random.push(Math.random() * 10)
 			this.instance.setMatrixAt(i, this.dummy.matrix)
 		})
 		this.instance.instanceMatrix.needsUpdate = true
 		this.instance.geometry.setAttribute('colorVal', new InstancedBufferAttribute(new Float32Array(color), 3))
+		this.instance.geometry.setAttribute('random', new InstancedBufferAttribute(new Float32Array(random), 1))
 		this.add(this.instance)
 		console.log(this.instance)
-		this.instance.position.set(0, 0, 0)
+		this.instance.position.set(0, 10, 0)
 
 	}
 
@@ -113,9 +118,8 @@ export default class Projects extends Group {
 		if(this.timeline) {
 			this.timeline.progress(this.progress)
 		}
-		if(this.instance && this.mesh) {
+		if(this.instance) {
 			this.instance.position.y = this.yPos
-			this.mesh.position.y = this.yPos
 		}
 		
 		// this.meshes.forEach((el, i) => {
@@ -137,5 +141,11 @@ export default class Projects extends Group {
 		// store.AssetLoader.loadGltf('./models/model.glb').then(gltf => {
 		// 	this.assets.models.rockFormation = gltf.scene.children[0]
 		// })
+	}
+	onResize = () => {
+		console.log(store.window.dpr)
+		this.instance.material.uniforms.uResolution.value.set(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
+		// this.mesh.material.uniforms.uResolution.value.set(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
+		// this.backfaceMaterial.uniforms.resolution.value = [store.window.w * store.window.dpr, store.window.h * store.window.dpr]
 	}
 }

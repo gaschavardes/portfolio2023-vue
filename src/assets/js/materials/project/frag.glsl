@@ -18,13 +18,16 @@ const float noiseStrength = .1;
 const float noiseTime = 0.1;
 
 void main() {
-	vec2 screenUV = gl_FragCoord.xy / uResolution;
-	float noiseFact = smoothstep(0.9, 0.8, screenUV.y) *  smoothstep(0.1, 0.2, screenUV.y);
+	vec2 screenCoord = vec2(
+		gl_FragCoord.x / uResolution.x,
+		gl_FragCoord.y / uResolution.y
+	);
+	float noiseFact = smoothstep(0.9, 0.8, screenCoord.y) *  smoothstep(0.1, 0.2, screenCoord.y);
 
-	float noise = random(vec2(screenUV.x +  (1. - noiseFact) * 10., screenUV.y ));
+	float noise = random(vec2(screenCoord.x +  (1. - noiseFact) * 10., screenCoord.y ));
 
 	vec4 texture = texture2D(uMap, vUv);
 
     gl_FragColor = vec4(noise * (1. - noiseFact), 0., 0., 1.);
-	// gl_FragColor = texture;
+	gl_FragColor = texture * (noiseFact);
 }
