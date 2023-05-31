@@ -20,6 +20,7 @@ export default class Projects extends Group {
 		store.RAFCollection.add(this.animate, 4)
 		E.on(GlobalEvents.RESIZE, this.onResize)
 		this.yPos = -10
+		this.progressEased = 0
 
 	}
 
@@ -106,8 +107,8 @@ export default class Projects extends Group {
 		this.timeline = gsap.timeline({ paused: true })
 		for (let index = 0; index < store.projects.length; index++) {
 			this.timeline.to(this, {  yPos: 0 })
-			.to(this, {  yPos: 10, ease: 'power2.easeOut' })
-			.set(this, {  yPos: -10, ease: 'power2.easeIn' })
+			.to(this, {  yPos: 10, ease: 'none' })
+			.set(this, {  yPos: -10, ease: 'none' })
 			.call(this.textureUpdate)
 		}
 	}
@@ -140,7 +141,8 @@ export default class Projects extends Group {
 
 	animate = () => {
 		if(this.timeline) {
-			this.timeline.progress(this.progress)
+			this.progressEased += (this.progress - this.progressEased) * 0.1
+			this.timeline.progress(this.progressEased)
 		}
 		if(this.instance) {
 			this.instance.position.y = this.yPos
