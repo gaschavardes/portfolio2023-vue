@@ -8,6 +8,8 @@ export default class GlassMaterial extends ShaderMaterial {
 		super({
 			vertexShader,
 			fragmentShader,
+			depthTest: true,
+			depthWrite: true,
 			uniforms: {
 				envMap: { value: options.envMap },
 				uMap: {value: options.uMap},

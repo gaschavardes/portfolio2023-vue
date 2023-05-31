@@ -1,4 +1,4 @@
-import { ClampToEdgeWrapping, Clock, LinearFilter, LinearMipmapLinearFilter, Texture, WebGLRenderer } from 'three'
+import { ClampToEdgeWrapping, Clock, LinearFilter, LinearMipmapLinearFilter, Texture, WebGLRenderer, LinearSRGBColorSpace } from 'three'
 import { setupShaderChunks } from './materials'
 import store from './store'
 import { E, qs } from './utils'
@@ -21,7 +21,10 @@ export default class WebGL {
 		this.renderer = new WebGLRenderer({ alpha: false, antialias: true, canvas: this.dom.canvas, powerPreference: 'high-performance', stencil: false })
 		this.renderer.setPixelRatio(store.window.dpr >= 2 ? 2 : store.window.dpr)
 		this.renderer.setSize(store.window.w, store.window.h)
+		// this.renderer.toneMapping = ReinhardToneMapping
+		this.renderer.outputColorSpace = LinearSRGBColorSpace;
 
+		this.renderer.toneMappingExposure = 1
 		this.clock = new Clock()
 
 		this.globalUniforms = {

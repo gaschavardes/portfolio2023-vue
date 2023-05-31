@@ -1,4 +1,4 @@
-import { Color, PerspectiveCamera, CameraHelper, OrthographicCamera, WebGLRenderTarget, Scene, AmbientLight, SpotLight, GridHelper} from 'three'
+import { Color, PerspectiveCamera, CameraHelper, OrthographicCamera, WebGLRenderTarget, Scene, AmbientLight, SpotLight, GridHelper, Vector2, ShaderMaterial} from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Background from '../components/Background'
 // import Hello from '../components/Hello'
@@ -7,6 +7,13 @@ import Projects from '../components/Projects'
 import store from '../store'
 import { E } from '../utils'
 import GlobalEvents from '../utils/GlobalEvents'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader'
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
+import screenFxVert from '../../../../glsl/includes/screenFx/vert.glsl'
+import screenFxFrag from '../../../../glsl/includes/screenFx/frag.glsl'
 // import Sim from '../components/Sim'
 // import Background from '../components/Background'
 
@@ -19,7 +26,7 @@ export default class MainScene extends Scene {
 			controls: window.urlParams.has('controls')
 		}
 
-		this.camera = new PerspectiveCamera(45, store.window.w / store.window.h, 0.1, 50)
+		this.camera = new PerspectiveCamera(45, store.window.w / store.window.h, 2, 50)
 		this.camera.position.z = 15
 		this.add(this.camera)
 
@@ -74,12 +81,61 @@ export default class MainScene extends Scene {
 
 	build() {
 		this.buildDebugEnvironment()
-
+		this.composer = new EffectComposer(store.WebGL.renderer)
+		this.composer.setSize(store.window.w, store.window.h)
 		// Build components and add to scene
 		for (const key in this.components) {
 			this.components[key].build(this.objectData)
 			this.add(this.components[key])
 		}
+
+		this.buildPasses()
+	}
+
+	buildPasses() {
+		this.renderScene = new RenderPass(this, this.activeCamera)
+
+		this.fxaaPass = new ShaderPass(FXAAShader)
+		this.fxaaPass.material.uniforms.resolution.value.x = 1 / (store.window.w * store.WebGL.renderer.getPixelRatio())
+		this.fxaaPass.material.uniforms.resolution.value.y = 1 / (store.window.fullHeight * store.WebGL.renderer.getPixelRatio())
+
+		this.bloomPass = new UnrealBloomPass(new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio()), 1, 1, 0.9)
+		this.bloomPass.enabled = true
+	
+		this.screenFxPass = new ShaderPass(new ShaderMaterial({
+			vertexShader: screenFxVert,
+			fragmentShader: screenFxFrag,
+			uniforms: {
+				tDiffuse: { value: null },
+				uMaxDistort: { value: 0.251 },
+				uBendAmount: { value: -0.272 }
+			}
+		}))
+
+		this.composer.addPass(this.renderScene)
+		// this.composer.renderToScreen = false
+		// this.composer.addPass(this.fxaaPass)
+		this.composer.addPass(this.bloomPass)
+		this.composer.addPass(this.screenFxPass)
+
+		// const finalPass = new ShaderPass(
+		// 	new ShaderMaterial({
+		// 		uniforms: {
+		// 			baseTexture: { value: null },
+		// 			bloomTexture: { value: this.composer.renderTarget2.texture }
+		// 		},
+		// 		vertexShader: finalFxVert,
+		// 		fragmentShader: finalFxFrag,
+		// 		defines: {}
+		// 	}), 'baseTexture'
+		// )
+		// finalPass.needsSwap = true
+
+		// this.finalComposer = new EffectComposer(store.WebGL.renderer)
+		// this.finalComposer.setSize(store.window.w, store.window.h)
+		// this.finalComposer.addPass(this.renderScene)
+		// this.finalComposer.addPass(finalPass)
+		console.log(this.composer)
 	}
 
 	createFbo() {
@@ -130,6 +186,8 @@ export default class MainScene extends Scene {
 		}
 
 		store.Gui && store.Gui.refresh(false)
+
+		this.composer.render()
 	}
 
 	onResize = () => {

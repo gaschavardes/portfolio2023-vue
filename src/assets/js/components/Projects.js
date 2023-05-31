@@ -24,10 +24,7 @@ export default class Projects extends Group {
 	}
 
 	build() {
-		// store.projects.forEach(el => {
-		// this.createPlane()
 		this.createParticle()
-		// })
 		this.createTimeline()
 	}
 
@@ -49,9 +46,10 @@ export default class Projects extends Group {
 		const image = texture.source.data
 		console.log(image)
 		this.canvas = qs('canvas#texture')
-		this.ctx = this.canvas.getContext("2d")
+		this.ctx = this.canvas.getContext("2d", { willReadFrequently: true})
 		console.log(this.canvas)
-		const size = new Vector2(image.width * 0.8, image.height * 0.8)
+		
+		const size = store.isMobile ? new Vector2(image.width * 0.5, image.height * 0.5) : new Vector2(image.width * 0.8, image.height * 0.8)
 		this.canvas.width = size.x ;
 		this.canvas.height = size.y ;
 		this.ctx.translate(0, size.y)
@@ -107,11 +105,37 @@ export default class Projects extends Group {
 	createTimeline() {
 		this.timeline = gsap.timeline({ paused: true })
 		for (let index = 0; index < store.projects.length; index++) {
-			console.log('COUCOU')
 			this.timeline.to(this, {  yPos: 0 })
-			this.timeline.to(this, {  yPos: 10 }, '+=1')
-			this.timeline.set(this, {  yPos: -10 })
+			.to(this, {  yPos: 10, ease: 'power2.easeOut' })
+			.set(this, {  yPos: -10, ease: 'power2.easeIn' })
+			.call(this.textureUpdate)
 		}
+	}
+
+	textureUpdate = () => {
+		const texture = store.MainScene.backgroundTexture
+		const image = texture.source.data
+		this.canvas = qs('canvas#texture')
+		this.ctx = this.canvas.getContext("2d", { willReadFrequently: true})
+		const size = store.isMobile ? new Vector2(image.width * 0.5, image.height * 0.5) : new Vector2(image.width * 0.8, image.height * 0.8)
+		this.canvas.width = size.x ;
+		this.canvas.height = size.y ;
+		this.ctx.translate(0, size.y)
+		this.ctx.scale(1, -1)
+		this.ctx.drawImage(image, 0, 0, size.x, size.y);
+		const data = this.ctx.getImageData(0, 0, size.x, size.y);
+		
+		const colors = [];
+		for (let y = 0, y2 = data.height; y < y2; y++) {
+			for (let x = 0, x2 = data.width; x < x2; x++) {
+				if (data.data[(y * 4 * data.width) + (x * 4) + 3] > 128) {
+					colors.push(...[data.data[(y * 4 * data.width)+ (x * 4)] / 255, data.data[(y * 4 * data.width)+ (x * 4) +1] / 255, data.data[(y * 4 * data.width)+ (x * 4) +2] / 255]);
+				}
+			}
+		}
+		this.instance.geometry.setAttribute('colorVal', new InstancedBufferAttribute(new Float32Array(colors), 3))
+		this.instance.geometry.getAttribute('colorVal').needsUpdate = true
+
 	}
 
 	animate = () => {
@@ -121,14 +145,6 @@ export default class Projects extends Group {
 		if(this.instance) {
 			this.instance.position.y = this.yPos
 		}
-		
-		// this.meshes.forEach((el, i) => {
-		// 	if(i === 1) {
-		// 		console.log((this.progress * this.meshes.length - i ) / this.meshes.length)
-		// 	}
-		// 	const meshProgress = ((this.progress * this.meshes.length - i) / this.meshes.length) * 100.
-		// 	el.position.set(0, meshProgress, 0)
-		// })
 	}
 
 	load() {
@@ -136,16 +152,9 @@ export default class Projects extends Group {
 			models: {},
 			textures: {}
 		}
-
-		// Load component assets if needed
-		// store.AssetLoader.loadGltf('./models/model.glb').then(gltf => {
-		// 	this.assets.models.rockFormation = gltf.scene.children[0]
-		// })
 	}
 	onResize = () => {
 		console.log(store.window.dpr)
 		this.instance.material.uniforms.uResolution.value.set(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
-		// this.mesh.material.uniforms.uResolution.value.set(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
-		// this.backfaceMaterial.uniforms.resolution.value = [store.window.w * store.window.dpr, store.window.h * store.window.dpr]
 	}
 }
