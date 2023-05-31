@@ -14,6 +14,8 @@ import Lenis from '@studio-freight/lenis'
 import store from './assets/js/store'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
+import E from './assets/js/utils/E'
+import GlobalEvents from './assets/js/utils/GlobalEvents'
 export default {
   name: 'App',
   components: {
@@ -30,7 +32,6 @@ export default {
 	store.Lenis.start()
 	store.Lenis.on('scroll', () => {
 		ScrollTrigger.update()
-		console.log('scroll')
 	})
 
 	ScrollTrigger.defaults({
@@ -44,11 +45,17 @@ export default {
 	})
 
 	store.isMobile = store.window.w < 900
+
+	E.on(GlobalEvents.RESIZE, this.onResize)
   },
   methods: {
 	raf() {
 		// this.Lenis.raf(time)
 		requestAnimationFrame(this.raf)
+	},
+	onResize() {
+		const vh = store.window.h * 0.01
+		document.documentElement.style.setProperty('--vh', `${vh}px`)
 	}
   }
 }
@@ -82,13 +89,12 @@ export default {
   z-index: 100;
 }
 body{
+
     /* overscroll-behavior: none; */
     /* touch-action: none; */
     /* height: calc(var(--vh, 1vh) * 100); */
 }
 .scroll-container{
-	scroll-behavior: none;
-	height: 100vh;
 	height: calc(var(--vh, 1vh) * 100) !important;
 	overflow-y: hidden;
 	overflow-x: hidden;
@@ -96,7 +102,6 @@ body{
 	scrollbar-width: none;
 	-ms-overflow-style: none;
 	overscroll-behavior: none;
-	overflow-y: auto;
 	z-index: 10;
 }
 .canvas-container{

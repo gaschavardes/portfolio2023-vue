@@ -140,12 +140,12 @@ export default class MainScene extends Scene {
 
 	createFbo() {
 		store.envFbo = new WebGLRenderTarget(
-			store.window.w * store.window.dpr,
-			store.window.h * store.window.dpr
+			store.window.w * store.WebGL.renderer.getPixelRatio(),
+			store.window.h * store.WebGL.renderer.getPixelRatio()
 		)
 		store.simFbo = new WebGLRenderTarget(
-			store.window.w * store.window.dpr,
-			store.window.h * store.window.dpr
+			store.window.w * store.WebGL.renderer.getPixelRatio(),
+			store.window.h * store.WebGL.renderer.getPixelRatio()
 		)
 		E.emit('fboCreated')
 	}
@@ -193,7 +193,8 @@ export default class MainScene extends Scene {
 	onResize = () => {
 		this.camera.aspect = store.window.w / store.window.h
 		this.camera.updateProjectionMatrix()
-		store.envFbo.setSize(store.window.w * store.window.dpr, store.window.h * store.window.dpr)
+		store.envFbo.setSize(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
+		this.composer.setSize(store.window.w, store.window.h)
 	}
 
 	load() {
