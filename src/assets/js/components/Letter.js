@@ -313,7 +313,9 @@ export default class Letter extends Group {
 		this.GlassMaterial.uniforms.uTime.value = store.WebGL.globalUniforms.uTime.value
 
 		if(this.easedScroll < 0.9) {
-			store.MainScene.bloomPass.threshold = 0.9
+			if(store.MainScene.bloomPass) {
+				store.MainScene.bloomPass.threshold = 0.9
+			}
 
 			store.MainScene.components.projects.instance.visible = false
 			store.WebGL.renderer.setRenderTarget(store.envFbo)
@@ -347,7 +349,9 @@ export default class Letter extends Group {
 			// store.WebGL.renderer.render(this.parent, this.camera)
 		} else {
 			store.MainScene.components.projects.instance.visible = true
-			store.MainScene.bloomPass.threshold = 1
+			if(store.MainScene.bloomPass) {
+				store.MainScene.bloomPass.threshold = 1
+			}
 		}
 		
 	}
