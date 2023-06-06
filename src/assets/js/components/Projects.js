@@ -1,4 +1,4 @@
-import { Group, PlaneGeometry, Color, Mesh, Vector2, Object3D, InstancedMesh, Vector3, InstancedBufferAttribute, VideoTexture} from 'three'
+import { Group, PlaneGeometry, Color, Mesh, Vector2, Object3D, InstancedMesh, Vector3, InstancedBufferAttribute} from 'three'
 import { ProjectMaterial, ParticleMaterial } from '../materials'
 import store from '../store'
 import gsap from 'gsap'
@@ -85,7 +85,7 @@ export default class Projects extends Group {
 				uniforms: {
 					resolution: { value: new Vector2(store.window.w * store.window.dpr, store.window.h * store.window.dpr)},
 					spriteSize: {value: new Vector2(data.width, data.height) },
-					videoTexture: { value: new VideoTexture( this.video ) }
+					// videoTexture: { value: new VideoTexture( this.video ) }
 				}
 			}),
 			particles.length
