@@ -47,7 +47,7 @@ export default class Projects extends Group {
 		const image = texture.source.data
 		this.canvas = qs('canvas#texture')
 		this.video =  qs('video#videoContainer')
-		this.video.play()
+		// this.video.play()
 		this.ctx = this.canvas.getContext("2d", { willReadFrequently: true})
 		
 		const size = store.isMobile ? new Vector2(image.width * 0.5, image.width * 0.5 * 9/16) : new Vector2(image.width * 1,  image.width * 1 * 9/16)
