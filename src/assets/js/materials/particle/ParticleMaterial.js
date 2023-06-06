@@ -10,7 +10,7 @@ export default class BasicMaterial extends RawShaderMaterial {
 		options = mergeDeep(
 			{
 				uniforms: {
-					uTexture: options.uniforms.videoTexture,
+					uTexture: { value: store.MainScene.backgroundTexture },
 					uColor: { value: new Color(0xffffff) },
 					uResolution: {value: new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())},
 					uTime: store.WebGL.globalUniforms.uTime,
