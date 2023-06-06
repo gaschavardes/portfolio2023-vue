@@ -31,7 +31,7 @@
 	},
 	methods: {
 		split() {
-			this.$refs.title.split = new SplitText(this.$refs.title, {type:'chars, words, lines', charsClass:'char', linesClass:'line'})
+			this.$refs.title.split = new SplitText(this.$refs.title, {type:'chars, words, lines', charsClass:'char', linesClass:'line', wordsClass:'word'})
 			this.$refs.agency.split = new SplitText(this.$refs.agency, {type:'chars, words, lines', charsClass:'char', linesClass:'line'})
 			this.splits = [this.$refs.title.split, this.$refs.agency.split ]
 

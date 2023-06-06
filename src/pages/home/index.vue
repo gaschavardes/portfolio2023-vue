@@ -10,6 +10,8 @@
 			</div>
 		</section>
 		<section class="projects" ref="projectContainer">
+	<video id="videoContainer" :src="require(`@/assets/video/${this.activeVideo}.mp4`)" autoplay="true" muted="true" loop ref="video"></video>
+
 			<Counter :number="projects.length" :progress="this.projectProgress" />
 			<ProjectItem v-for="(el, id) in projects" :data='el' :key='id' ref='projects'/>
 		</section>
@@ -31,27 +33,30 @@
 	data() {
 		return{
 			projectProgress: 0,
+			activeVideo: 'crosswire',
 			projects: [
 				{
 					name: 'Crosswire',
 					agency: 'Unseen Studio',
+					media: "crosswire",
 					link: 'https://crosswire.unseen.co/'
 				},
 				{
 					name: 'Visionnaries Club',
 					agency: 'Unseen Studio',
+					media: "visionaries",
 					link: 'https://visionaries.vc/'
 				},
 				{
 					name: "Air Shifumi",
 					// "type": "video",
-					// "media": "airshifumi",
+					media: "airshifumi",
 					agency: 'Hands Agency',
-					"link": "https://airshifumi.hands.agency/"
+					link: "https://airshifumi.hands.agency/"
 				},
 				{
 					name: "Palais de tokyo",
-					// "media": "palaisdetokyo",
+					media: "palaisdetokyo",
 					// "type": "video",
 					agency: 'Hands Agency',
 					link: "https://palaisdetokyo.com/",
@@ -130,12 +135,24 @@
 				scrub: 1, // smooth scrubbing, takes 1 second to "catch up" to the scrollbar
 				onEnter: () => {
 					el.enter()
+					if(el.data.media) {
+						this.activeVideo = el.data.media
+						setTimeout(() => {
+							this.$refs.video.play()
+						}, 100)
+					}
 				},
 				onLeave: () => {
 					el.leave()
 				},
 				onEnterBack: () => {
 					el.enter()
+					if(el.data.media) {
+						this.activeVideo = el.data.media
+						setTimeout(() => {
+							this.$refs.video.play()
+						}, 100)
+					}
 
 				},
 				onLeaveBack: () => {

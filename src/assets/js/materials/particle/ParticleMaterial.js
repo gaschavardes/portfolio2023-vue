@@ -6,12 +6,15 @@ import fragmentShader from './frag.glsl'
 
 export default class BasicMaterial extends RawShaderMaterial {
 	constructor(options = {}) {
+		console.log(options.uniforms.spriteSize)
 		options = mergeDeep(
 			{
 				uniforms: {
+					uTexture: options.uniforms.videoTexture,
 					uColor: { value: new Color(0xffffff) },
 					uResolution: {value: new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())},
-					uTime: store.WebGL.globalUniforms.uTime
+					uTime: store.WebGL.globalUniforms.uTime,
+					uSpriteSize: options.uniforms.spriteSize
 				},
 				defines: {
 				}

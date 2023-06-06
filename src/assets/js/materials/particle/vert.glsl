@@ -9,6 +9,12 @@ attribute mat4 instanceMatrix;
 uniform vec2 uResolution;
 uniform float uTime;
 
+attribute float aID;
+attribute vec2 aUVID;
+varying vec2 vUV1;
+varying vec2 vUV2;
+uniform vec2 uSpriteSize;
+
 // NOISE 
 vec3 mod289(vec3 x) {
     return x - floor(x * (1.0 / 289.0)) * 289.0;
@@ -124,6 +130,8 @@ void main()	{
     );
 	mat4 instance = instanceMatrix;
 	instance *= translationMatrix(displacement);
+
+    vUV1 = (uv + aUVID) / uSpriteSize;
 
     gl_Position = projectionMatrix * modelViewMatrix * instance * vec4( newPos, 1.0 );
 	vProgress = noiseFact;

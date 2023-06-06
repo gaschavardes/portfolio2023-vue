@@ -5,7 +5,9 @@ uniform vec2 uResolution;
 varying vec3 vNormal;
 varying vec3 vColor;
 varying float vProgress;
-
+uniform sampler2D uTexture;
+varying vec2 vUV1;
+varying vec2 vUV2;
 
 void main() {
     vec2 screenUV = gl_FragCoord.xy / uResolution;
@@ -13,5 +15,9 @@ void main() {
 
 	float highlight = smoothstep(0.2, 0.05, vProgress) * smoothstep(0.0001, 0.01, vProgress);
 
-	gl_FragColor = vec4(vec3(vColor) + highlight * vec3(1.), 1.);
+	vec4 textureMain = texture2D(uTexture, vUV1);
+	// vec4 textureMain2 = texture2D(uTexture, vUV2);
+	// vec4 textureMain = texture2D(uTexture, gl_FragCoord.xy);
+
+	gl_FragColor = vec4(vec3(textureMain.rgb) + highlight * vec3(1.), 1.);
 }

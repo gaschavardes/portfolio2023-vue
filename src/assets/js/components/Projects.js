@@ -1,4 +1,4 @@
-import { Group, PlaneGeometry, Color, Mesh, Vector2, Object3D, InstancedMesh, Vector3, InstancedBufferAttribute} from 'three'
+import { Group, PlaneGeometry, Color, Mesh, Vector2, Object3D, InstancedMesh, Vector3, InstancedBufferAttribute, VideoTexture} from 'three'
 import { ProjectMaterial, ParticleMaterial } from '../materials'
 import store from '../store'
 import gsap from 'gsap'
@@ -46,19 +46,23 @@ export default class Projects extends Group {
 		const texture = store.MainScene.backgroundTexture
 		const image = texture.source.data
 		this.canvas = qs('canvas#texture')
+		this.video =  qs('video#videoContainer')
+		this.video.play()
 		this.ctx = this.canvas.getContext("2d", { willReadFrequently: true})
 		
-		const size = store.isMobile ? new Vector2(image.width * 0.5, image.height * 0.5) : new Vector2(image.width * 0.8, image.height * 0.8)
-		this.canvas.width = size.x ;
-		this.canvas.height = size.y ;
+		const size = store.isMobile ? new Vector2(image.width * 0.5, image.width * 0.5 * 9/16) : new Vector2(image.width * 1,  image.width * 1 * 9/16)
+		this.canvas.width = size.x;
+		this.canvas.height = size.x * 16/9;
 		this.ctx.translate(0, size.y)
 		this.ctx.scale(1, -1)
 		this.ctx.drawImage(image, 0, 0, size.x, size.y);
 		const data = this.ctx.getImageData(0, 0, size.x, size.y);
 		
-		const particles = [];
+		const particles = []
+		const aIDs = []
+		const aUVIDs = []
 		for (let y = 0, y2 = data.height; y < y2; y++) {
-			for (let x = 0, x2 = data.width; x < x2; x++) {
+			for (let x = 0, x2 = data.height * 16/9; x < x2; x++) {
 				if (data.data[(y * 4 * data.width) + (x * 4) + 3] > 128) {
 					const particle = {
 						x : (x - size.x * 0.5),
@@ -66,6 +70,10 @@ export default class Projects extends Group {
 						color: new Vector3(data.data[(y * 4 * data.width)+ (x * 4)] / 255, data.data[(y * 4 * data.width)+ (x * 4) +1] / 255, data.data[(y * 4 * data.width)+ (x * 4) +2] / 255)
 					};
 					particles.push(particle);
+					aIDs.push(x + 1)
+					// aUVIDs.push(x % data.height)
+					aUVIDs.push(x)
+					aUVIDs.push(y)
 				}
 			}
 		}
@@ -76,6 +84,8 @@ export default class Projects extends Group {
 			new ParticleMaterial({
 				uniforms: {
 					resolution: { value: new Vector2(store.window.w * store.window.dpr, store.window.h * store.window.dpr)},
+					spriteSize: {value: new Vector2(data.width, data.height) },
+					videoTexture: { value: new VideoTexture( this.video ) }
 				}
 			}),
 			particles.length
@@ -93,6 +103,8 @@ export default class Projects extends Group {
 		this.instance.instanceMatrix.needsUpdate = true
 		this.instance.geometry.setAttribute('colorVal', new InstancedBufferAttribute(new Float32Array(color), 3))
 		this.instance.geometry.setAttribute('random', new InstancedBufferAttribute(new Float32Array(random), 1))
+		this.instance.geometry.setAttribute('aID', new InstancedBufferAttribute(new Float32Array(aIDs), 1))
+		this.instance.geometry.setAttribute('aUVID', new InstancedBufferAttribute(new Float32Array(aUVIDs), 2))
 		this.add(this.instance)
 		this.instance.position.set(0, 10, 0)
 		this.instance.visible = false
@@ -105,34 +117,8 @@ export default class Projects extends Group {
 			this.timeline.to(this, {  yPos: 0 })
 			.to(this, {  yPos: 10, ease: 'none' })
 			.set(this, {  yPos: -10, ease: 'none' })
-			.call(this.textureUpdate)
+			// .call(this.textureUpdate)
 		}
-	}
-
-	textureUpdate = () => {
-		const texture = store.MainScene.backgroundTexture
-		const image = texture.source.data
-		this.canvas = qs('canvas#texture')
-		this.ctx = this.canvas.getContext("2d", { willReadFrequently: true})
-		const size = store.isMobile ? new Vector2(image.width * 0.5, image.height * 0.5) : new Vector2(image.width * 0.8, image.height * 0.8)
-		this.canvas.width = size.x ;
-		this.canvas.height = size.y ;
-		this.ctx.translate(0, size.y)
-		this.ctx.scale(1, -1)
-		this.ctx.drawImage(image, 0, 0, size.x, size.y);
-		const data = this.ctx.getImageData(0, 0, size.x, size.y);
-		
-		const colors = [];
-		for (let y = 0, y2 = data.height; y < y2; y++) {
-			for (let x = 0, x2 = data.width; x < x2; x++) {
-				if (data.data[(y * 4 * data.width) + (x * 4) + 3] > 128) {
-					colors.push(...[data.data[(y * 4 * data.width)+ (x * 4)] / 255, data.data[(y * 4 * data.width)+ (x * 4) +1] / 255, data.data[(y * 4 * data.width)+ (x * 4) +2] / 255]);
-				}
-			}
-		}
-		this.instance.geometry.setAttribute('colorVal', new InstancedBufferAttribute(new Float32Array(colors), 3))
-		this.instance.geometry.getAttribute('colorVal').needsUpdate = true
-
 	}
 
 	animate = () => {
