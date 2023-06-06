@@ -16,21 +16,20 @@ export default class Letter extends Group {
 		this.appearProgress = 0
 		this.load()
 		store.landing = this
-		store.RAFCollection.add(this.animate, 4)
 		this.centers = {}
 		this.easedMouse = new Vector2()
 		this.easedMouseTemp = new Vector2()
 		this.easedScroll = 0
 		// this.parent = options.parent
 		this.intro = document.querySelector('.intro')
-		console.log(this.intro)
+
 		E.on(GlobalEvents.RESIZE, this.onResize)
 	}
 
 	build() {
-		this.envFbo = new WebGLRenderTarget(
-			store.window.w,
-			store.window.h
+		store.envFbo = new WebGLRenderTarget(
+			store.window.w * store.WebGL.renderer.getPixelRatio(),
+			store.window.h * store.WebGL.renderer.getPixelRatio()
 		)
 		// this.quad = this.createBackground()
 		this.item = new Group()
@@ -43,7 +42,8 @@ export default class Letter extends Group {
 			start: "top top",
 			end: "bottom top",
 		})
-		console.log(this.scrollTrigger)
+		store.RAFCollection.add(this.animate, 0)
+
 	}
 
 	fboCreate = () => {
@@ -254,31 +254,19 @@ export default class Letter extends Group {
 		this.item.geometry = geometry
 		this.item.geometry.computeBoundingSphere()
 		this.item.geometry.boundingSphere.radius *= 10
-		// gsap.to(this, {
-		// 	explodeProgress: 25,
-		// 	yoyo: true,
-		// 	repeat: -1,
-		// 	repeatDelay: 2,
-		// 	delay: 2,
-		// 	duration: 4,
-		// 	ease: 'power2.easeInOut',
-		// 	onUpdate: () => {
-		// 		this.GlassMaterial.uniforms.uProgress.value = this.explodeProgress
-		// 		this.backfaceMaterial.uniforms.uProgress.value = this.explodeProgress
-		// 	}
-		// })
 
-		// gsap.fromTo(this, { appearProgress: 0 }, {
-		// 	appearProgress: 1.4,
-		// 	yoyo: true,
-		// 	repeat: 3,
-		// 	duration: 2,
-		// 	ease: 'power1.easeInOut',
-		// 	onUpdate: () => {
-		// 		this.GlassMaterial.uniforms.uAppear.value = this.appearProgress
-		// 		this.backfaceMaterial.uniforms.uAppear.value = this.appearProgress
-		// 	}
-		// })
+
+		gsap.fromTo(this, { appearProgress: 1.4 }, {
+			appearProgress: 0,
+			yoyo: true,
+			repeat: 0,
+			duration: 4,
+			ease: 'power1.easeInOut',
+			onUpdate: () => {
+				this.GlassMaterial.uniforms.uAppear.value = this.appearProgress
+				this.backfaceMaterial.uniforms.uAppear.value = this.appearProgress
+			}
+		})
 	}
 
 	explode() {
@@ -327,10 +315,12 @@ export default class Letter extends Group {
 		this.GlassMaterial.uniforms.uTime.value = store.WebGL.globalUniforms.uTime.value
 
 		if(this.easedScroll < 0.9) {
+			store.MainScene.components.projects.instance.visible = false
 			store.WebGL.renderer.setRenderTarget(store.envFbo)
 			store.WebGL.renderer.render(store.MainScene, store.MainScene.activeCamera)
-			store.WebGL.renderer.clearDepth()
+			// store.WebGL.renderer.clearDepth()
 			// render cube backfaces to fbo
+
 	
 			this.item.material = this.backfaceMaterial
 			store.WebGL.renderer.setRenderTarget(this.backfaceFboBroken)
@@ -343,18 +333,20 @@ export default class Letter extends Group {
 			this.fullItem.material = this.backfaceMaterial
 			store.WebGL.renderer.setRenderTarget(this.backfaceFbo)
 	
-			store.WebGL.renderer.clearDepth()
+			// store.WebGL.renderer.clearDepth()
 			store.WebGL.renderer.render(store.MainScene, store.MainScene.activeCamera)
 	
 			// render env to screen
 			store.WebGL.renderer.setRenderTarget(null)
 			// store.WebGL.renderer.render(this, this.store.MainScene.activeCamera)
-			store.WebGL.renderer.clearDepth()
+			// store.WebGL.renderer.clearDepth()
 			this.fullItem.visible = false
 			this.item.visible = true
 			// render cube with refraction material to screen
 			this.item.material = this.GlassMaterial
 			// store.WebGL.renderer.render(this.parent, this.camera)
+		} else {
+			store.MainScene.components.projects.instance.visible = true
 		}
 		
 	}

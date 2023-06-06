@@ -20,6 +20,7 @@ varying vec3 viewDirection;
 varying vec2 vUv; 
 varying vec3 worldPosition;
 varying float vBackface;
+varying float zVal;
 
 
 // float ior = 2.4;
@@ -191,8 +192,15 @@ void main() {
 	outgoingLight = mix(map.rgb, outgoingLight, 1.);
 
 	gl_FragColor = vec4(final.rgb, 1.0);
-	gl_FragColor = vec4(outgoingLight, 1.);
-	// gl_FragColor = vec4(vec2(vUv), 1., 1.);	
+
+	float zthreshold = smoothstep(-3., -2., zVal);
+	zthreshold = mix(zthreshold, 1., vBackface);
+	float glowThreshold = smoothstep(-2., -1., zVal);
+	glowThreshold = mix(glowThreshold, 1., vBackface);
+
+	outgoingLight = mix(vec3(1.), outgoingLight, min(glowThreshold, 1.));
+	gl_FragColor = vec4(outgoingLight, zthreshold);
+	// gl_FragColor = vec4(zthreshold);	
 
 	
 

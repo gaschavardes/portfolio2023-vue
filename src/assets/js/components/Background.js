@@ -11,8 +11,8 @@ export default class Background extends Mesh {
 			})
 		)
 
-		this.position.set(0, 0, -5)
-		this.scale.setScalar(30)
+		this.position.set(0, 0, -20)
+		this.scale.setScalar(100)
 		this.globalUniforms = {
 			uColor: { value: new Color(0xf3ff8f) },
 		}

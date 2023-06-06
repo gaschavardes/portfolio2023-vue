@@ -3,6 +3,7 @@
 			<div class="content">
 				<h2 ref="title">{{ data.name }}</h2>
 				<h4 ref="agency">{{ data.agency }}</h4>
+				<Button icon="visit" text="Visit site" />
 			</div>
 		</div>
   </template>
@@ -11,6 +12,7 @@
   import './style.less'
   import SplitText from '../../assets/js/utils/gsap/SplitText'
   import gsap from 'gsap'
+  import Button from '../Button'
   export default {
 	name: 'Project-item',
 	props: {
@@ -22,6 +24,7 @@
 		}
 	},
 	components: {
+		Button
 	},
 	mounted() {
 		this.split()

@@ -1,4 +1,4 @@
-import { Color, PerspectiveCamera, CameraHelper, OrthographicCamera, WebGLRenderTarget, Scene, AmbientLight, SpotLight, GridHelper, Vector2, ShaderMaterial} from 'three'
+import { Color, PerspectiveCamera, CameraHelper, OrthographicCamera, Scene, AmbientLight, SpotLight, GridHelper, Vector2, ShaderMaterial} from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Background from '../components/Background'
 // import Hello from '../components/Hello'
@@ -116,7 +116,7 @@ export default class MainScene extends Scene {
 		// this.composer.renderToScreen = false
 		// this.composer.addPass(this.fxaaPass)
 		this.composer.addPass(this.bloomPass)
-		this.composer.addPass(this.screenFxPass)
+		// this.composer.addPass(this.screenFxPass)
 
 		// const finalPass = new ShaderPass(
 		// 	new ShaderMaterial({
@@ -139,14 +139,10 @@ export default class MainScene extends Scene {
 	}
 
 	createFbo() {
-		store.envFbo = new WebGLRenderTarget(
-			store.window.w * store.WebGL.renderer.getPixelRatio(),
-			store.window.h * store.WebGL.renderer.getPixelRatio()
-		)
-		store.simFbo = new WebGLRenderTarget(
-			store.window.w * store.WebGL.renderer.getPixelRatio(),
-			store.window.h * store.WebGL.renderer.getPixelRatio()
-		)
+		// store.simFbo = new WebGLRenderTarget(
+		// 	store.window.w * store.WebGL.renderer.getPixelRatio(),
+		// 	store.window.h * store.WebGL.renderer.getPixelRatio()
+		// )
 		E.emit('fboCreated')
 	}
 

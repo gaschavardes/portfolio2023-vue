@@ -100,6 +100,7 @@ export default class Projects extends Group {
 		this.add(this.instance)
 		console.log(this.instance)
 		this.instance.position.set(0, 10, 0)
+		this.instance.visible = false
 
 	}
 

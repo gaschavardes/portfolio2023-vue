@@ -20,6 +20,7 @@ uniform float uAppear;
 uniform vec2 uMouse;
 varying vec3 vReflect;
 varying float vBackface;
+varying float zVal;
 
 float easeInQuart(float x) {
 return x * x * x * x;
@@ -223,4 +224,5 @@ void main() {
 	
 	gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
 	vBackface = clamp(progressVal * 10., 0., 1.);
+	zVal = pos.z;
 }
