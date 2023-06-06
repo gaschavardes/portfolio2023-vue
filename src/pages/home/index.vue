@@ -1,6 +1,13 @@
 <template>
 	<section class="home">
-		<section class="intro">
+		<section class="intro" ref="intro">
+			<div class="intro__text" ref="introContent">
+				I'm Gaspard Chavardes,<br>
+				a creative developper based in France<br>
+				Former Hands Agency and Unseen,<br>
+				I'm now available for some freelance jobs<br>
+				Don't hesitate to ping me<br>
+			</div>
 		</section>
 		<section class="projects" ref="projectContainer">
 			<Counter :number="projects.length" :progress="this.projectProgress" />
@@ -16,6 +23,7 @@
   import gsap from 'gsap'
   import ScrollTrigger from 'gsap/ScrollTrigger'
   import store from '../../assets/js/store'
+  import SplitText from '../../assets/js/utils/gsap/SplitText'
 
   gsap.registerPlugin(ScrollTrigger)
   export default {
@@ -108,19 +116,15 @@
 	},
 	mounted() {
 		store.projects = this.projects
-		// E.on('projectsCreated', () => {
-		// 	console.log('COUCOU')
-		// 	console.log(store.MainScene.components.projects)
-		// })
 		gsap.delayedCall(1, this.setScrollTrigger)
+
+		this.$refs.introContent.split = new SplitText(this.$refs.introContent, {type: 'lines'})
 	},
 	methods: {
 		setScrollTrigger() {
 			this.$refs.projects.forEach(el => {
 				this.projectsTl = ScrollTrigger.create({
-				// yes, we can add it to an entire timeline!
 				trigger: el.$el,
-				// pin: true,   // pin the trigger element while active
 				start: "top top", // when the top of the trigger hits the top of the viewport
 				end: "bottom top", // end after scrolling 500px beyond the start
 				scrub: 1, // smooth scrubbing, takes 1 second to "catch up" to the scrollbar
@@ -150,13 +154,22 @@
 				onUpdate: function(self) {
 					that.projectProgress = self.progress
 					if(store.MainScene) {
-						console.log()
 						store.MainScene.components.projects.progress = self.progress
 					}
 				}
 			})
-			console.log(this.containerTl)
 
+			console.log(this.$refs.intro, this.$refs.introContent.split)
+			this.introTl = gsap.timeline({
+				// yes, we can add it to an entire timeline!
+				scrollTrigger: {
+					trigger: this.$refs.projectContainer,
+					start: "top bottom", // when the top of the trigger hits the top of the viewport
+					end: "top top", // end after scrolling 500px beyond the start
+					scrub: 1, // smooth scrubbing, takes 1 second to "catch up" to the scrollbar
+				}
+			});
+			this.introTl.to(this.$refs.introContent.split.lines, {opacity: 0, stagger: -0.2})
 			
 		}
 	}

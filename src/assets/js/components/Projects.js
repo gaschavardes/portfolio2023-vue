@@ -45,10 +45,8 @@ export default class Projects extends Group {
 	createParticle() {
 		const texture = store.MainScene.backgroundTexture
 		const image = texture.source.data
-		console.log(image)
 		this.canvas = qs('canvas#texture')
 		this.ctx = this.canvas.getContext("2d", { willReadFrequently: true})
-		console.log(this.canvas)
 		
 		const size = store.isMobile ? new Vector2(image.width * 0.5, image.height * 0.5) : new Vector2(image.width * 0.8, image.height * 0.8)
 		this.canvas.width = size.x ;
@@ -59,7 +57,6 @@ export default class Projects extends Group {
 		const data = this.ctx.getImageData(0, 0, size.x, size.y);
 		
 		const particles = [];
-		console.log(data.height)
 		for (let y = 0, y2 = data.height; y < y2; y++) {
 			for (let x = 0, x2 = data.width; x < x2; x++) {
 				if (data.data[(y * 4 * data.width) + (x * 4) + 3] > 128) {
@@ -72,7 +69,6 @@ export default class Projects extends Group {
 				}
 			}
 		}
-		console.log(particles)
 		const color = []
 		const random = []
 		this.instance = new InstancedMesh(
@@ -98,7 +94,6 @@ export default class Projects extends Group {
 		this.instance.geometry.setAttribute('colorVal', new InstancedBufferAttribute(new Float32Array(color), 3))
 		this.instance.geometry.setAttribute('random', new InstancedBufferAttribute(new Float32Array(random), 1))
 		this.add(this.instance)
-		console.log(this.instance)
 		this.instance.position.set(0, 10, 0)
 		this.instance.visible = false
 
@@ -157,7 +152,6 @@ export default class Projects extends Group {
 		}
 	}
 	onResize = () => {
-		console.log(store.window.dpr)
 		this.instance.material.uniforms.uResolution.value.set(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
 	}
 }

@@ -155,10 +155,10 @@ export default class MainScene extends Scene {
 		this.add(this.light)
 
 		this.grid = new GridHelper(200, 50)
-		this.grid.position.y = -10
-		this.grid.material.opacity = 0.5
-		this.grid.material.transparent = true
-		this.add(this.grid)
+		// this.grid.position.y = -10
+		// this.grid.material.opacity = 0.5
+		// this.grid.material.transparent = true
+		// this.add(this.grid)
 	}
 
 	addEvents() {

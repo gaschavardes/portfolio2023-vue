@@ -2,5 +2,21 @@
 	.intro{
 		height: 100vh;
 		width: 100vw;
+		font-family: "unbounded";
+
+		&__text{
+			position: fixed;
+			top: 65vh;
+			color: white;
+			left: 50%;
+			transform: translateX(-50%);
+			font-size: 20px;
+			width: 90vw;
+			line-height: 1.5;
+
+			@media screen and (max-width: 400px) {
+				font-size: 16px;
+			}
+		}
 	}
 }

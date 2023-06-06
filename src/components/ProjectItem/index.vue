@@ -3,7 +3,7 @@
 			<div class="content">
 				<h2 ref="title">{{ data.name }}</h2>
 				<h4 ref="agency">{{ data.agency }}</h4>
-				<Button icon="visit" text="Visit site" />
+				<Button icon="visit" text="Visit site" ref="button" />
 			</div>
 		</div>
   </template>
@@ -40,7 +40,6 @@
 			this.splits.forEach(el => {
 				gsap.delayedCall(2, () => {
 					el.elements[0].style.width = el.elements[0].getBoundingClientRect().width + 'px'
-					console.log(el.elements[0].getBoundingClientRect().width)
 
 				})
 				this.tlOut.fromTo(el.chars,  { '--wght': 400, opacity: 1}, {opacity: 0,  '--wght': 200, duration: 0.4, stagger: 0.01}, 0)
@@ -54,11 +53,15 @@
 
 		},
 		enter() {
+			this.$el.style.pointerEvents = 'all'
+			this.$refs.button.appear()
 			this.tlOut.pause()
 			this.tlIn.progress(0)
 			this.tlIn.play()
 		},
 		leave() {
+			this.$el.style.pointerEvents = 'none'
+			this.$refs.button.disappear()
 			this.tlIn.pause()
 			this.tlOut.progress(0)
 			this.tlOut.play()

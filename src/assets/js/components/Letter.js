@@ -186,9 +186,7 @@ export default class Letter extends Group {
 			const center = new Vector3()
 			new Box3().setFromArray(centerVectorArray).getCenter(center)
 			this.centers[key] = center
-			if(key === 'e') {
-				console.log(pieces)
-			}
+		
 			pieces.forEach((piece) => {
 				if (piece.geometry) {
 					piece.geometry.computeBoundingBox()

@@ -44,7 +44,7 @@ export default {
 		ScrollTrigger.update()
 	})
 
-	store.isMobile = store.window.w < 900
+	store.isMobile = store.window.w < 500
 
 	E.on(GlobalEvents.RESIZE, this.onResize)
   },

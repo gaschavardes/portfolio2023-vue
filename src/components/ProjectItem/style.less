@@ -2,6 +2,7 @@
 	height: 100vh;
 	position: relative;
 	margin-bottom: 25vh;
+	pointer-events: none;
 	.content{
 		position: fixed;
 		bottom: 20px;
@@ -11,7 +12,13 @@
 		color: #FFF;
 		h2{
 			font-size: 60px;
-			max-width: 50vw;
+			max-width: min(50vw, 500px);
+			margin-bottom: 20px;
+			@media screen and (max-width: 400px) {
+				max-width: 300px;
+				margin-bottom: 10px;
+				font-size: 40px;
+			}
 		}
 		h4{
 
@@ -24,7 +31,7 @@
 		}
 		.line{
 			word-wrap: no-wrap;
-			white-space: nowrap;
+			// white-space: nowrap;
 		}
 	}
 }
