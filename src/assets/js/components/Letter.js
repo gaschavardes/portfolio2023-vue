@@ -254,17 +254,20 @@ export default class Letter extends Group {
 		this.item.geometry.boundingSphere.radius *= 10
 
 
-		gsap.fromTo(this, { appearProgress: 1.4 }, {
-			appearProgress: 0,
-			yoyo: true,
-			repeat: 0,
-			duration: 4,
-			ease: 'power1.easeInOut',
-			onUpdate: () => {
-				this.GlassMaterial.uniforms.uAppear.value = this.appearProgress
-				this.backfaceMaterial.uniforms.uAppear.value = this.appearProgress
-			}
+		E.on('LoaderOut', () => {
+			gsap.fromTo(this, { appearProgress: 1.4 }, {
+				appearProgress: 0,
+				yoyo: true,
+				repeat: 0,
+				duration: 4,
+				ease: 'power1.easeInOut',
+				onUpdate: () => {
+					this.GlassMaterial.uniforms.uAppear.value = this.appearProgress
+					this.backfaceMaterial.uniforms.uAppear.value = this.appearProgress
+				}
+			})
 		})
+	
 	}
 
 	explode() {

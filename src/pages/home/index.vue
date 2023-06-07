@@ -1,5 +1,6 @@
 <template>
 	<section class="home">
+		<Loader/>
 		<section class="intro" ref="intro">
 			<div class="intro__text" ref="introContent">
 				I'm Gaspard Chavardes,<br>
@@ -23,10 +24,12 @@
   import './style.less'
   import ProjectItem from '../../components/ProjectItem'
   import Counter from '../../components/Counter'
+  import Loader from '../../components/Loader'
   import gsap from 'gsap'
   import ScrollTrigger from 'gsap/ScrollTrigger'
   import store from '../../assets/js/store'
   import SplitText from '../../assets/js/utils/gsap/SplitText'
+
 
 
 
@@ -122,6 +125,7 @@
 	components: {
 		ProjectItem,
 		Counter,
+		Loader
 	},
 	mounted() {
 		store.projects = this.projects
@@ -151,7 +155,12 @@
 				},
 				onEnterBack: () => {
 					el.enter()
-
+					if(el.data.media) {
+						this.activeVideo = el.data.media
+						setTimeout(() => {
+							this.$refs.video.play()
+						}, 100)
+					}
 				},
 				onLeaveBack: () => {
 					el.leave()

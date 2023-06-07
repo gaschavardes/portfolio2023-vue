@@ -1,0 +1,67 @@
+.loader{
+	position: fixed;
+	width: 100vw;
+	height: calc(var(--vh, 1vh) * 100);
+	background-color: black;
+	z-index: 100;
+	--progress: 0;
+
+	&__percent, &__button{
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		font-family: "unbounded";
+		color: #FFF;
+		font-size: 50px;
+		transition: opacity 0.5s 0.5s, transform 0.5s 0s;
+		// transition-delay: 0.5s;
+		&.hide{
+			opacity: 0;
+			transition-delay: 0s;
+			pointer-events: none;
+		}
+		span{
+			font-size: 20px;
+		}
+	}
+	&__button{
+		--clipPath: 1;
+		background-color: transparent;
+		border: none;
+		font-size: 30px;
+		padding: 60px 20px;
+		cursor: pointer;
+		user-select: none;
+		clip-path: circle(calc(50% * var(--clipPath)) at 50% 50%);
+		&:hover{
+			transform: translate(-50%, -50%) scale(0.95);
+			&+svg{
+				circle{
+					stroke-width: 5px;
+				}
+			}
+		}
+
+		
+	}
+	svg{
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%) rotate(-90deg);
+		position: absolute;
+		width: 200px;
+		pointer-events: none;
+		circle{
+			stroke: #FFF;
+			stroke-dasharray: calc(255px * var(--progress)) 250px;
+			transition: stroke-dasharray 0.5s;
+			fill: none;
+			transition: stroke-width 0.5s;
+		}
+		.circle_inner{
+			fill: black;
+			stroke:none;
+		}
+	}
+}
