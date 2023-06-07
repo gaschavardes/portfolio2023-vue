@@ -10,7 +10,7 @@
 			</div>
 		</section>
 		<section class="projects" ref="projectContainer">
-		<video id="videoContainer" src="@/assets/video/crosswire.mp4" autoplay="false" muted ref="video"></video>
+		<video id="videoContainer" :src="`./video/crosswire.mp4`" muted ref="video"></video>
 
 			<Counter :number="projects.length" :progress="this.projectProgress" />
 			<ProjectItem v-for="(el, id) in projects" :data='el' :key='id' ref='projects'/>
@@ -27,11 +27,14 @@
   import store from '../../assets/js/store'
   import SplitText from '../../assets/js/utils/gsap/SplitText'
 
+
+
   gsap.registerPlugin(ScrollTrigger)
   export default {
 	name: 'Home-page',
 	data() {
 		return{
+			publicPath: process.env.BASE_URL,
 			projectProgress: 0,
 			activeVideo: 'crosswire',
 			projects: [
@@ -117,7 +120,7 @@
 	},
 	components: {
 		ProjectItem,
-		Counter
+		Counter,
 	},
 	mounted() {
 		store.projects = this.projects
