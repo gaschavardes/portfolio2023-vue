@@ -31,7 +31,7 @@ export default class AssetLoader {
 		if (element) {
 			this.element = element
 			this.addFonts()
-			this.addMedia()
+			// this.addMedia()
 		}
 
 		let loadedCount = 0
@@ -90,8 +90,8 @@ export default class AssetLoader {
 				if (videos[i].src === '' && videos[i].dataset.src) {
 					videos[i].src = videos[i].dataset.src
 				}
-				videos[i].load()
-				videos[i].play()
+				// videos[i].load()
+				// videos[i].play()
 			}))
 		}
 	}
