@@ -10,7 +10,7 @@
 			</div>
 		</section>
 		<section class="projects" ref="projectContainer">
-		<video id="videoContainer" :src="`./video/crosswire.mp4`" muted ref="video"></video>
+		<video id="videoContainer" :src="`./video/${activeVideo}.mp4`" muted ref="video"></video>
 
 			<Counter :number="projects.length" :progress="this.projectProgress" />
 			<ProjectItem v-for="(el, id) in projects" :data='el' :key='id' ref='projects'/>
@@ -141,7 +141,7 @@
 					if(el.data.media) {
 						this.activeVideo = el.data.media
 						setTimeout(() => {
-							// this.$refs.video.play()
+							this.$refs.video.play()
 						}, 100)
 					}
 				},
