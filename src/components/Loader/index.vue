@@ -59,10 +59,14 @@
 				ease: 'power1.in',
 				onUpdate: function() {
 					that.$refs.button.style.setProperty('--clipPath', 1 - this.progress())
+					if(this.progress() > 0.8 && !this.loaderOut) {
+						this.loaderOut = true
+						gsap.to(that.$el, { autoAlpha: 0, duration: 0.2})
+						E.emit('LoaderOut')
+					}
 				},
 				onComplete:() => {
-					gsap.to(this.$el, { autoAlpha: 0, duration: 0.2})
-					E.emit('LoaderOut')
+				
 				}
 			})
 		}

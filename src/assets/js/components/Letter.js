@@ -353,7 +353,7 @@ export default class Letter extends Group {
 		} else {
 			store.MainScene.components.projects.instance.visible = true
 			if(store.MainScene.bloomPass) {
-				store.MainScene.bloomPass.threshold = 1
+				store.MainScene.bloomPass.threshold = 0.99
 			}
 		}
 		

@@ -1,6 +1,8 @@
 import { Mesh, Color, PlaneGeometry} from 'three'
 import { BackgroundMaterial } from '../materials'
 import store from '../store'
+import gsap from 'gsap'
+import { E } from '../utils'
 // import { copyObjectDataTransforms } from '../utils'
 
 export default class Background extends Mesh {
@@ -17,6 +19,7 @@ export default class Background extends Mesh {
 			uColor: { value: new Color(0xf3ff8f) },
 		}
 		this.renderOrder = 1
+		this.appaearProgress = 0
 		this.load()
 	}
 
@@ -26,6 +29,19 @@ export default class Background extends Mesh {
 		this.material.uniforms.uMap.value = store.MainScene.backgroundTexture
 		// this.material.uniforms.envFbo.value = store.simFbo.texture
 		console.log(store.MainScene.backgroundTexture)
+
+		E.on('LoaderOut', () => {
+			gsap.fromTo(this, { appearProgress: 0 }, {
+				appearProgress: 1,
+				repeat: 0,
+				duration: 0.5,
+				ease: 'power1.easeInOut',
+				onUpdate: () => {
+					this.material.uniforms.uAppear.value = this.appearProgress
+					
+				}
+			})
+		})
 	}
 
 	mouseMove = () => {

@@ -1,4 +1,4 @@
-import { Color, RawShaderMaterial, Vector2 } from 'three'
+import { AdditiveBlending, Color, RawShaderMaterial, Vector2 } from 'three'
 import { mergeDeep } from '../../utils'
 import store from '../../store'
 import vertexShader from './vert.glsl'
@@ -25,7 +25,8 @@ export default class BasicMaterial extends RawShaderMaterial {
 			fragmentShader,
 			uniforms: options.uniforms,
 			defines: options.defines,
-			transparent: true
+			toneMapped: false,
+			blending: AdditiveBlending 
 		})
 
 		this.globalUniforms = options.globalUniforms

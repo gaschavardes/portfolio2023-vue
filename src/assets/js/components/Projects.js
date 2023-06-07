@@ -1,5 +1,5 @@
-import { Group, PlaneGeometry, Color, Mesh, Vector2, Object3D, InstancedMesh, Vector3, InstancedBufferAttribute, VideoTexture} from 'three'
-import { ProjectMaterial, ParticleMaterial } from '../materials'
+import { Group, PlaneGeometry, Color, Vector2, Object3D, InstancedMesh, Vector3, InstancedBufferAttribute, VideoTexture} from 'three'
+import { ParticleMaterial } from '../materials'
 import store from '../store'
 import gsap from 'gsap'
 import { E, qs } from '../utils'
@@ -29,18 +29,18 @@ export default class Projects extends Group {
 		this.createTimeline()
 	}
 
-	createPlane(){
-		const mesh = new Mesh(
-			new PlaneGeometry(5, 5 *  store.MainScene.backgroundTexture.source.data.height / store.MainScene.backgroundTexture.source.data.width),
-			new ProjectMaterial({ uniforms: {
-				resolution: { value: new Vector2(store.window.w, store.window.h)},
-				map: { value: store.MainScene.backgroundTexture }
-			}, globalUniforms: this.globalUniforms })
-		)
-		this.add(mesh)
-		mesh.position.set(0, 10, 0)
-		this.mesh = mesh
-	}
+	// createPlane(){
+	// 	const mesh = new Mesh(
+	// 		new PlaneGeometry(5, 5 *  store.MainScene.backgroundTexture.source.data.height / store.MainScene.backgroundTexture.source.data.width),
+	// 		new ProjectMaterial({ uniforms: {
+	// 			resolution: { value: new Vector2(store.window.w, store.window.h)},
+	// 			map: { value: store.MainScene.backgroundTexture }
+	// 		}, globalUniforms: this.globalUniforms })
+	// 	)
+	// 	this.add(mesh)
+	// 	mesh.position.set(0, 10, 0)
+	// 	this.mesh = mesh
+	// }
 
 	createParticle() {
 		const texture = store.MainScene.backgroundTexture
