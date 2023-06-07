@@ -14,6 +14,7 @@ attribute vec2 aUVID;
 varying vec2 vUV1;
 varying vec2 vUV2;
 uniform vec2 uSpriteSize;
+uniform float uYpos;
 
 // NOISE 
 vec3 mod289(vec3 x) {
@@ -109,30 +110,60 @@ mat4 translationMatrix(vec3 axis)
 					axis.r, axis.g, axis.b, 1.);
 }
 
+mat4 rotationMatrix(vec3 axis, float angle)
+{
+		axis = normalize(axis);
+		float s = sin(angle);
+		float c = cos(angle);
+		float oc = 1.0 - c;
+
+		return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+														oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
+														oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
+														0.0,                                0.0,                                0.0,                                1.0);
+}
+mat3 rotateZ(float theta) {
+    float c = cos(theta);
+    float s = sin(theta);
+    return mat3(
+        vec3(c, -s, 0),
+        vec3(s, c, 0),
+        vec3(0, 0, 1)
+    );
+}
+
 void main()	{
     #include <normalsVert>
 
 	vColor = colorVal;
 
-	vec3 newPos = position;
+	vec4 newPos = vec4(position, 1.);
 
 	vec4 worldPosition = vec4(position, 1.);
 	worldPosition = instanceMatrix * worldPosition;
-	worldPosition = projectionMatrix * modelViewMatrix * instanceMatrix * vec4( newPos, 1.0 );
+	worldPosition = modelViewMatrix * instanceMatrix * newPos;
 
-	float noiseFact = 1. - smoothstep(15., 13., worldPosition.y) * smoothstep(-15., -13., worldPosition.y);
+	float noiseFact = 1. - smoothstep(5., 3., worldPosition.y) * smoothstep(-5., -3., worldPosition.y);
 	// newPos.x += (1. - noiseFact) * 10.;
 
+	float borderNoise =  smoothstep( uSpriteSize.x * 0.05, 0., aUVID.x)
+	 + smoothstep( uSpriteSize.x * 0.95, uSpriteSize.x, aUVID.x) 
+	 + smoothstep( uSpriteSize.y * 0.95, uSpriteSize.y, aUVID.y)
+	 + smoothstep( uSpriteSize.y * 0.05, 0., aUVID.y);
+	borderNoise *= 0.03;
+
 	vec3 displacement = vec3(
-        pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(101.0, random, random)) * noiseStrength * 30. * noiseFact,
-       - abs(pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(202.0, random, random)) * noiseStrength)  * noiseFact,
-        pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(202.0)) * noiseStrength * (noiseFact) * 0.1
+        pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(101.0, random, random)) * noiseStrength * 30. * (noiseFact + borderNoise),
+       - abs(pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(202.0, random, random)) * noiseStrength)  * (noiseFact + borderNoise),
+        pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(202.0)) * noiseStrength * (noiseFact + borderNoise) * 0.1
     );
 	mat4 instance = instanceMatrix;
+
+	displacement *= rotateZ(sin(-uYpos * 0.1));
 	instance *= translationMatrix(displacement);
 
     vUV1 = (uv + aUVID) / uSpriteSize;
 
-    gl_Position = projectionMatrix * modelViewMatrix * instance * vec4( newPos, 1.0 );
+    gl_Position = projectionMatrix * modelViewMatrix * instance * newPos;
 	vProgress = noiseFact;
 }

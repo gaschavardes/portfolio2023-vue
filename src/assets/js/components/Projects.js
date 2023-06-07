@@ -128,6 +128,9 @@ export default class Projects extends Group {
 		}
 		if(this.instance) {
 			this.instance.position.y = this.yPos
+			this.instance.material.uniforms.uYpos.value = this.yPos;
+			this.instance.rotation.z = Math.sin(this.yPos * 0.1)
+			this.instance.rotation.x = Math.sin(-this.yPos * 0.1)
 		}
 	}
 

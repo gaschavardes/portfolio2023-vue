@@ -14,11 +14,13 @@ export default class BasicMaterial extends RawShaderMaterial {
 					uColor: { value: new Color(0xffffff) },
 					uResolution: {value: new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())},
 					uTime: store.WebGL.globalUniforms.uTime,
-					uSpriteSize: options.uniforms.spriteSize
+					uSpriteSize: options.uniforms.spriteSize,
+					uYpos: {value: 0}
 				},
 				defines: {
 				}
 			}, options)
+
 
 		super({
 			vertexShader,
