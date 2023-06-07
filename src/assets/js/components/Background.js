@@ -32,9 +32,10 @@ export default class Background extends Mesh {
 
 		E.on('LoaderOut', () => {
 			gsap.fromTo(this, { appearProgress: 0 }, {
-				appearProgress: 1,
+				appearProgress: 2,
 				repeat: 0,
-				duration: 0.5,
+				delay: 0.5,
+				duration: 2,
 				ease: 'power1.easeInOut',
 				onUpdate: () => {
 					this.material.uniforms.uAppear.value = this.appearProgress

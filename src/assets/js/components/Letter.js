@@ -317,7 +317,7 @@ export default class Letter extends Group {
 
 		if(this.easedScroll < 0.9) {
 			if(store.MainScene.bloomPass) {
-				store.MainScene.bloomPass.threshold = 0.9
+				store.MainScene.bloomPass.threshold = 0.93
 			}
 
 			store.MainScene.components.projects.instance.visible = false
