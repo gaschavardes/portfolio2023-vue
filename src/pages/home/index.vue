@@ -10,7 +10,8 @@
 			</div>
 		</section>
 		<section class="projects" ref="projectContainer">
-		<video id="videoContainer" :src="`./video/${activeVideo}.mp4`" muted ref="video"></video>
+		<button @click="play">PLAY VID</button>
+		<video id="videoContainer" :src="`./video/${activeVideo}.mp4`" muted loop ref="video"></video>
 
 			<Counter :number="projects.length" :progress="this.projectProgress" />
 			<ProjectItem v-for="(el, id) in projects" :data='el' :key='id' ref='projects'/>
@@ -185,6 +186,9 @@
 			});
 			this.introTl.to(this.$refs.introContent.split.lines, {opacity: 0, stagger: -0.2})
 			
+		},
+		play() {
+			this.$refs.video.play()
 		}
 	}
   }
