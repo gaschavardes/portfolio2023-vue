@@ -10,7 +10,7 @@
 			</div>
 		</section>
 		<section class="projects" ref="projectContainer">
-	<video id="videoContainer" :src="require(`@/assets/video/${this.activeVideo}.mp4`)" autoplay="true" muted="true" loop ref="video"></video>
+		<video id="videoContainer" :src="require(`@/assets/video/${this.activeVideo}.mp4`)" muted ref="video"></video>
 
 			<Counter :number="projects.length" :progress="this.projectProgress" />
 			<ProjectItem v-for="(el, id) in projects" :data='el' :key='id' ref='projects'/>
