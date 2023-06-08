@@ -13,7 +13,7 @@ export default class Sim extends Group {
             new PlaneGeometry(2, 2),
 			new GradientMaterial({
 				waterTexture: {
-					value: this.simulation.fbos.vel_1.texture
+					value: this.simulation.fbos.vel_0.texture
 				},
 				boundarySpace: {
 					value: new Vector2(0, 0)
@@ -32,8 +32,6 @@ export default class Sim extends Group {
             //     },
             // })
         );
-		this.output.scale.setScalar(100)
-		this.output.position.z = -10
 		this.add(this.output)
 		store.RAFCollection.add(this.animate, 0)
 	}

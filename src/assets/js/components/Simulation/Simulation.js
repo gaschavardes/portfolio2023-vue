@@ -1,12 +1,15 @@
+import Mouse from "./Mouse";
+// import Common from "./Common";
 import * as THREE from "three";
+// import Controls from "./Controls";
+import store from '../../store'
+
 import Advection from "./Advection";
 import ExternalForce from "./ExternalForce";
 import Viscous from "./Viscous";
 import Divergence from "./Divergence";
 import Poisson from "./Poisson";
 import Pressure from "./Pressure";
-import store from '../../store';
-import Mouse from './Mouse'
 
 export default class Simulation{
     constructor(props){
@@ -37,11 +40,13 @@ export default class Simulation{
             viscous: 30,
             isBounce: false,
             dt: 0.014,
-            isViscous: false,
+            isViscous: true,
             BFECC: true
         };
 
-        this.fboSize = new THREE.Vector2(store.window.h, store.window.w);
+        // const controls = new Controls(this.options);
+
+        this.fboSize = new THREE.Vector2();
         this.cellScale = new THREE.Vector2();
         this.boundarySpace = new THREE.Vector2();
 
@@ -121,6 +126,7 @@ export default class Simulation{
     }
 
     calcSize(){
+		console.log(this.options.resolution * store.window.w)
         const width = Math.round(this.options.resolution * store.window.w);
         const height = Math.round(this.options.resolution * store.window.h);
 
@@ -159,6 +165,7 @@ export default class Simulation{
         let vel = this.fbos.vel_1;
 
         if(this.options.isViscous){
+			console.log("COUCOU")
             vel = this.viscous.update({
                 viscous: this.options.viscous,
                 iterations: this.options.iterations_viscous,

@@ -3,7 +3,7 @@
 			<div class="content">
 				<h2 ref="title">{{ data.name }}</h2>
 				<h4 ref="agency">{{ data.agency }}</h4>
-				<Button icon="visit" text="Visit site" ref="button" />
+				<Button icon="visit" text="Visit site" :link="data.link" ref="button" />
 			</div>
 		</div>
   </template>

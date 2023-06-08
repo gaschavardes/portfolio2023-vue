@@ -1,4 +1,5 @@
-import { Color, PerspectiveCamera, CameraHelper, OrthographicCamera, Scene, AmbientLight, SpotLight, GridHelper, Vector2, ShaderMaterial} from 'three'
+/* eslint-disable */
+import { Color, PerspectiveCamera, CameraHelper, OrthographicCamera, Scene, AmbientLight, SpotLight, GridHelper, Vector2, ShaderMaterial, WebGLRenderTarget} from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Background from '../components/Background'
 // import Hello from '../components/Hello'
@@ -14,7 +15,7 @@ import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
 import screenFxVert from '../../../../glsl/includes/screenFx/vert.glsl'
 import screenFxFrag from '../../../../glsl/includes/screenFx/frag.glsl'
-// import Sim from '../components/Sim'
+import Sim from '../components/Sim'
 // import Background from '../components/Background'
 
 export default class MainScene extends Scene {
@@ -141,10 +142,10 @@ export default class MainScene extends Scene {
 	}
 
 	createFbo() {
-		// store.simFbo = new WebGLRenderTarget(
-		// 	store.window.w * store.WebGL.renderer.getPixelRatio(),
-		// 	store.window.h * store.WebGL.renderer.getPixelRatio()
-		// )
+		store.simFbo = new WebGLRenderTarget(
+			store.window.w * store.WebGL.renderer.getPixelRatio(),
+			store.window.h * store.WebGL.renderer.getPixelRatio()
+		)
 		E.emit('fboCreated')
 	}
 

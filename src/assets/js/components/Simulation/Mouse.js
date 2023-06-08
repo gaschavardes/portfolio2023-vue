@@ -45,7 +45,8 @@ class Mouse{
 
     update(){
         this.diff.subVectors(this.coords, this.coords_old);
-        this.coords_old.copy(this.coords);
+        this.coords_old.copy(this.coords );
+
 
         if(this.coords_old.x === 0 && this.coords_old.y === 0) this.diff.set(0, 0);
     }

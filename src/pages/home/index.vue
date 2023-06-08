@@ -15,6 +15,9 @@
 			<Counter :number="projects.length" :progress="this.projectProgress" />
 			<ProjectItem v-for="(el, id) in projects" :data='el' :key='id' ref='projects'/>
 		</section>
+		<section class="contact">
+
+		</section>
 	</section>
   </template>
   
@@ -81,7 +84,7 @@
 				},
 				{
 					name: "27 lisboa",
-					"media": "27lisboa",
+					media: "27lisboa",
 					"type": "video",
 					agency: 'Hands Agency',
 					link: "https://27lisboa.com/",
@@ -91,7 +94,7 @@
 				},
 				{
 					name: "Jeu de paume",
-					// "media": "jeudepaume",
+					media: "jeudepaume",
 					// "type": "video",
 					agency: "Hands Agency",
 					link: "https://jeudepaume.org/",

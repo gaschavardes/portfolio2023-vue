@@ -1,5 +1,5 @@
 <template>
-		<a class="button" @mouseenter="mouseEnter" @mouseleave="mouseLeave" ref="button">
+		<a class="button" :href="link" target="_blank" rel="nofollow" @mouseenter="mouseEnter" @mouseleave="mouseLeave" ref="button">
 			<div class="button-border" ref="border">
 					<div class="button-border-left"></div>
 					<div class="button-border-center"></div>
@@ -25,7 +25,8 @@
 	name: 'link-button',
 	props: {
 		text: String,
-		icon: String
+		icon: String,
+		link: String
 	},
 	setup() {
       return {

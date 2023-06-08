@@ -7,7 +7,7 @@ export default class Controls{
     }
 
     init(){
-        this.gui = new dat.GUI({width: 300});
+          this.gui = new dat.GUI({width: 300});
         this.gui.add(this.params, "mouse_force",20, 200);
         this.gui.add(this.params, "cursor_size", 10, 200);
         this.gui.add(this.params, "isViscous");

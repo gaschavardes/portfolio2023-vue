@@ -6,6 +6,7 @@ export default class ShaderPass{
     constructor(props){
         this.props = props;
         this.uniforms = this.props.material?.uniforms;
+
     }
 
     init(){

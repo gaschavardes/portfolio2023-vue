@@ -146,16 +146,16 @@ void main()	{
 	float noiseFact = 1. - smoothstep(5., 3., worldPosition.y) * smoothstep(-5., -3., worldPosition.y);
 	// newPos.x += (1. - noiseFact) * 10.;
 
-	float borderNoise =  smoothstep( uSpriteSize.x * 0.05, 0., aUVID.x)
-	 + smoothstep( uSpriteSize.x * 0.95, uSpriteSize.x, aUVID.x) 
-	 + smoothstep( uSpriteSize.y * 0.95, uSpriteSize.y, aUVID.y)
-	 + smoothstep( uSpriteSize.y * 0.05, 0., aUVID.y);
+	float borderNoise =  smoothstep( uSpriteSize.x * 0.01, 0., aUVID.x)
+	 + smoothstep( uSpriteSize.x * 0.99, uSpriteSize.x, aUVID.x) 
+	 + smoothstep( uSpriteSize.y * 0.99, uSpriteSize.y, aUVID.y)
+	 + smoothstep( uSpriteSize.y * 0.01, 0., aUVID.y);
 	borderNoise *= 0.03;
 
 	vec3 displacement = vec3(
-        pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(101.0, random, random)) * noiseStrength * 30. * (noiseFact + borderNoise),
-       - abs(pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(202.0, random, random)) * noiseStrength)  * (noiseFact + borderNoise),
-        pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(202.0)) * noiseStrength * (noiseFact + borderNoise) * 0.1
+        pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(101.0, random, random)) * noiseStrength * 30. * (noiseFact),
+       - abs(pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(202.0, random, random)) * noiseStrength)  * (noiseFact),
+        pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(202.0)) * noiseStrength * (noiseFact) * 0.1
     );
 	mat4 instance = instanceMatrix;
 

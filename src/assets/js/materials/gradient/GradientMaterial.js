@@ -1,5 +1,4 @@
-import { Color, RawShaderMaterial, Vector2 } from 'three'
-import store from '../../store'
+import { RawShaderMaterial } from 'three'
 import { mergeDeep } from '../../utils'
 
 import vertexShader from './vert.glsl'
@@ -7,14 +6,12 @@ import fragmentShader from './frag.glsl'
 
 export default class GradientMaterial extends RawShaderMaterial {
 	constructor(options = {}) {
+		console.log(options)
 		options = mergeDeep(
 			{
 				uniforms: {
-					uColor: { value: new Color(0xffffff) },
-					uResolution: { value: new Vector2( store.window.w, store.window.h )},
-					uTime: store.WebGL.globalUniforms.uTime,
-					velocity: { value: null},
-					boundarySpace: { value: new Vector2()}
+					velocity: options.waterTexture,
+					boundarySpace: options.boundarySpace
 				},
 				defines: {
 				}
