@@ -90,7 +90,7 @@ export default class AssetLoader {
 				if (videos[i].src === '' && videos[i].dataset.src) {
 					videos[i].src = videos[i].dataset.src
 				}
-				// videos[i].load()
+				videos[i].load()
 				// videos[i].play()
 			}))
 		}

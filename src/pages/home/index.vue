@@ -80,21 +80,21 @@
 					}
 				},
 				{
-					name: "Bompard Shoppable Experience",
-					"media": "bompard",
-					"type": "video",
+					name: "Rémy Martin x Lee Broom",
+					media: "leeBroom",
+					// "type": "video",
 					agency: 'Hands Agency',
-					link: "https://experience.eric-bompard.com/",
+					link: "https://www.remymartin.com/collection/xo-lee-broom/",
 					"content": {
 
 					}
 				},
 				{
-					name: "27 lisboa",
-					media: "27lisboa",
+					name: "Bompard Shoppable Experience",
+					"media": "bompard",
 					"type": "video",
 					agency: 'Hands Agency',
-					link: "https://27lisboa.com/",
+					link: "https://experience.eric-bompard.com/",
 					"content": {
 
 					}
@@ -110,23 +110,33 @@
 					}
 				},
 				{
-					name: "Lab 1",
-					// "image": "furidays.png",
-					agency: "Lab",
-					link: "https://reverent-neumann-6228ac.netlify.app/",
+					name: "27 lisboa",
+					media: "27lisboa",
+					"type": "video",
+					agency: 'Hands Agency',
+					link: "https://27lisboa.com/",
 					"content": {
 
 					}
 				},
-				{
-					name: "Lab 2",
-					// "image": "mobius.png",
-					agency: 'Lab',
-					link: "https://mystifying-aryabhata-929c52.netlify.app/",
-					"content": {
+				// {
+				// 	name: "Lab 1",
+				// 	// "image": "furidays.png",
+				// 	agency: "Lab",
+				// 	link: "https://reverent-neumann-6228ac.netlify.app/",
+				// 	"content": {
 
-					}
-				}
+				// 	}
+				// },
+				// {
+				// 	name: "Lab 2",
+				// 	// "image": "mobius.png",
+				// 	agency: 'Lab',
+				// 	link: "https://mystifying-aryabhata-929c52.netlify.app/",
+				// 	"content": {
+
+				// 	}
+				// }
 			]
 		}
 	},

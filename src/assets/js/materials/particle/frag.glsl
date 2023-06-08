@@ -19,5 +19,5 @@ void main() {
 	// vec4 textureMain2 = texture2D(uTexture, vUV2);
 	// vec4 textureMain = texture2D(uTexture, gl_FragCoord.xy);
 
-	gl_FragColor = vec4(vec3(clamp(textureMain.rgb, vec3(0.), vec3(0.97))) + highlight * vec3(10.), 1.);
+	gl_FragColor = vec4(vec3(clamp(textureMain.rgb, vec3(0.), vec3(0.97))) + highlight * vec3(100.), 1.);
 }

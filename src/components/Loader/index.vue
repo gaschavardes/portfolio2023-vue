@@ -55,18 +55,16 @@
 			this.$refs.circle.style.fill = '#FFF'
 			gsap.to(this.$refs.mask, { r: 0, ease: 'power1.out'})
 			gsap.to(this.$refs.circle, { 
-				r: 0,
+				r: 10,
+				opacity: 0,
+				duration: 0.35,
 				ease: 'power1.in',
 				onUpdate: function() {
 					that.$refs.button.style.setProperty('--clipPath', 1 - this.progress())
-					if(this.progress() > 0.8 && !this.loaderOut) {
-						this.loaderOut = true
-						gsap.to(that.$el, { autoAlpha: 0, duration: 0.2})
-						E.emit('LoaderOut')
-					}
 				},
 				onComplete:() => {
-				
+					gsap.to(that.$el, { autoAlpha: 0, duration: 0.5})
+					E.emit('LoaderOut')
 				}
 			})
 		}

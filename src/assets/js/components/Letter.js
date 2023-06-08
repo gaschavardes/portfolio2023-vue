@@ -323,11 +323,10 @@ export default class Letter extends Group {
 			if(store.MainScene.bloomPass) {
 				store.MainScene.bloomPass.threshold = 0.93
 			}
-
 			this.item.visible = false
 			store.WebGL.renderer.setRenderTarget(store.envFbo)
 			store.WebGL.renderer.render(store.MainScene, store.MainScene.activeCamera)
-
+			this.item.visible = true
 			// store.WebGL.renderer.clearDepth()
 			// render cube backfaces to fbo
 
@@ -336,7 +335,7 @@ export default class Letter extends Group {
 			store.WebGL.renderer.setRenderTarget(this.backfaceFboBroken)
 			store.WebGL.renderer.render(store.MainScene, store.MainScene.activeCamera)
 	
-			
+			this.item.visible = false
 			this.fullItem.visible = true
 	
 			store.WebGL.renderer.setRenderTarget(null)
