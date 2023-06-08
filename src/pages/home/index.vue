@@ -4,10 +4,10 @@
 		<section class="intro" ref="intro">
 			<div class="intro__text" ref="introContent">
 				I'm Gaspard Chavardes,<br>
-				a creative developper based in France<br>
+				A creative developper based in France<br>
 				Former Hands Agency and Unseen,<br>
 				I'm now available for some freelance jobs<br>
-				Don't hesitate to ping me<br>
+				Don't hesitate to <a href="mailto:chavardes.gaspard@gmail.com" data-text="ping me"><span>ping me</span></a><br>
 			</div>
 		</section>
 		<section class="projects" ref="projectContainer">
@@ -16,7 +16,14 @@
 			<ProjectItem v-for="(el, id) in projects" :data='el' :key='id' ref='projects'/>
 		</section>
 		<section class="contact">
-
+			<div class="contact__content" ref="contact">
+				<h2>Contact</h2>
+				<ul class="contact__links">
+					<li><a href="https://github.com/gaschavardes?tab=repositories">Github</a></li>
+					<li><a href="mailto:chavardes.gaspard@gmail.com">Mail</a></li>
+					<li><a href="https://www.linkedin.com/in/gaspardchavardes/">Linkedin</a></li>
+				</ul>
+			</div>
 		</section>
 	</section>
   </template>
@@ -181,10 +188,17 @@
 					if(store.MainScene) {
 						store.MainScene.components.projects.progress = self.progress
 					}
+				},
+				onLeave: () => {
+					this.$refs.contact.classList.add('show')
+
+				},
+				onEnterBack: () => {
+					this.$refs.contact.classList.remove('show')
+
 				}
 			})
 
-			console.log(this.$refs.intro, this.$refs.introContent.split)
 			this.introTl = gsap.timeline({
 				// yes, we can add it to an entire timeline!
 				scrollTrigger: {

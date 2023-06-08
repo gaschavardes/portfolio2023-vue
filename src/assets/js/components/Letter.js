@@ -31,6 +31,10 @@ export default class Letter extends Group {
 			store.window.w * store.WebGL.renderer.getPixelRatio(),
 			store.window.h * store.WebGL.renderer.getPixelRatio()
 		)
+		store.env = new WebGLRenderTarget(
+			store.window.w * store.WebGL.renderer.getPixelRatio(),
+			store.window.h * store.WebGL.renderer.getPixelRatio()
+		)
 		// this.quad = this.createBackground()
 		this.item = new Group()
 		this.scale.setScalar(store.isMobile ? 0.05 : 0.1)
@@ -320,9 +324,10 @@ export default class Letter extends Group {
 				store.MainScene.bloomPass.threshold = 0.93
 			}
 
-			store.MainScene.components.projects.instance.visible = false
+			this.item.visible = false
 			store.WebGL.renderer.setRenderTarget(store.envFbo)
 			store.WebGL.renderer.render(store.MainScene, store.MainScene.activeCamera)
+
 			// store.WebGL.renderer.clearDepth()
 			// render cube backfaces to fbo
 
@@ -331,7 +336,7 @@ export default class Letter extends Group {
 			store.WebGL.renderer.setRenderTarget(this.backfaceFboBroken)
 			store.WebGL.renderer.render(store.MainScene, store.MainScene.activeCamera)
 	
-			this.item.visible = false
+			
 			this.fullItem.visible = true
 	
 			store.WebGL.renderer.setRenderTarget(null)
@@ -350,6 +355,8 @@ export default class Letter extends Group {
 			// render cube with refraction material to screen
 			this.item.material = this.GlassMaterial
 			// store.WebGL.renderer.render(this.parent, this.camera)
+
+			store.MainScene.components.projects.instance.visible = false
 		} else {
 			store.MainScene.components.projects.instance.visible = true
 			if(store.MainScene.bloomPass) {

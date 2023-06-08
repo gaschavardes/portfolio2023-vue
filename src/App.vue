@@ -62,7 +62,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="less">
 
 @font-face {
 	font-family: "unbounded";
@@ -71,6 +71,53 @@ export default {
 	font-weight: 200 1000;
 
 }
+
+a:not(.button){
+    text-decoration: none;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    /* top: 50%; */
+    // overflow-y: hidden;
+    vertical-align: top;
+    padding: 0 5px;
+
+	&:before{
+		content: '';
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		background-color: white;
+		left: 0;
+		// transform: scaleX(0);
+		transition: transform 0.5s @ease-InOutQuad;
+		transform-origin: 0% 0%;
+		transform: rotate3d(1, 0, 0, 100deg) translate3D(0, calc(50px - 50px * cos(0.7)) , calc(-50px * sin(0.7)));
+	}
+	&:after{
+		content: attr(data-text);
+		position: absolute;
+		color: black;
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		left: 0px;
+		transform: translateY(100%);
+		transition: transform 0.5s @ease-InOutQuad
+	}
+
+	&:hover{
+		&:before{
+			transform: rotate3d(1, 0, 0, 0deg) translate3D(0, calc(50px - 50px * cos(0)) , calc(-50px * sin(0)));
+		}
+		&:after{
+			transform: translateY(0%);
+			transition-delay: 0.1s;
+		}
+	}
+}
+
 #gl, #texture{
 	position: fixed;
 	top: 0;
@@ -185,4 +232,43 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
+
+
+@custom-ease: cubic-bezier(0.2, 0, 0.25, 1);
+@ease-linear: cubic-bezier(0.25, 0.25, 0.75, 0.75);
+@ease-InQuad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+@ease-InCubic: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+@ease-InQuart: cubic-bezier(0.895, 0.03, 0.685, 0.22);
+@ease-InQuint: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+@ease-InSine: cubic-bezier(0.47, 0, 0.745, 0.715);
+@ease-InExpo: cubic-bezier(0.95, 0.05, 0.795, 0.035);
+@ease-InCirc: cubic-bezier(0.6, 0.04, 0.98, 0.335);
+@ease-InBack: cubic-bezier(0.6, 0, 0.735, 0.045);
+@ease-OutQuad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+@ease-OutCubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+@ease-OutQuart: cubic-bezier(0.165, 0.84, 0.44, 1);
+@ease-OutQuint: cubic-bezier(0.23, 1, 0.32, 1);
+@ease-OutSine: cubic-bezier(0.39, 0.575, 0.565, 1);
+@ease-OutExpo: cubic-bezier(0.19, 1, 0.22, 1);
+@ease-OutCirc: cubic-bezier(0.075, 0.82, 0.165, 1);
+@ease-OutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+@ease-InOutQuad: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+@ease-InOutCubic: cubic-bezier(0.645, 0.045, 0.355, 1);
+@ease-InOutQuart: cubic-bezier(0.77, 0, 0.175, 1);
+@ease-InOutQuint: cubic-bezier(0.86, 0, 0.07, 1);
+@ease-InOutSine: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+@ease-InOutExpo: cubic-bezier(1, 0, 0, 1);
+@ease-InOutCirc: cubic-bezier(0.785, 0.135, 0.15, 0.86);
+@ease-InOutBack: cubic-bezier(0.68, 0, 0.265, 1);
+@ease-special-1: cubic-bezier(0, 1, 0, 1);
+@ease-special-2: cubic-bezier(0, 1, 1, 0);
+@ease-expo: cubic-bezier(0, 0.82, 0, 0.985);
+@ease-bounce: cubic-bezier(0.89, -0.01, 0, 1.37);
+@ease-bounce-button: cubic-bezier(0.175, 0.885, 0.695, 1.135);
+@ease-bounce-2: cubic-bezier(0.89, -0.005, 0, 2.65);
+@ease-unbounce: cubic-bezier(0.83, -0.37, 0, 1.01);
+@ease-bounce-in: cubic-bezier(0, 0, 0.2, 1.03);
+@ease-bounce-out: cubic-bezier(0.045, 0.345, 0, 3.65);
+@ease-custom-out: cubic-bezier(0, 1.16, 0, 0.99);
+
 </style>

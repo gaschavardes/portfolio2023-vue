@@ -13,7 +13,7 @@ void main() {
     vec2 screenUV = gl_FragCoord.xy / uResolution;
 	float noiseFact = smoothstep(0.9, 0.8, screenUV.y) *  smoothstep(0.1, 0.2, screenUV.y);
 
-	float highlight = smoothstep(0.2, 0.05, vProgress) * smoothstep(0.0001, 0.01, vProgress);
+	float highlight = smoothstep(0.1, 0.05, vProgress) * smoothstep(0.0001, 0.01, vProgress);
 
 	vec4 textureMain = texture2D(uTexture, vUV1);
 	// vec4 textureMain2 = texture2D(uTexture, vUV2);
