@@ -7,7 +7,7 @@
 				A creative developper based in France<br>
 				Former Hands Agency and Unseen,<br>
 				I'm now available for some freelance jobs<br>
-				Don't hesitate to <a href="mailto:chavardes.gaspard@gmail.com" data-text="ping me"><span>ping me</span></a><br>
+				Don't hesitate to <LinkComponent href="mailto:chavardes.gaspard@gmail.com" text="ping me" ref="pingTitle"/><br>
 			</div>
 		</section>
 		<section class="projects" ref="projectContainer">
@@ -19,9 +19,9 @@
 			<div class="contact__content" ref="contact">
 				<h2>Contact</h2>
 				<ul class="contact__links">
-					<li><a href="https://github.com/gaschavardes?tab=repositories">Github</a></li>
-					<li><a href="mailto:chavardes.gaspard@gmail.com">Mail</a></li>
-					<li><a href="https://www.linkedin.com/in/gaspardchavardes/">Linkedin</a></li>
+					<li><LinkComponent href="https://github.com/gaschavardes?tab=repositories" text="Github"/></li>
+					<li><LinkComponent href="mailto:chavardes.gaspard@gmail.com" text="Mail"/></li>
+					<li><LinkComponent href="https://www.linkedin.com/in/gaspardchavardes/" text="Linkedin"/></li>
 				</ul>
 			</div>
 		</section>
@@ -33,13 +33,12 @@
   import ProjectItem from '../../components/ProjectItem'
   import Counter from '../../components/Counter'
   import Loader from '../../components/Loader'
+  import LinkComponent from '../../components/linkComponent'
   import gsap from 'gsap'
   import ScrollTrigger from 'gsap/ScrollTrigger'
   import store from '../../assets/js/store'
   import SplitText from '../../assets/js/utils/gsap/SplitText'
-
-
-
+  import { E } from '../../assets/js/utils'
 
   gsap.registerPlugin(ScrollTrigger)
   export default {
@@ -143,13 +142,30 @@
 	components: {
 		ProjectItem,
 		Counter,
-		Loader
+		Loader,
+		LinkComponent
 	},
 	mounted() {
 		store.projects = this.projects
 		gsap.delayedCall(1, this.setScrollTrigger)
 
-		this.$refs.introContent.split = new SplitText(this.$refs.introContent, {type: 'lines'})
+		this.$refs.introContent.split = new SplitText(this.$refs.introContent, {type: 'lines, words', linesClass:"line", wordsClass: 'word'})
+		console.log(this.$refs.introContent.split)
+		this.$refs.introContent.split.lines.forEach((el, i) => {
+			console.log(el)
+			Array.from(el.children).forEach(word => {
+				word.style.transitionDelay = `${i * 0.1}s`
+			})
+		})
+		E.on('LoaderOut', () => {
+			setTimeout(() => {
+				this.$refs.introContent.classList.add('show')
+				setTimeout(() => {
+					this.$refs.pingTitle.appear()
+				}, 2000)
+			}, 700)
+		})
+
 	},
 	methods: {
 		setScrollTrigger() {

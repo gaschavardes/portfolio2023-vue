@@ -69,53 +69,11 @@ export default {
 	src: url("~@/assets/fonts/Unbounded-VariableFont_wght.woff2") format("woff2 supports variations"),
 		url("~@/assets/fonts/Unbounded-VariableFont_wght.woff2") format("woff2-variations");
 	font-weight: 200 1000;
-
 }
 
 a:not(.button){
-    text-decoration: none;
-    color: white;
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
-    /* top: 50%; */
-    // overflow-y: hidden;
-    vertical-align: top;
-    padding: 0 5px;
+ 
 
-	&:before{
-		content: '';
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		background-color: white;
-		left: 0;
-		// transform: scaleX(0);
-		transition: transform 0.5s @ease-InOutQuad;
-		transform-origin: 0% 0%;
-		transform: rotate3d(1, 0, 0, 100deg) translate3D(0, calc(50px - 50px * cos(0.7)) , calc(-50px * sin(0.7)));
-	}
-	&:after{
-		content: attr(data-text);
-		position: absolute;
-		color: black;
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		left: 0px;
-		transform: translateY(100%);
-		transition: transform 0.5s @ease-InOutQuad
-	}
-
-	&:hover{
-		&:before{
-			transform: rotate3d(1, 0, 0, 0deg) translate3D(0, calc(50px - 50px * cos(0)) , calc(-50px * sin(0)));
-		}
-		&:after{
-			transform: translateY(0%);
-			transition-delay: 0.1s;
-		}
-	}
 }
 
 #gl, #texture{
