@@ -8,6 +8,7 @@ uniform sampler2D uMap;
 uniform vec2 resolution;
 uniform float uTime;
 uniform float uAppear;
+uniform float uScroll;
 
 #define S(a,b,t) smoothstep(a,b,t)
 
@@ -54,12 +55,12 @@ void main() {
 
 	float colorNoise = (snoise2(uv * 1000.) * 0.5 + 0.5);
 
-	float noiseValX = noise(vec2(uv.x, uv.y));
-	float noiseX = sin((vUv.x + noiseValX) * 10. + uTime * 0.1);
+	float noiseValX = noise(vec2(uv.x, uv.y - uScroll * 0.0001));
+	float noiseX = sin((vUv.x + noiseValX) * 10. + (uTime) * 0.1);
 	// noiseX = smoothstep(0.3, 0.7, noiseX);
 	noiseX += (smoothstep(0., 0.5, noiseX) - smoothstep(0.5, 1., noiseX)) * colorNoise;
 
-	float noiseY = sin((vUv.y + noiseValX) * 10. + uTime * 0.1);
+	float noiseY = sin((vUv.y + noiseValX) * 10. + (uTime) * 0.1);
 	// noiseX = smoothstep(0.3, 0.7, noiseX);
 	noiseY += (smoothstep(0., 0.5, noiseY) - smoothstep(0.5, 1., noiseY)) * colorNoise;
 

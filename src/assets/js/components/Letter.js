@@ -61,7 +61,7 @@ export default class Letter extends Group {
 			matcap: this.matcap,
 			progress: 0,
 			fresnelVal: 1,
-			refractPower: 2,
+			refractPower: 10,
 			uMap: store.MainScene.backgroundTexture
 		})
 		this.backfaceMaterial = new BackFaceMaterial()

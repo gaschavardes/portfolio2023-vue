@@ -14,7 +14,8 @@ export default class BasicMaterial extends RawShaderMaterial {
 					uMap: { value: null },
 					resolution: { value: new Vector2(store.window.w, store.window.h) },
 					uTime: store.WebGL.globalUniforms.uTime,
-					uAppear: { value: 0}
+					uAppear: { value: 0},
+					uScroll: { value: 0}
 				},
 				defines: {
 				}

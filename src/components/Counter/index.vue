@@ -20,7 +20,7 @@
 	watch: {
 		progress(val) {
 			this.timeline.progress(val)
-			if(val === 0) {
+			if(val === 0 || val === 1) {
 				this.$el.classList.add('hide')
 			} else {
 				this.$el.classList.remove('hide')

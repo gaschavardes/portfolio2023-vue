@@ -35,6 +35,9 @@
 	methods: {
 		appear() {
 			this.$el.classList.add('show')
+		},
+		disappear() {
+			this.$el.classList.remove('show')
 		}
 	}
   }

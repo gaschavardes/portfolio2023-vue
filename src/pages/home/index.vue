@@ -17,11 +17,12 @@
 		</section>
 		<section class="contact">
 			<div class="contact__content" ref="contact">
-				<h2>Contact</h2>
+				<h2 ref="contactTitle">Contact</h2>
+				<hr>
 				<ul class="contact__links">
-					<li><LinkComponent href="https://github.com/gaschavardes?tab=repositories" text="Github"/></li>
-					<li><LinkComponent href="mailto:chavardes.gaspard@gmail.com" text="Mail"/></li>
-					<li><LinkComponent href="https://www.linkedin.com/in/gaspardchavardes/" text="Linkedin"/></li>
+					<li v-for="(link, i) in contactLinks" :key="i" :style="{ transitionDelay: Math.abs(i + 1 - Math.round(contactLinks.length * 0.5)) * 0.2 + 's'}">
+						<LinkComponent :href="link.link" :text="link.name" ref="contactLink"/>
+					</li>
 				</ul>
 			</div>
 		</section>
@@ -48,6 +49,7 @@
 			publicPath: process.env.BASE_URL,
 			projectProgress: 0,
 			activeVideo: 'crosswire',
+			animateTimeOut: null,
 			projects: [
 				{
 					name: 'Crosswire',
@@ -136,6 +138,20 @@
 
 				// 	}
 				// }
+			],
+			contactLinks: [
+				{
+					link:'https://github.com/gaschavardes?tab=repositories',
+					name: 'Github',
+				},
+				{
+					link:'mailto:chavardes.gaspard@gmail.com',
+					name: 'Mail',
+				},
+				{
+					link:'https://www.linkedin.com/in/gaspardchavardes/',
+					name: 'Linkedin',
+				},
 			]
 		}
 	},
@@ -157,6 +173,13 @@
 				word.style.transitionDelay = `${i * 0.1}s`
 			})
 		})
+
+		this.$refs.contactTitle.split = new SplitText(this.$refs.contactTitle, {type: 'chars', charsClass: 'chars'})
+		const length = this.$refs.contactTitle.split.chars.length
+		this.$refs.contactTitle.split.chars.forEach((el, i) => {
+			el.style.transitionDelay = `${Math.abs(i + 1 - Math.round(length * 0.5)) * 0.05}s`
+		})
+		
 		E.on('LoaderOut', () => {
 			setTimeout(() => {
 				this.$refs.introContent.classList.add('show')
@@ -217,10 +240,23 @@
 				},
 				onLeave: () => {
 					this.$refs.contact.classList.add('show')
+					clearTimeout(this.animateTimeOut)
+					this.$refs.contact.classList.add('animateIn')
+					setTimeout(() => {
+						this.$refs.contactLink.forEach(el => {
+							el.appear()
+						})
+					}, 500)
 
 				},
 				onEnterBack: () => {
 					this.$refs.contact.classList.remove('show')
+					this.animateTimeOut = setTimeout(() => {
+						this.$refs.contact.classList.remove('animateIn')
+						this.$refs.contactLink.forEach(el => {
+							el.disappear()
+						})
+					}, 500)
 
 				}
 			})

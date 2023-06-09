@@ -21,6 +21,9 @@ export default class Background extends Mesh {
 		this.renderOrder = 1
 		this.appaearProgress = 0
 		this.load()
+		store.RAFCollection.add(this.animate, 0)
+		this.targetScroll = 0
+
 	}
 
 	build() {
@@ -50,8 +53,9 @@ export default class Background extends Mesh {
 	}
 
 	animate = () => {
-		
-		this.material.uniforms.uTime = store.WebGL.globalUniforms.uTime
+		// console.log('COUCOU')
+		this.targetScroll += (store.Lenis.targetScroll - this.targetScroll) * 0.01
+		this.material.uniforms.uScroll.value = this.targetScroll
 	}
 
 	load() {
