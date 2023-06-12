@@ -12,6 +12,9 @@
 		</section>
 		<section class="projects" ref="projectContainer">
 			<video id="videoContainer" :src="`./video/${activeVideo}.mp4`" muted playsinline loop ref="video"></video>
+			<div class="video_preload">
+				<video id="videoContainer" v-for="(el, id) in projects" :key='id' :src="`./video/${el.media}.mp4`" muted playsinline loop></video>
+			</div>
 			<Counter :number="projects.length" :progress="this.projectProgress" />
 			<ProjectItem v-for="(el, id) in projects" :data='el' :key='id' ref='projects'/>
 		</section>
