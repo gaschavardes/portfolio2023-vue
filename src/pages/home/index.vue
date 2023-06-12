@@ -222,6 +222,7 @@
 						}
 						setTimeout(() => {
 							this.$refs.videoTexture[index].play()
+							this.$refs.videoTexture[index].currentTime = 0
 						}, 100)
 					}
 				},
@@ -230,6 +231,7 @@
 					if(el.data.media) {
 						setTimeout(() => {
 							this.$refs.videoTexture[index].play()
+							this.$refs.videoTexture[index].currentTime = 0
 						}, 100)
 					}
 				},
@@ -243,6 +245,7 @@
 						}
 						setTimeout(() => {
 							this.$refs.videoTexture[index].play()
+							this.$refs.videoTexture[index].currentTime = 0
 						}, 100)
 					}
 				},
@@ -251,6 +254,7 @@
 					if(el.data.media) {
 						setTimeout(() => {
 							this.$refs.videoTexture[index].play()
+							this.$refs.videoTexture[index].currentTime = 0
 						}, 100)
 					}
 				},
