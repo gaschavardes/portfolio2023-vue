@@ -95,7 +95,7 @@ export default class Projects extends Group {
 		)
 		let scale = 0.0062 * 2
 		this.dummy.scale.set(scale,scale,1)
-		
+		console.log(particles.length)
 		particles.forEach((el, i) => {
 			this.dummy.position.set(el.x * scale, el.y * scale, 0)
 			this.dummy.updateMatrix()
