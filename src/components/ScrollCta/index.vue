@@ -28,7 +28,6 @@
 	},
 	watch: {
 		destination(val) {
-			console.log(val)
 			if(val === 'the top') {
 				this.isContact = true
 			} else {
