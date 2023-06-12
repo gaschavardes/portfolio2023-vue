@@ -2,7 +2,7 @@ import { Group, PlaneGeometry, Color, Vector2, Object3D, InstancedMesh, Vector3,
 import { ParticleMaterial } from '../materials'
 import store from '../store'
 import gsap from 'gsap'
-import { E, qs } from '../utils'
+import { E, qs, qsa } from '../utils'
 import GlobalEvents from '../utils/GlobalEvents'
 // import { copyObjectDataTransforms } from '../utils'
 
@@ -47,6 +47,10 @@ export default class Projects extends Group {
 		const image = texture.source.data
 		this.canvas = qs('canvas#texture')
 		this.video =  qs('video#videoContainer')
+		this.videos = qsa('.video_preload video')
+		this.videos.forEach(el => {
+			el.texture = new VideoTexture( el )
+		})
 		// this.video.play()
 		this.ctx = this.canvas.getContext("2d", { willReadFrequently: true})
 		
@@ -114,9 +118,12 @@ export default class Projects extends Group {
 	createTimeline() {
 		this.timeline = gsap.timeline({ paused: true })
 		for (let index = 0; index < store.projects.length; index++) {
-			this.timeline.to(this, {  yPos: 0 })
+			this.timeline
+			.call(() => { this.instance.material.uniforms.videoTexture.value = this.videos[index].texture})
+			.to(this, {  yPos: 0 })
 			.to(this, {  yPos: 10, ease: 'none' })
 			.set(this, {  yPos: -10, ease: 'none' })
+			.call(() => { this.instance.material.uniforms.videoTexture.value = this.videos[index].texture})
 			// .call(this.textureUpdate)
 		}
 	}

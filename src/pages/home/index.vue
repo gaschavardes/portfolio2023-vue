@@ -12,9 +12,9 @@
 			</div>
 		</section>
 		<section class="projects" id="theprojects" ref="projectContainer">
-			<video id="videoContainer" :src="`./video/${activeVideo}.mp4`" muted playsinline loop ref="video"></video>
+			<!-- <video id="videoContainer" :src="`./video/${activeVideo}.mp4`" muted playsinline loop ref="video"></video> -->
 			<div class="video_preload">
-				<video id="videoContainer" v-for="(el, id) in projects" :key='id' :src="`./video/${el.media}.mp4`" muted playsinline loop></video>
+				<video id="videoContainer" v-for="(el, id) in projects" :key='id' :src="`./video/${el.media}.mp4`" ref="videoTexture" muted playsinline loop></video>
 			</div>
 			<Counter :number="projects.length" :progress="this.projectProgress" />
 			<ProjectItem v-for="(el, id) in projects" :data='el' :key='id' :id="el.slug.replace(/\s/g, '').replace(/[0-9]/g, '')" ref='projects'/>
@@ -215,36 +215,44 @@
 				onEnter: () => {
 					el.enter()
 					if(el.data.media) {
-						this.activeVideo = el.data.media
 						if(this.$refs.projects[index + 1]){
 							this.activeDestination = this.$refs.projects[index + 1].data.slug
 						}else {
 							this.activeDestination = 'contact'
 						}
 						setTimeout(() => {
-							this.$refs.video.play()
+							this.$refs.videoTexture[index].play()
 						}, 100)
 					}
 				},
 				onLeave: () => {
 					el.leave()
+					if(el.data.media) {
+						setTimeout(() => {
+							this.$refs.videoTexture[index].play()
+						}, 100)
+					}
 				},
 				onEnterBack: () => {
 					el.enter()
 					if(el.data.media) {
-						this.activeVideo = el.data.media
 						if(this.$refs.projects[index + 1]){
 							this.activeDestination = this.$refs.projects[index + 1].data.slug
 						}else {
 							this.activeDestination = 'contact'
 						}
 						setTimeout(() => {
-							this.$refs.video.play()
+							this.$refs.videoTexture[index].play()
 						}, 100)
 					}
 				},
 				onLeaveBack: () => {
 					el.leave()
+					if(el.data.media) {
+						setTimeout(() => {
+							this.$refs.videoTexture[index].play()
+						}, 100)
+					}
 				},
 				onUpdate: function(self) {
 					that.projectProgress = (index + self.progress) / that.$refs.projects.length
@@ -306,7 +314,9 @@
 			
 		},
 		play() {
-			this.$refs.video.play()
+			this.$refs.videoTexture.forEach(el => {
+				el.play()
+			})
 		}
 	}
   }
