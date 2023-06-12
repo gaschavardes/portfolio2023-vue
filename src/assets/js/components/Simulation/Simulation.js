@@ -126,7 +126,6 @@ export default class Simulation{
     }
 
     calcSize(){
-		console.log(this.options.resolution * store.window.w)
         const width = Math.round(this.options.resolution * store.window.w);
         const height = Math.round(this.options.resolution * store.window.h);
 
@@ -165,7 +164,6 @@ export default class Simulation{
         let vel = this.fbos.vel_1;
 
         if(this.options.isViscous){
-			console.log("COUCOU")
             vel = this.viscous.update({
                 viscous: this.options.viscous,
                 iterations: this.options.iterations_viscous,

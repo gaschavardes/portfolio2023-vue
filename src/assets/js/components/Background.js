@@ -33,7 +33,6 @@ export default class Background extends Mesh {
 	}
 
 	animate = () => {
-		// console.log('COUCOU')
 		this.targetScroll += (store.Lenis.targetScroll - this.targetScroll) * 0.01
 		this.material.uniforms.uScroll.value = this.targetScroll
 	}

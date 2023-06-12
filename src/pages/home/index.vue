@@ -1,7 +1,7 @@
 <template>
 	<section class="home" id="thetop">
 		<Loader/>
-		<ScrollCta :destination="activeDestination"/>
+		<ScrollCta :destination="activeDestination" ref="scrollCta"/>
 		<section class="intro" ref="intro">
 			<div class="intro__text" ref="introContent">
 				I'm Gaspard Chavardes,<br>
@@ -181,9 +181,7 @@
 		gsap.delayedCall(1, this.setScrollTrigger)
 
 		this.$refs.introContent.split = new SplitText(this.$refs.introContent, {type: 'lines, words', linesClass:"line", wordsClass: 'word'})
-		console.log(this.$refs.introContent.split)
 		this.$refs.introContent.split.lines.forEach((el, i) => {
-			console.log(el)
 			Array.from(el.children).forEach(word => {
 				word.style.transitionDelay = `${i * 0.1}s`
 			})
@@ -208,11 +206,12 @@
 	methods: {
 		setScrollTrigger() {
 			this.$refs.projects.forEach((el, index) => {
+				const that = this
 				this.projectsTl = ScrollTrigger.create({
 				trigger: el.$el,
-				start: "top top", // when the top of the trigger hits the top of the viewport
-				end: "bottom top", // end after scrolling 500px beyond the start
-				scrub: 1, // smooth scrubbing, takes 1 second to "catch up" to the scrollbar
+				start: "top top",
+				end: "bottom top",
+				scrub: 1,
 				onEnter: () => {
 					el.enter()
 					if(el.data.media) {
@@ -246,23 +245,23 @@
 				},
 				onLeaveBack: () => {
 					el.leave()
-				}
+				},
+				onUpdate: function(self) {
+					that.projectProgress = (index + self.progress) / that.$refs.projects.length
+					if(store.MainScene) {
+						store.MainScene.components.projects.progress = that.projectProgress
+					}
+				} 
+				
 			});
 			})
 
-			const that = this
-			
 			this.containerTl =  ScrollTrigger.create({
 				trigger: this.$refs.projectContainer,
-				start: "top top", // when the top of the trigger hits the top of the viewport
-				end: "bottom top", // end after scrolling 500px beyond the start
-				scrub: 1, // smooth scrubbing, takes 1 second to "catch up" to the scrollbar,
-				onUpdate: function(self) {
-					that.projectProgress = self.progress
-					if(store.MainScene) {
-						store.MainScene.components.projects.progress = self.progress
-					}
-				},
+				start: "top top",
+				end: "bottom top",
+				scrub: 1,
+				
 				onLeave: () => {
 					this.$refs.contact.classList.add('show')
 					clearTimeout(this.animateTimeOut)
@@ -274,6 +273,13 @@
 						})
 					}, 500)
 
+				},
+				onLeaveBack: () => {
+					this.$refs.scrollCta.mobileHidden = true
+					this.activeDestination = 'the projects'
+				},
+				onEnter: () => {
+					this.$refs.scrollCta.mobileHidden = false
 				},
 				onEnterBack: () => {
 					this.$refs.contact.classList.remove('show')

@@ -1,5 +1,5 @@
 <template>
-		<button class="scroll-cta" @click="scrollTo">
+		<button class="scroll-cta " :class="[{isContact : isContact}, {mobileHidden : mobileHidden}]" @click="scrollTo">
 			<div :class="{show : appear}" class="text-content">
 				<span>scroll to <br>
 				</span>
@@ -26,9 +26,21 @@
 	props: {
 		destination: String
 	},
+	watch: {
+		destination(val) {
+			console.log(val)
+			if(val === 'the top') {
+				this.isContact = true
+			} else {
+				this.isContact = false
+			}
+		}
+	},
 	data() {
 		return{
-			appear: false
+			appear: false,
+			isContact: false,
+			mobileHidden: true
 		}
 	},	
 	components: {
@@ -42,7 +54,8 @@
 	},
 	methods: {
 		scrollTo(){
-			store.Lenis.scrollTo(`#${this.destination.replace(/\s/g, '').replace(/[0-9]/g, '')}`, { offset: this.destination.replace(/\s/g, '') !== 'thetop' ? store.window.h * 0.5 : 0})
+			const destination = this.destination.replace(/\s/g, '').replace(/[0-9]/g, '')
+			store.Lenis.scrollTo(`#${destination}`, { offset: destination !== 'thetop' ? store.window.h * 0.5 : 0, duration: destination !== 'thetop' ? 1 : 5 })
 		}
 	}
   }

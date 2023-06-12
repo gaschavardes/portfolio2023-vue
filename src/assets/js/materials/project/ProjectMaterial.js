@@ -6,7 +6,6 @@ import fragmentShader from './frag.glsl'
 
 export default class ProjectMaterial extends RawShaderMaterial {
 	constructor(options = {}) {
-		console.log(store.window.dpr)
 
 		options = mergeDeep(
 			{

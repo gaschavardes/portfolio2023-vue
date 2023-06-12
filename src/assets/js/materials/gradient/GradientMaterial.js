@@ -6,7 +6,6 @@ import fragmentShader from './frag.glsl'
 
 export default class GradientMaterial extends RawShaderMaterial {
 	constructor(options = {}) {
-		console.log(options)
 		options = mergeDeep(
 			{
 				uniforms: {

@@ -16,7 +16,6 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 import screenFxVert from '../../../../glsl/includes/screenFx/vert.glsl'
 import screenFxFrag from '../../../../glsl/includes/screenFx/frag.glsl'
 import Sim from '../components/Sim'
-// import Background from '../components/Background'
 
 export default class MainScene extends Scene {
 	constructor() {
@@ -61,7 +60,6 @@ export default class MainScene extends Scene {
 		this.controls.enableDamping = true
 
 		this.background = new Color(0x222222)
-		// this.fog = new Fog(0x000000, this.camera.near, this.camera.far)
 
 		/* Add scene components */
 		this.components = {
@@ -95,9 +93,6 @@ export default class MainScene extends Scene {
 
 	buildPasses() {
 		this.renderScene = new RenderPass(this, this.activeCamera)
-		console.log(this.renderScene)
-// 		renderTarget.texture.format = THREE.RGBAFormat;
-// renderTarget.texture.minFilter = THREE.LinearFilter;
 		this.fxaaPass = new ShaderPass(FXAAShader)
 		this.fxaaPass.material.uniforms.resolution.value.x = 1 / (store.window.w * store.WebGL.renderer.getPixelRatio())
 		this.fxaaPass.material.uniforms.resolution.value.y = 1 / (store.window.fullHeight * store.WebGL.renderer.getPixelRatio())
@@ -116,29 +111,7 @@ export default class MainScene extends Scene {
 		}))
 
 		this.composer.addPass(this.renderScene)
-		// this.composer.renderToScreen = false
-		// this.composer.addPass(this.fxaaPass)
 		this.composer.addPass(this.bloomPass)
-		// this.composer.addPass(this.screenFxPass)
-
-		// const finalPass = new ShaderPass(
-		// 	new ShaderMaterial({
-		// 		uniforms: {
-		// 			baseTexture: { value: null },
-		// 			bloomTexture: { value: this.composer.renderTarget2.texture }
-		// 		},
-		// 		vertexShader: finalFxVert,
-		// 		fragmentShader: finalFxFrag,
-		// 		defines: {}
-		// 	}), 'baseTexture'
-		// )
-		// finalPass.needsSwap = true
-
-		// this.finalComposer = new EffectComposer(store.WebGL.renderer)
-		// this.finalComposer.setSize(store.window.w, store.window.h)
-		// this.finalComposer.addPass(this.renderScene)
-		// this.finalComposer.addPass(finalPass)
-		console.log(this.composer)
 	}
 
 	createFbo() {
@@ -158,10 +131,6 @@ export default class MainScene extends Scene {
 		this.add(this.light)
 
 		this.grid = new GridHelper(200, 50)
-		// this.grid.position.y = -10
-		// this.grid.material.opacity = 0.5
-		// this.grid.material.transparent = true
-		// this.add(this.grid)
 	}
 
 	addEvents() {
@@ -170,10 +139,6 @@ export default class MainScene extends Scene {
 	}
 
 	onRaf = () => {
-		// store.WebGL.renderer.setRenderTarget(store.envFbo)
-		// store.WebGL.renderer.render(this, this.camera)
-		// store.WebGL.renderer.setRenderTarget(null)
-		// store.WebGL.renderer.render(this, this.camera)
 		this.controls.enabled && this.controls.update()
 
 		if (this.controls.enabled) {
@@ -205,12 +170,5 @@ export default class MainScene extends Scene {
 		store.AssetLoader.loadTexture('/textures/background.jpeg').then(texture => {
 			this.backgroundTexture = texture
 		})
-
-		// Load .unseen file
-		// store.AssetLoader.loadJson('./objectdata.unseen').then(data => {
-		// 	this.objectData = data
-		// })
-
-		// Global assets
 	}
 }

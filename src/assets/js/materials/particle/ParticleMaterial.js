@@ -6,7 +6,6 @@ import fragmentShader from './frag.glsl'
 
 export default class BasicMaterial extends RawShaderMaterial {
 	constructor(options = {}) {
-		console.log(options.uniforms.spriteSize)
 		options = mergeDeep(
 			{
 				uniforms: {
