@@ -1,6 +1,6 @@
 <template>
 	<canvas id="gl"></canvas>
-	<canvas id="texture"></canvas>
+	<!-- <canvas id="texture"></canvas> -->
 	<div ref="scrollContainer" class="scroll-container" >
 
 		<Home ref="home"/>
