@@ -30,7 +30,7 @@ export default {
 	document.documentElement.style.setProperty('--vh', `${vh}px`)
 	
 	store.Lenis = new Lenis({ wrapper: this.$refs.scrollContainer, content: this.$refs.home.$el })
-	store.Lenis.start()
+	store.Lenis.stop()
 	store.Lenis.on('scroll', () => {
 		ScrollTrigger.update()
 	})

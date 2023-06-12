@@ -18,7 +18,7 @@
   <script>
   import './style.less'
   import gsap from 'gsap'
-//   import store from '@/assets/js/store'
+  import store from '@/assets/js/store'
   import {E} from '@/assets/js/utils'
   import GlobalEvents from '@/assets/js/utils/GlobalEvents'
   export default {
@@ -50,6 +50,7 @@
 			this.$el.style.setProperty('--progress', this.percent * 0.01)
 		},
 		close(){
+			store.Lenis.start()
 			const that = this
 			this.$parent.play()
 			this.$refs.circle.style.fill = '#FFF'
