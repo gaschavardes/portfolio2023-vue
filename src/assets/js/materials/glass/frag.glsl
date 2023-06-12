@@ -200,7 +200,7 @@ void main() {
 
 	outgoingLight = mix(vec3(1.), outgoingLight, min(glowThreshold, 1.));
 	gl_FragColor = vec4(outgoingLight, zthreshold);
-	// gl_FragColor = vec4(zthreshold);	
+	// gl_FragColor = vec4(vec3(backfaceBroken), 1.);	
 
 	
 
