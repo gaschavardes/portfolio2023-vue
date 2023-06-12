@@ -55,9 +55,8 @@
 		circle{
 			stroke: #FFF;
 			stroke-dasharray: calc(255px * var(--progress)) 250px;
-			transition: stroke-dasharray 0.5s;
 			fill: none;
-			transition: stroke-width 0.5s;
+			transition: stroke-width 0.5s, stroke-dasharray 0.5s;
 		}
 		.circle_inner{
 			fill: black;
