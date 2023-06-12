@@ -48,6 +48,11 @@ export default class Letter extends Group {
 		})
 		store.RAFCollection.add(this.animate, 0)
 
+		// console.log(this.item)
+		// this.item.onBeforeRender = () => {
+		// 	console.log("COUCOU")
+		// }
+
 	}
 
 	fboCreate = () => {
@@ -292,9 +297,6 @@ export default class Letter extends Group {
 		// qs('.js-landing .headline').classList.add('show')
 	}
 
-	onEnter() {
-		store.activeV = this
-	}
 
 	randomIntFromInterval(min, max) {
 		return Math.floor(Math.random() * (max - min + 1) + min)
@@ -357,6 +359,7 @@ export default class Letter extends Group {
 
 			store.MainScene.components.projects.instance.visible = false
 		} else {
+			this.item.visible = false
 			store.MainScene.components.projects.instance.visible = true
 			if(store.MainScene.bloomPass) {
 				store.MainScene.bloomPass.threshold = 0.99
