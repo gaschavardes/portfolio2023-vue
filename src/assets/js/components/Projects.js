@@ -65,8 +65,9 @@ export default class Projects extends Group {
 		const particles = []
 		const aIDs = []
 		const aUVIDs = []
-		for (let y = 0, y2 = size.y; y < y2; y++) {
-			for (let x = 0, x2 = size.x; x < x2; x++) {
+		const step = store.isMobile ? 4 : 2
+		for (let y = 0, y2 = size.y; y < y2; y = y + step) {
+			for (let x = 0, x2 = size.x; x < x2; x = x + step) {
 				// if (data.data[(y * 4 * data.width) + (x * 4) + 3] > 128) {
 					const particle = {
 						x : (x - size.x * 0.5),
@@ -75,19 +76,19 @@ export default class Projects extends Group {
 					particles.push(particle);
 					aIDs.push(x + 1)
 					// aUVIDs.push(x % data.height)
-					aUVIDs.push(x)
-					aUVIDs.push(y)
+					aUVIDs.push(x / step)
+					aUVIDs.push(y / step)
 				// }
 			}
 		}
 		// const color = []
 		const random = []
 		this.instance = new InstancedMesh(
-			new PlaneGeometry(1, 1),
+			new PlaneGeometry(step, step),
 			new ParticleMaterial({
 				uniforms: {
 					resolution: { value: new Vector2(store.window.w * store.window.dpr, store.window.h * store.window.dpr)},
-					spriteSize: {value: new Vector2(size.x, size.y) },
+					spriteSize: {value: new Vector2(size.x / step, size.y / step ) },
 					videoTexture: { value: new VideoTexture( this.video ) }
 				}
 			}),
