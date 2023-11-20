@@ -98,19 +98,18 @@ body{
 
     /* overscroll-behavior: none; */
     /* touch-action: none; */
-    /* height: calc(var(--vh, 1vh) * 100); */
+    height: calc(var(--vh, 1vh) * 100);
+	overflow: hidden;
 }
 .scroll-container{
 	scroll-behavior: none;
 	height: 100vh;
 	height: calc(var(--vh, 1vh) * 100) !important;
-	overflow-y: hidden;
-	overflow-x: hidden;
+	overflow: hidden;
 	position: relative;
 	scrollbar-width: none;
 	-ms-overflow-style: none;
 	overscroll-behavior: none;
-	overflow-y: auto;
 	z-index: 10;
 }
 .canvas-container{
