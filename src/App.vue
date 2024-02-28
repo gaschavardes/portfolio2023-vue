@@ -29,7 +29,12 @@ export default {
 	const vh = store.window.h * 0.01
 	document.documentElement.style.setProperty('--vh', `${vh}px`)
 	
-	store.Lenis = new Lenis({ wrapper: this.$refs.scrollContainer, content: this.$refs.home.$el })
+	store.Lenis = new Lenis({
+		wrapper: this.$refs.scrollContainer,
+		content: this.$refs.home.$el,
+		gestureOrientation: 'vertical',
+		syncTouch: true
+	})
 	store.Lenis.stop()
 	store.Lenis.on('scroll', () => {
 		ScrollTrigger.update()
@@ -102,7 +107,7 @@ body{
 	overflow: hidden;
 }
 .scroll-container{
-	scroll-behavior: none;
+	scroll-behavior: auto !important;
 	height: 100vh;
 	height: calc(var(--vh, 1vh) * 100) !important;
 	overflow: hidden;
