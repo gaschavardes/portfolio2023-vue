@@ -57,6 +57,13 @@
 			activeDestination: 'the projects',
 			animateTimeOut: null,
 			projects: [
+				// {
+				// 	name: 'Organimo',
+				// 	agency: 'Unseen Studio',
+				// 	media: "organimo",
+				// 	slug:'organimo',
+				// 	link: 'https://organimo.com/'
+				// },
 				{
 					name: 'Crosswire',
 					agency: 'Unseen Studio',

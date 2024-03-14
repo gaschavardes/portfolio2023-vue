@@ -1,9 +1,12 @@
 <template>
 		<div class="project__item">
 			<div class="content">
-				<h2 ref="title">{{ data.name }}</h2>
-				<h4 ref="agency">{{ data.agency }}</h4>
-				<Button icon="visit" text="Visit site" :link="data.link" ref="button" />
+				<a :href="data.link" target="_blank" rel="nofollow">
+					<h2 ref="title">{{ data.name }}</h2>
+					<h4 ref="agency">{{ data.agency }}</h4>
+					<Button icon="visit" text="Visit site" :link="data.link" ref="button" />
+				</a>
+				
 			</div>
 		</div>
   </template>
