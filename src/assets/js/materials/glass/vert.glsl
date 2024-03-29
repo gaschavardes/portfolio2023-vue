@@ -195,7 +195,7 @@ void main() {
 	pos.x += letterCenter.x;
 	pos.y += letterCenter.y;
 
-	pos.z += translatePos.z - easeInBack(appearProgress(uAppear)) * 50.;
+	pos.z += translatePos.z + 5. - easeInBack(appearProgress(uAppear)) * 50.;
 	pos.x += translatePos.x;
 	pos.y += translatePos.y;
 
