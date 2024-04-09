@@ -16,6 +16,10 @@ import GradientMaterial from './gradient/GradientMaterial'
 import BackgroundMaterial from './background/BackgroundMaterial'
 import ProjectMaterial from './project/ProjectMaterial'
 import ParticleMaterial from './particle/ParticleMaterial'
+import GridMaterial from './grid/GridMaterial'
+import BackFaceGrid from './grid/BackFaceGrid'
+import TokenMaterial from './token/TokenMaterial'
+import BackFaceToken from './token/BackFaceToken'
 
 // materials
 import BasicMaterial from './basic/BasicMaterial'
@@ -43,5 +47,9 @@ export {
 	GradientMaterial,
 	BackgroundMaterial,
 	ProjectMaterial,
-	ParticleMaterial
+	ParticleMaterial,
+	GridMaterial,
+	BackFaceGrid,
+	TokenMaterial, 
+	BackFaceToken
 }

@@ -1,6 +1,5 @@
 <template>
 	<section class="home" id="thetop">
-		<Loader/>
 		<ScrollCta :destination="activeDestination" ref="scrollCta"/>
 		<section class="intro" ref="intro">
 			<div class="intro__text" ref="introContent">
@@ -37,7 +36,6 @@
   import './style.less'
   import ProjectItem from '../../components/ProjectItem'
   import Counter from '../../components/Counter'
-  import Loader from '../../components/Loader'
   import LinkComponent from '../../components/linkComponent'
   import ScrollCta from '../../components/ScrollCta'
   import gsap from 'gsap'
@@ -179,7 +177,6 @@
 	components: {
 		ProjectItem,
 		Counter,
-		Loader,
 		LinkComponent,
 		ScrollCta
 	},
@@ -199,22 +196,32 @@
 		this.$refs.contactTitle.split.chars.forEach((el, i) => {
 			el.style.transitionDelay = `${Math.abs(i + 1 - Math.round(length * 0.5)) * 0.05}s`
 		})
-		
+
 		E.on('LoaderOut', () => {
+			this.appear()
+		})
+
+	},
+	beforeUnmount(){
+		this.$refs.projects.forEach((el) => {
+			el.projectsTl.kill()
+		})
+		this.containerTl.kill()
+	},
+	methods: {
+		appear() {
 			setTimeout(() => {
 				this.$refs.introContent.classList.add('show')
 				setTimeout(() => {
 					this.$refs.pingTitle.appear()
-				}, 2000)
+					this.$refs.scrollCta.appear = true
+				}, 1000)
 			}, 700)
-		})
-
-	},
-	methods: {
+		},
 		setScrollTrigger() {
 			this.$refs.projects.forEach((el, index) => {
 				const that = this
-				this.projectsTl = ScrollTrigger.create({
+				el.projectsTl = ScrollTrigger.create({
 				trigger: el.$el,
 				start: "top top",
 				end: "bottom top",

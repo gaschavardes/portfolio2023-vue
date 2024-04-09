@@ -1,8 +1,9 @@
 import { ClampToEdgeWrapping, Clock, LinearFilter, LinearMipmapLinearFilter, Texture, WebGLRenderer, LinearSRGBColorSpace, LinearToneMapping  } from 'three'
 import { setupShaderChunks } from './materials'
 import store from './store'
-import { E, qs } from './utils'
+import { E, qs, ArrayOrderController, SceneTransition} from './utils'
 import GlobalEvents from './utils/GlobalEvents'
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer"
 
 export default class WebGL {
 	constructor() {
@@ -10,9 +11,20 @@ export default class WebGL {
 			canvas: qs('canvas#gl')
 		}
 
-		console.log('WEBGL', store)
 
 		this.setup()
+
+		this.composer = new EffectComposer(this.renderer)
+		this.composerPasses = new ArrayOrderController(this.composer.passes)
+
+		this.SceneTransition = new SceneTransition({ fromScene: 'MainScene', toScene: 'LabScene', index: 50, duration: 3 })
+
+		this.scenes = {
+			/** @type { import("./scenes/MainScene").default } */
+			MainScene: store.MainScene,
+			/** @type { import("./scenes/LabScene").default } */
+			LabScene: store.LabScene,
+		}
 
 		E.on('App:start', this.start)
 	}
@@ -41,18 +53,29 @@ export default class WebGL {
 
 	addEvents() {
 		E.on(GlobalEvents.RESIZE, this.onResize)
-		store.RAFCollection.add(this.onRaf, 0)
+		store.RAFCollection.add(this.onRaf, 1)
+		E.on('sceneChange', (e) => {
+			this.SceneTransition.transition(e.value === 'Lab' ? 1 : 0)
+		})
+	}
+
+	buildPasses() {
+		// this.lensEffect.build()
+		this.scenes.MainScene = store.MainScene
+		this.scenes.LabScene = store.LabScene
+		this.SceneTransition.build()
 	}
 
 	onRaf = (time) => {
 		this.clockDelta = this.clock.getDelta()
 		this.globalUniforms.uDelta.value = this.clockDelta > 0.016 ? 0.016 : this.clockDelta
 		this.globalUniforms.uTime.value = time
-		
+		this.composer.render()
 	}
 
 	onResize = () => {
 		this.renderer.setSize(store.window.w, store.window.h)
+		this.composer.setSize(store.window.w, store.window.h)
 	}
 
 	generateTexture(texture, options = {}, isKtx = false) {

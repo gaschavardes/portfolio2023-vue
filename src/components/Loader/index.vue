@@ -52,7 +52,8 @@
 		close(){
 			store.Lenis.start()
 			const that = this
-			this.$parent.play()
+			if(this.$parent.play) this.$parent.play()
+			
 			this.$refs.circle.style.fill = '#FFF'
 			gsap.to(this.$refs.mask, { r: 0, ease: 'power1.out'})
 			gsap.to(this.$refs.circle, { 

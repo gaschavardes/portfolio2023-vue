@@ -31,6 +31,7 @@
 	},
 	mounted() {
 		this.split()
+
 	},
 	methods: {
 		split() {

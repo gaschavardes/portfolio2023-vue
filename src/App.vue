@@ -1,37 +1,90 @@
 <template>
 	<canvas id="gl"></canvas>
 	<!-- <canvas id="texture"></canvas> -->
-	<div ref="scrollContainer" class="scroll-container" >
-
-		<Home ref="home"/>
-  </div>
+	<Loader />
+	<div ref="scrollContainer" class="scroll-container">
+		<nav v-if="location.name">
+			<router-link v-if="location.name === 'Home'" to="lab">Lab</router-link>
+			<router-link v-else to="/">home</router-link>
+		</nav>
+		<!-- <Home ref="home"/> -->
+		<!-- <RouterView ref="router" /> -->
+		<router-view v-slot="{ Component, route }">
+			<transition :name="route.meta.transition">
+				<component :is="Component" ref="routerEl" />
+			</transition>
+		</router-view>
+	</div>
 </template>
 
 <script>
 // import store from './assets/js/store'
 // import '../src/assets/fonts/stylesheet.css'
-import Home from './pages/home'
+// import Home from './pages/home'
 import Lenis from '@studio-freight/lenis'
 import store from './assets/js/store'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import E from './assets/js/utils/E'
 import GlobalEvents from './assets/js/utils/GlobalEvents'
+import Loader from './components/Loader'
+import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
+
 export default {
   name: 'App',
   components: {
-	Home
+	Loader
+  },
+  data: () =>{
+	return {
+		location: {}
+	}
   },
   created() {
-
+	
+	
   },
   mounted() {
+	this.location = useRoute();
+	this.router =  useRouter();
+
+	E.on('PageLoaded',() => {
+			setTimeout(() => {
+				if(this.location.name === 'Home') {
+				store.MainScene.start()
+			} else{
+				// store.LabScene.start()
+				store.WebGL.SceneTransition.transition(1, 0.1)
+			}
+		}, 200)
+		
+	})
+
+	E.on('LoaderOut', () => {
+		this.router.afterEach((to) => {
+			// const nextComponent = to.matched[0].components.default
+			// const prevComponent = from.matched[0].components.default
+			this.$nextTick(() => {
+				this.$refs.routerEl.appear()
+				E.emit('sceneChange', { value: to.name})
+			});
+		})
+	})
+	
+
+	E.on('LoaderOut', () => {
+		this.router.beforeEach((to, from, next) => {
+			next()
+		})
+	})
+
 	const vh = store.window.h * 0.01
 	document.documentElement.style.setProperty('--vh', `${vh}px`)
 	
 	store.Lenis = new Lenis({
 		wrapper: this.$refs.scrollContainer,
-		content: this.$refs.home.$el,
+		content: document.querySelector('body'),
 		gestureOrientation: 'vertical',
 		syncTouch: true
 	})
@@ -68,7 +121,6 @@ export default {
 </script>
 
 <style lang="less">
-
 @font-face {
 	font-family: "unbounded";
 	src: url("~@/assets/fonts/Unbounded-VariableFont_wght.woff2") format("woff2 supports variations"),
@@ -76,37 +128,39 @@ export default {
 	font-weight: 200 1000;
 }
 
-a:not(.button){
- 
+a:not(.button) {}
 
-}
-
-#gl, #texture{
+#gl,
+#texture {
 	position: fixed;
 	top: 0;
 	left: 0;
 	pointer-events: none;
 	touch-action: none;
 }
-#texture{
+
+#texture {
 	opacity: 0;
 }
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  z-index: 100;
-}
-body{
 
-    /* overscroll-behavior: none; */
-    /* touch-action: none; */
-    height: calc(var(--vh, 1vh) * 100);
+#app {
+	font-family: Avenir, Helvetica, Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-align: center;
+	color: #2c3e50;
+	z-index: 100;
+}
+
+body {
+
+	/* overscroll-behavior: none; */
+	/* touch-action: none; */
+	height: calc(var(--vh, 1vh) * 100);
 	overflow: hidden;
 }
-.scroll-container{
+
+.scroll-container {
 	scroll-behavior: auto !important;
 	height: 100vh;
 	height: calc(var(--vh, 1vh) * 100) !important;
@@ -117,31 +171,38 @@ body{
 	overscroll-behavior: none;
 	z-index: 10;
 }
-.canvas-container{
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    z-index: -1;
-    
 
-    canvas{
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100% !important;
-        height: 100% !important;
-    }
+.canvas-container {
+	position: fixed;
+	width: 100vw;
+	height: 100vh;
+	top: 0;
+	left: 0;
+	pointer-events: none;
+	z-index: -1;
+
+
+	canvas {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100% !important;
+		height: 100% !important;
+	}
 }
 
-.fade-enter-active, .fade-leave-active {
-    transition: opacity .5s;
-  }
-  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-    opacity: 0;
-  }
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity .5s;
+}
+
+.fade-enter,
+.fade-leave-to
+
+/* .fade-leave-active below version 2.1.8 */
+	{
+	opacity: 0;
+}
 
 
 
@@ -151,19 +212,87 @@ body{
    License: none (public domain)
 */
 
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
 	margin: 0;
 	padding: 0;
 	border: 0;
@@ -171,25 +300,44 @@ time, mark, audio, video {
 	font: inherit;
 	vertical-align: baseline;
 }
+
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
 	display: block;
 }
+
 body {
 	line-height: 1;
 }
-ol, ul {
+
+ol,
+ul {
 	list-style: none;
 }
-blockquote, q {
+
+blockquote,
+q {
 	quotes: none;
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
 	content: '';
 	content: none;
 }
+
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
@@ -232,5 +380,4 @@ table {
 @ease-bounce-in: cubic-bezier(0, 0, 0.2, 1.03);
 @ease-bounce-out: cubic-bezier(0.045, 0.345, 0, 3.65);
 @ease-custom-out: cubic-bezier(0, 1.16, 0, 0.99);
-
 </style>

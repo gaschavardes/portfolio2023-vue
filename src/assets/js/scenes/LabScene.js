@@ -1,10 +1,8 @@
 /* eslint-disable */
-import { Color, PerspectiveCamera, LinearFilter, CustomSavePass, CameraHelper, OrthographicCamera, Scene, AmbientLight, SpotLight, GridHelper, Vector2, ShaderMaterial, WebGLRenderTarget} from 'three'
+import { Color, PerspectiveCamera, LinearFilter, CameraHelper, OrthographicCamera, Scene, AmbientLight, SpotLight, GridHelper, Vector2, ShaderMaterial, WebGLRenderTarget, PMREMGenerator} from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import Background from '../components/Background'
-// import Hello from '../components/Hello'
-import Letter from '../components/Letter'
-import Projects from '../components/Projects'
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
+import InteractiveGrid from '../components/InteractiveGrid'
 import store from '../store'
 import { E, SavePass } from '../utils'
 import GlobalEvents from '../utils/GlobalEvents'
@@ -13,34 +11,23 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
-import screenFxVert from '../../../../glsl/includes/screenFx/vert.glsl'
-import screenFxFrag from '../../../../glsl/includes/screenFx/frag.glsl'
-import Sim from '../components/Sim'
 
-export default class MainScene extends Scene {
+
+export default class LabScene extends Scene {
 	constructor() {
 		super()
-
-		store.MainScene = this
+		store.LabScene = this
 		this.options = {
 			controls: window.urlParams.has('controls')
 		}
 
-		this.camera = new PerspectiveCamera(45, store.window.w / store.window.h, 2, 50)
-		this.camera.position.z = 15
+		this.camera = new PerspectiveCamera(45, store.window.w / store.window.h, 0.1, 1000)
+		this.camera.position.z = 20
 		this.add(this.camera)
 
 
-		this.orthoCamera = new OrthographicCamera(
-			store.window.w / -2,
-			store.window.w / 2,
-			store.window.h / 2,
-			store.window.h / -2,
-			1,
-			1000
-		)
-		this.orthoCamera.position.z = 5
-		this.orthoCamera.layers.set(1)
+		this.orthoCamera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
+		// this.orthoCamera.position.z = 5
 
 		this.activeCamera = this.camera
 
@@ -59,27 +46,30 @@ export default class MainScene extends Scene {
 		this.controls.enabled = this.options.controls
 		this.controls.enableDamping = true
 
-		this.background = new Color(0x222222)
+		this.background = new Color(0x000000)
 
 		/* Add scene components */
 		this.components = {
-			// sim: new Sim(),
-			background: new Background(),
-			letter: new Letter(),
-			projects: new Projects()
+			// MarchingCubes: new MarchingCubes(),
+			// aiSphere: new AISphere()
+			// imageSequence: new ImageSequence()
+			interactiveGrid: new InteractiveGrid()
+			// background: new Background(),
+			// text: new Text()
+			// letter: new Letter(),
+			// projects: new Projects()
 		}
 
 		this.load()
 
 		E.on('App:start', () => {
-			this.createFbo()
+			// this.createFbo()
 			this.build()
 			this.addEvents()
 		})
 	}
 
 	build() {
-		this.buildDebugEnvironment()
 		this.composer = new EffectComposer(store.WebGL.renderer)
 		this.composer.setSize(store.window.w, store.window.h)
 		// Build components and add to scene
@@ -88,24 +78,34 @@ export default class MainScene extends Scene {
 			this.add(this.components[key])
 		}
 
+	
+		this.setupEnvironment()
+		// this.waterTexture = new WaterTexture({ debug: true })
+
 		this.buildPasses()
+	}
+
+	async setupEnvironment() {
+		const envMap = await this.loadHDRI('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/empty_warehouse_01_1k.hdr', store.WebGL.renderer)
+		this.environment = envMap
 	}
 
 	buildPasses() {
 		this.renderScene = new RenderPass(this, this.activeCamera)
+		this.fxaaPass = new ShaderPass(FXAAShader)
+		this.fxaaPass.material.uniforms.resolution.value.x = 1 / (store.window.w * store.WebGL.renderer.getPixelRatio())
+		this.fxaaPass.material.uniforms.resolution.value.y = 1 / (store.window.fullHeight * store.WebGL.renderer.getPixelRatio())
+
 		this.bloomPass = new UnrealBloomPass(new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio()), 1.5, 1, .9)
 		this.bloomPass.enabled = true
-
-
-		// this.composer.addPass(this.renderScene)
+	
+		this.composer.addPass(this.renderScene)
 		// this.composer.addPass(this.screenFxPass)
-		// this.composer.addPass(this.bloomPass)
-		store.WebGL.composerPasses.add(this.renderScene)
-		store.WebGL.composerPasses.add(this.bloomPass)
+		this.composer.addPass(this.bloomPass)
 
 		this.renderPass = new RenderPass(this, this.camera)
 		this.renderPass.name = this.name
-		this.renderPass.enabled = true
+		this.renderPass.enabled = false
 		this.renderPass.renderToScreen = false
 
 		// The final save pass used for transitioning
@@ -114,10 +114,11 @@ export default class MainScene extends Scene {
 			magFilter: LinearFilter,
 			depthBuffer: false
 		}))
+
 		this.savePass.name = `${this.name} Final`
-		this.savePass.enabled = true
-		store.WebGL.composerPasses.add(this.renderPass, 0)
-		store.WebGL.composerPasses.add(this.savePass, 1)
+		this.savePass.enabled = false
+		store.WebGL.composerPasses.add(this.renderPass, 20)
+		store.WebGL.composerPasses.add(this.savePass, 21)
 	}
 
 	createFbo() {
@@ -144,7 +145,6 @@ export default class MainScene extends Scene {
 		store.RAFCollection.add(this.onRaf, 1)
 	}
 
-
 	start() {
 		// this.removeEvents()
 		for (const key in this.components) {
@@ -159,28 +159,28 @@ export default class MainScene extends Scene {
 		}
 	}
 
-
 	onRaf = () => {
 		this.controls.enabled && this.controls.update()
 
 		if (this.controls.enabled) {
 			// store.WebGL.renderer.render(this, this.devCamera)
-			this.activeCamera = this.devCamera
+			// this.activeCamera = this.devCamera
 		} else {
 			// store.WebGL.renderer.render(this, this.camera)
-			this.activeCamera = this.camera
+			// this.activeCamera = this.orthoCamera
 		}
 
 		store.Gui && store.Gui.refresh(false)
+		if(this.components.MarchingCubes) this.components.MarchingCubes.animate()
+		if(this.components.aiSphere) this.components.aiSphere.animate()
 
 		// this.composer.render()
 	}
 
 	onResize = () => {
-		this.savePass.setSize(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
 		this.camera.aspect = store.window.w / store.window.h
 		this.camera.updateProjectionMatrix()
-		store.envFbo.setSize(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
+		// store.envFbo.setSize(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
 		this.composer.setSize(store.window.w, store.window.h)
 	}
 
@@ -190,8 +190,21 @@ export default class MainScene extends Scene {
 			models: {}
 		}
 
-		store.AssetLoader.loadTexture('/textures/background.jpeg').then(texture => {
-			this.backgroundTexture = texture
-		})
+		// store.AssetLoader.loadTexture(backgroundImg).then(texture => {
+		// 	this.backgroundTexture = texture
+		// })
 	}
+
+	loadHDRI(url, renderer) {
+		return new Promise(resolve => {
+		  const loader = new RGBELoader()
+		  const pmremGenerator = new PMREMGenerator(renderer)
+		  loader.load(url, (texture) => {
+			const envMap = pmremGenerator.fromEquirectangular(texture).texture
+			texture.dispose()
+			pmremGenerator.dispose()
+			resolve(envMap)
+		  })
+		})
+	  }
 }

@@ -18,9 +18,9 @@
   
   <script>
   import './style.less'
-  import gsap from 'gsap'
+//   import gsap from 'gsap'
   import store from '@/assets/js/store'
-  import {E} from '@/assets/js/utils'
+//   import {E} from '@/assets/js/utils'
   export default {
 	name: 'loader-component',
 	props: {
@@ -45,11 +45,11 @@
 	components: {
 	},
 	mounted() {
-		E.on('LoaderOut', () => {
-			gsap.delayedCall(1, () => {
-				this.appear = true
-			})
-		})
+		// E.on('LoaderOut', () => {
+		// 	gsap.delayedCall(1, () => {
+		// 		this.appear = true
+		// 	})
+		// })
 	},
 	methods: {
 		scrollTo(){

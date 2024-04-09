@@ -26,21 +26,7 @@ export default class Projects extends Group {
 
 	build() {
 		this.createParticle()
-		this.createTimeline()
 	}
-
-	// createPlane(){
-	// 	const mesh = new Mesh(
-	// 		new PlaneGeometry(5, 5 *  store.MainScene.backgroundTexture.source.data.height / store.MainScene.backgroundTexture.source.data.width),
-	// 		new ProjectMaterial({ uniforms: {
-	// 			resolution: { value: new Vector2(store.window.w, store.window.h)},
-	// 			map: { value: store.MainScene.backgroundTexture }
-	// 		}, globalUniforms: this.globalUniforms })
-	// 	)
-	// 	this.add(mesh)
-	// 	mesh.position.set(0, 10, 0)
-	// 	this.mesh = mesh
-	// }
 
 	createParticle() {
 		const texture = store.MainScene.backgroundTexture
@@ -89,14 +75,13 @@ export default class Projects extends Group {
 				uniforms: {
 					resolution: { value: new Vector2(store.window.w * store.window.dpr, store.window.h * store.window.dpr)},
 					spriteSize: {value: new Vector2(size.x / step, size.y / step ) },
-					videoTexture: { value: new VideoTexture( this.video ) }
+					videoTexture: { value: null }
 				}
 			}),
 			particles.length
 		)
 		let scale = 0.0062 * 2
 		this.dummy.scale.set(scale,scale,1)
-		console.log(particles.length)
 		particles.forEach((el, i) => {
 			this.dummy.position.set(el.x * scale, el.y * scale, 0)
 			this.dummy.updateMatrix()
@@ -113,6 +98,20 @@ export default class Projects extends Group {
 		this.instance.position.set(0, 10, 0)
 		this.instance.visible = false
 
+	}
+
+	start = () => {
+		this.video =  qs('video#videoContainer')
+		this.videos = qsa('.video_preload video')
+		this.videos.forEach(el => {
+			el.texture = new VideoTexture( el )
+		})
+		this.instance.material.uniforms.videoTexture.value = this.video
+		this.createTimeline()
+
+	}
+	stop() {
+		if(this.timeline) this.timeline.kill()
 	}
 
 	createTimeline() {

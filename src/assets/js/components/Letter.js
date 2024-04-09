@@ -46,11 +46,9 @@ export default class Letter extends Group {
 			start: "top top",
 			end: "bottom top",
 		})
-		store.RAFCollection.add(this.animate, 0)
+		// store.RAFCollection.add(this.animate, 0)
 
-		// console.log(this.item)
 		// this.item.onBeforeRender = () => {
-		// 	console.log("COUCOU")
 		// }
 
 	}
@@ -302,9 +300,27 @@ export default class Letter extends Group {
 		return Math.floor(Math.random() * (max - min + 1) + min)
 	}
 
+	stop() {
+		store.RAFCollection.remove(this.animate, 0)
+	}
+	start() {
+		store.RAFCollection.add(this.animate, 0)
+		gsap.fromTo(this, { appearProgress: 1.4 }, {
+			appearProgress: 0,
+			yoyo: true,
+			repeat: 0,
+			duration: 4,
+			delay: 1,
+			ease: 'power1.easeInOut',
+			onUpdate: () => {
+				this.GlassMaterial.uniforms.uAppear.value = this.appearProgress
+				this.backfaceMaterial.uniforms.uAppear.value = this.appearProgress
+			}
+		})
+	}
+
 	animate = () => {
 		if (!this.item) return
-
 		// Ease Mouse movement
 		this.easedMouseTemp.subVectors(store.pointer.glNormalized, this.easedMouse)
 		this.easedMouseTemp.multiplyScalar(0.1)
@@ -357,7 +373,7 @@ export default class Letter extends Group {
 			this.item.material = this.GlassMaterial
 			// store.WebGL.renderer.render(this.parent, this.camera)
 
-			store.MainScene.components.projects.instance.visible = false
+			// store.MainScene.components.projects.instance.visible = false
 		} else {
 			if(this.item.visible) this.item.visible = false
 			store.MainScene.components.projects.instance.visible = true
