@@ -79,7 +79,7 @@ export default {
 			console.log(store.Lenis)
 			setTimeout(() => {
 				console.log('reset')
-				store.Lenis.reset()
+				store.Lenis.dimensions.resize()
 			}, 2000)
 			next()
 		})
