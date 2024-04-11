@@ -305,6 +305,7 @@ export default class Letter extends Group {
 	}
 	start() {
 		store.RAFCollection.add(this.animate, 0)
+		this.onResize()
 		gsap.fromTo(this, { appearProgress: 1.4 }, {
 			appearProgress: 0,
 			yoyo: true,

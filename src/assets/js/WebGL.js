@@ -17,7 +17,7 @@ export default class WebGL {
 		this.composer = new EffectComposer(this.renderer)
 		this.composerPasses = new ArrayOrderController(this.composer.passes)
 
-		this.SceneTransition = new SceneTransition({ fromScene: 'MainScene', toScene: 'LabScene', index: 50, duration: 1.5 })
+		this.SceneTransition = new SceneTransition({ fromScene: 'MainScene', toScene: 'LabScene', index: 50, duration: 2.5 })
 
 		this.scenes = {
 			/** @type { import("./scenes/MainScene").default } */

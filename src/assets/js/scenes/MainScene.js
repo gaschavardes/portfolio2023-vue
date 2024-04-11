@@ -153,6 +153,7 @@ export default class MainScene extends Scene {
 
 	start() {
 		this.addEvents()
+		this.onResize()
 		for (const key in this.components) {
 			this.components[key].start && this.components[key].start()
 		}

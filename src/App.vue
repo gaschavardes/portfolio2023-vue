@@ -80,6 +80,9 @@ export default {
 			setTimeout(() => {
 				console.log('reset')
 				store.Lenis.dimensions.resize()
+				ScrollTrigger.defaults({
+					scroller: this.$refs.scrollContainer
+				})
 			}, 2000)
 			next()
 		})

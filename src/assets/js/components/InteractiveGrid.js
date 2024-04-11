@@ -21,17 +21,20 @@ export default class InteractiveGrid extends Group {
 		E.on('App:start', () => {
 			this.appear()
 		})
+		E.on('introProgress', (e) => {
+			this.introLeave(e.value)
+		})
 	}
 
 	appear() {
 		console.log('coucou')
 		this.appearTimeline = gsap.timeline({ paused: true })
 		this.appearTimeline.addLabel('tokenAppear')
-		this.appearTimeline.fromTo(this.tokenMaterial.uniforms.uAppear, { value: 0}, { value: 1, duration: 2}, 'tokenAppear')
+		this.appearTimeline.fromTo(this.tokenMaterial.uniforms.uAppear, { value: 0}, { value: 2, duration: 4}, 'tokenAppear')
 		this.appearTimeline.to(this.token.rotation, { z: Math.PI * 2, duration: 1}, 'tokenAppear+=0.5')
 		this.appearTimeline.to(this.token.position, { y: -3, z: 7, duration: 1.2, ease: "back.out(5)"}, 'tokenAppear+=0.5')
 
-		this.appearTimeline.addLabel('gridAppear')
+		this.appearTimeline.addLabel('gridAppear', '-=2')
 		this.appearTimeline.fromTo(this.gridMaterial.uniforms.uAppear, { value: 0},
 			{ 
 				value: 30,
@@ -46,12 +49,27 @@ export default class InteractiveGrid extends Group {
 		// 	this.appearTimeline.play()
 		// 	console.log('wesh')
 		// })
+
+		this.tokenLeaveTimeline = gsap.timeline({ paused: true })
+		this.tokenLeaveTimeline.to(this.token.position, { y: 4, duration: 1.2}, 0)
+		this.tokenLeaveTimeline.to(this.tokenMaterial.uniforms.uIOR, { value: 1, duration: 1.2}, 0)
+		this.tokenLeaveTimeline.to(this.token.scale, { x: 1, y: 1, z: 1, duration: 1.2}, 0)
+
+	}
+
+	introLeave(e) {
+		this.tokenLeaveTimeline.progress(e)
+		console.log(this.tokenMaterial.uniforms.uIOR.value)
+		// this.tokenMaterial.uniforms.uLeave.value = e
+		// this.backfaceTokenMaterial.uniforms.uLeave.value = e
+		// this.token
+		// this.gridMaterial.uniforms.uLeave.value = e
 	}
 
 	createGrid() {
 		this._instanceDummy = new Object3D()
 	
-		const grid = 21
+		const grid = 27
 		const size = 0.5
 		const offset = 1.3
 		const gridSize = grid * size + offset * grid

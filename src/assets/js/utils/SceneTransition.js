@@ -1,4 +1,4 @@
-import { ShaderMaterial } from "three"
+import { ShaderMaterial, Vector2 } from "three"
 import transitionVert from '../materials/transition/transitionVert.glsl'
 import transitionFrag from '../materials/transition/transitionFrag.glsl'
 import store from "../store"
@@ -44,7 +44,8 @@ export default class SceneTransition {
 				uFromScene: { value: this.fromScene.savePass.renderTarget.texture },
 				uToScene: { value: this.toScene.savePass.renderTarget.texture },
 				uProgress: { value: 0 },
-				uTime: store.WebGL.globalUniforms.uTime
+				uTime: store.WebGL.globalUniforms.uTime,
+				uResolution: { value: new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())}
 			},
 			transparent: true
 		}))

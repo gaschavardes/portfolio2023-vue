@@ -66,13 +66,13 @@ varying vec3 worldPosition;
 varying float vZVal;
 uniform float uHideZ;
 uniform float uAppear;
+uniform float uIOR;
 
 
 // float ior = 2.4;
 // float a = .5;
 // float diffuse = 0.2;
 
-float ior = 5.;
 float diffuse = .2;
 
 vec3 fogColor = vec3(1.0);
@@ -108,6 +108,7 @@ vec2 matcap(vec3 eye, vec3 normal) {
 }
 
 void main() {
+	float ior = uIOR;
 	float a = .5;
 	// get screen coordinates
 	vec2 uv = gl_FragCoord.xy / resolution;

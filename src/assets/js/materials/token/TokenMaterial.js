@@ -30,7 +30,8 @@ export default class BasicMaterial extends ShaderMaterial {
 					uDiffuseMatcapBlend: { value: 1 },
 					uEnvMapBlend: { value: 0},
 					uHideZ: { value: 0},
-					uAppear: { value: 0}
+					uAppear: { value: 0},
+					uIOR: { value: 5},
 				},
 				defines: {
 					// USE_INSTANCING: true,
