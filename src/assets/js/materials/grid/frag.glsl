@@ -64,6 +64,7 @@ varying vec3 viewDirection;
 varying vec2 vUv; 
 varying vec3 worldPosition;
 varying float vZVal;
+varying float vAppear;
 uniform float uHideZ;
 
 
@@ -190,7 +191,7 @@ void main() {
 	refractCol.rgb = mix(refractCol.rgb, fogColor, thickness * diffuse);
 	// mix the refraction color and reflection color
 	refractCol.rgb = mix(refractCol.rgb, matCap.rgb, f * uFresnelVal);
-
+	// refractCol += 0.3;
 	vec3 viewDir = normalize( vViewPosition );
 
 	#ifdef USE_MATCAP
@@ -247,7 +248,9 @@ void main() {
 
 
 	gl_FragColor = vec4(outgoingLight, 1.);
-	gl_FragColor.a = mix(1., smoothstep(0.6, 0.5, vZVal), uHideZ);
+	gl_FragColor.rgb *= 1. + sin(vAppear * 3.14) * 10.;
+	gl_FragColor.a = vAppear;
+
 	// gl_FragColor = texture2D(envMap, gl_FragCoord.xy / resolution);
 	// gl_FragColor = mix(texture2D(envMap, uv), gl_FragColor, uHideZ);
 	// gl_FragColor = texture2D(envMap, gl_FragCoord.xy / resolution);	

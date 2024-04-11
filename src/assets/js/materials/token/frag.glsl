@@ -65,14 +65,15 @@ varying vec2 vUv;
 varying vec3 worldPosition;
 varying float vZVal;
 uniform float uHideZ;
+uniform float uAppear;
 
 
 // float ior = 2.4;
 // float a = .5;
 // float diffuse = 0.2;
 
-float ior = 1.;
-float diffuse = 0.2;
+float ior = 5.;
+float diffuse = .2;
 
 vec3 fogColor = vec3(1.0);
 vec3 reflectionColor = vec3(1.0);
@@ -135,7 +136,7 @@ void main() {
 	mat3 vTBN = mat3( tangent, bitangent, worldNormal );
 	vec3 mapN = texture2D( tNormal, vUv ).xyz * 2.0 - 1.0;
 	vec3 normalVal = normalize( vTBN * mapN );
-	vec3 normal = normalVal * (1.0 - a) - backfaceNormal * a ;
+	vec3 normal = normalVal * (1.0 - a) - backfaceNormal * a;
 	// calculate refraction and add to the screen coordinates
 	vec3 refracted = refract(eyeVector, normal, 1.0/ior);
 	uv += refracted.xy;
@@ -246,7 +247,15 @@ void main() {
 	gl_FragColor = vec4(final.rgb, 1.0);
 
 
+
 	gl_FragColor = vec4(outgoingLight, 1.);
+	vec2 uvAppear = gl_FragCoord.xy / resolution;
+	float appear =  smoothstep(uAppear, uAppear - 0.1, uvAppear.y);
+	float appearLight = sin(appear * 3.14159265359); 
+	gl_FragColor.a = appear;
+	gl_FragColor.rgb += appearLight * 1000.;
+	// gl_FragColor.rgb *= 1. - (appearLight * 5.);
+	// gl_FragColor= matcapColor;
 	// gl_FragColor = vec4(normal, 1.);
 	// gl_FragColor.a = mix(1., smoothstep(0.6, 0.5, vZVal), uHideZ);
 	// gl_FragColor = texture2D(envMap, gl_FragCoord.xy / resolution);

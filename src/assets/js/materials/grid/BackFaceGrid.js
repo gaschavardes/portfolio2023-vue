@@ -23,7 +23,8 @@ export default class BackFaceGrid extends ShaderMaterial {
 				uPos1: {value: new Vector3(0,0,0)},
 				uAnimate: {value: 0},
 				uVel: { value: 0},
-				tNormal: { value: options.tNormal}
+				tNormal: { value: options.tNormal},
+				uAppear: { value: 0}
 			}
 		})
 	}

@@ -14,6 +14,7 @@ varying vec3 worldNormal;
 varying vec3 worldPosition;
 varying vec3 eyeVector;
 varying float vZVal;
+uniform float uAppear;
 
 // NOISE 
 
@@ -51,11 +52,16 @@ void main()	{
 	vec3 pos = position;
 	vec3 objectNormal = normal;
    	eyeVector = normalize(worldPosition.xyz - cameraPosition);
+
+	vec4 test = vec4(pos, 1.0) * rotationMatrix(vec3(0., 0., -1.), uPos0.x * 0.02) * rotationMatrix(vec3(-1., 0., 0.), uPos0.y * 0.02);
+	objectNormal = vec4(vec4(objectNormal, 1.) * rotationMatrix(vec3(0., 0., -1.), uPos0.x * 0.02) * rotationMatrix(vec3(-1., 0., 0.), uPos0.y * 0.02)).rgb;
 	worldNormal = normalize( modelViewMatrix * vec4(objectNormal, 0.0)).xyz;
-	vec3 transformedPosition = pos;
+
+	vec3 transformedPosition = test.rgb;
 	#include <dynamicBaseVert>
-	mvPosition = modelViewMatrix * vec4(pos, 1.0);
+
+	mvPosition = modelViewMatrix * test;
 	vViewPosition = - mvPosition.xyz;
-	
-	gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+
+	gl_Position = projectionMatrix * mvPosition;
 }

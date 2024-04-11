@@ -13,7 +13,7 @@ export default class BackFaceMaterial extends ShaderMaterial {
 				uProgress: { value: 0 },
 				uStartingTime: { value: 0 },
 				uAppear: { value: 0 },
-				uMouse: { value: Vector2}
+				uMouse: { value: Vector2},
 			}
 		})
 	}

@@ -27,9 +27,10 @@ export default class BasicMaterial extends ShaderMaterial {
 					uNormalScale: { value: 1},
 					uBlendMode: { value: 4},
 					uRoughness: { value: 0 },
-					uDiffuseMatcapBlend: { value: 0.7 },
+					uDiffuseMatcapBlend: { value: 1},
 					uEnvMapBlend: { value: 0},
-					uHideZ: { value: 0}
+					uHideZ: { value: 0},
+					uAppear: { value: 0}
 				},
 				defines: {
 					// USE_INSTANCING: true,
@@ -51,8 +52,8 @@ export default class BasicMaterial extends ShaderMaterial {
 			uniforms: options.uniforms,
 			defines: options.defines,
 			transparent: true,
-			depthTest: options.variation.alpha,
-			depthWrite: options.variation.alpha
+			depthTest: true,
+			depthWrite: true
 		})
 
 		this.globalUniforms = options.globalUniforms

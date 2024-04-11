@@ -93,7 +93,7 @@ export default class MainScene extends Scene {
 
 	buildPasses() {
 		this.renderScene = new RenderPass(this, this.activeCamera)
-		this.bloomPass = new UnrealBloomPass(new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio()), 1.5, 1, .9)
+		this.bloomPass = new UnrealBloomPass(new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio()), 1.5, 1, .8)
 		this.bloomPass.enabled = true
 
 
@@ -101,7 +101,7 @@ export default class MainScene extends Scene {
 		// this.composer.addPass(this.screenFxPass)
 		// this.composer.addPass(this.bloomPass)
 		store.WebGL.composerPasses.add(this.renderScene)
-		store.WebGL.composerPasses.add(this.bloomPass)
+		store.WebGL.composerPasses.add(this.bloomPass, 1)
 
 		this.renderPass = new RenderPass(this, this.camera)
 		this.renderPass.name = this.name
@@ -117,7 +117,7 @@ export default class MainScene extends Scene {
 		this.savePass.name = `${this.name} Final`
 		this.savePass.enabled = true
 		store.WebGL.composerPasses.add(this.renderPass, 0)
-		store.WebGL.composerPasses.add(this.savePass, 1)
+		store.WebGL.composerPasses.add(this.savePass, 2)
 	}
 
 	createFbo() {
@@ -144,16 +144,23 @@ export default class MainScene extends Scene {
 		store.RAFCollection.add(this.onRaf, 1)
 	}
 
+	removeEvents() {
+		E.off(GlobalEvents.RESIZE, this.onResize)
+		store.RAFCollection.remove(this.onRaf, 1)
+	}
+
+
 
 	start() {
-		// this.removeEvents()
+		this.addEvents()
 		for (const key in this.components) {
 			this.components[key].start && this.components[key].start()
 		}
 	}
 
 	stop() {
-		// this.removeEvents()
+		this.removeEvents()
+		
 		for (const key in this.components) {
 			this.components[key].stop && this.components[key].stop()
 		}

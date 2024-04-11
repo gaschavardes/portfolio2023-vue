@@ -301,7 +301,7 @@ export default class Letter extends Group {
 	}
 
 	stop() {
-		store.RAFCollection.remove(this.animate, 0)
+		store.RAFCollection.remove(this.animate)
 	}
 	start() {
 		store.RAFCollection.add(this.animate, 0)

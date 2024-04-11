@@ -9,7 +9,7 @@
 		</nav>
 		<!-- <Home ref="home"/> -->
 		<!-- <RouterView ref="router" /> -->
-		<router-view v-slot="{ Component, route }">
+		<router-view v-slot="{ Component, route }" >
 			<transition :name="route.meta.transition">
 				<component :is="Component" ref="routerEl" />
 			</transition>
@@ -75,39 +75,55 @@ export default {
 
 	E.on('LoaderOut', () => {
 		this.router.beforeEach((to, from, next) => {
+			console.log('BLABLBLA')
+			console.log(store.Lenis)
+			setTimeout(() => {
+				console.log('reset')
+				store.Lenis.reset()
+			}, 2000)
 			next()
 		})
 	})
+	
 
 	const vh = store.window.h * 0.01
 	document.documentElement.style.setProperty('--vh', `${vh}px`)
 	
-	store.Lenis = new Lenis({
-		wrapper: this.$refs.scrollContainer,
-		content: document.querySelector('body'),
-		gestureOrientation: 'vertical',
-		syncTouch: true
-	})
-	store.Lenis.stop()
-	store.Lenis.on('scroll', () => {
-		ScrollTrigger.update()
-	})
+	E.on('PageLoaded', () => {
+		console.log(this.$refs.scrollContainer)
+		store.Lenis = new Lenis({
+			wrapper: this.$refs.scrollContainer,
+			// content: document.querySelector('body'),
+			gestureOrientation: 'vertical',
+			syncTouch: true,
+			autoResize: true,
+			wrapperResizeObserver: this.$refs.scrollContainer
+		})
+		store.Lenis.stop()
+		store.Lenis.on('scroll', () => {
+			ScrollTrigger.update()
+		})
 
-	ScrollTrigger.defaults({
-		scroller: this.$refs.scrollContainer
+		ScrollTrigger.defaults({
+			scroller: this.$refs.scrollContainer
+		})
+		// ScrollTrigger.scrollerProxy(this.$refs.scrollContainer)
+
+		gsap.ticker.add((time)=>{
+			store.Lenis.raf(time * 1000)
+			ScrollTrigger.update()
+		})
+
+		store.isMobile = store.window.w < 500
+
+		E.on(GlobalEvents.RESIZE, this.onResize)
 	})
-	// ScrollTrigger.scrollerProxy(this.$refs.scrollContainer)
-
-	gsap.ticker.add((time)=>{
-		store.Lenis.raf(time * 1000)
-		ScrollTrigger.update()
-	})
-
-	store.isMobile = store.window.w < 500
-
-	E.on(GlobalEvents.RESIZE, this.onResize)
+	
   },
   methods: {
+	initLenis() {
+
+	},
 	raf() {
 		// this.Lenis.raf(time)
 		requestAnimationFrame(this.raf)

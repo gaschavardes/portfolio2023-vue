@@ -8,7 +8,7 @@
   import './style.less'
   import gsap from 'gsap'
   import ScrollTrigger from 'gsap/ScrollTrigger'
-
+  import store from '@/assets/js/store'
 
   gsap.registerPlugin(ScrollTrigger)
   export default {
@@ -146,6 +146,7 @@
 	},
 	methods: {
 		appear() {
+			store.Lenis.start()
 		},
 		initLab: () => {
 			

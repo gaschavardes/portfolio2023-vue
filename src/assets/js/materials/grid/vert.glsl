@@ -14,6 +14,8 @@ varying vec3 worldNormal;
 varying vec3 worldPosition;
 varying vec3 eyeVector;
 varying float vZVal;
+varying float vAppear;
+uniform float uAppear;
 
 // NOISE 
 
@@ -58,6 +60,10 @@ void main()	{
 	float toCenter = length(newPos.xy);
 	vCenterDistance = toCenter;
 
+
+	vAppear = smoothstep(uAppear, uAppear - 5., vCenterDistance);
+
+
 	// transformed = rotate(transformed, vec3(0., 1., 1. ),  uTime + toCenter * 0.4 );
 	// transformed.z += sin(uTime * 2. + toCenter) * 0.3;
 
@@ -69,19 +75,20 @@ void main()	{
 	float velocity = EaseInOutSine(smoothstep(0., 0.2, uVel));
 	velocity = 1.;
 
-	transformed *= rotationMatrix(vec3(0., 0., 1. ), (1. - mouseTrail) * 3.14 * 2. * velocity);
+	transformed *= rotationMatrix(vec3(0., 0., 1. ), (1. - mouseTrail) * 3.14 * 2. * velocity + vAppear * 3.14 - 3.14 );
 	transformed *= rotationMatrix(vec3(1., 0., 0. ), 3.14 * .5);
 
-	transformed.z -= -2.9 * (1.-mouseTrail) * velocity + sin(uTime * 2. + toCenter) * 0.1;
+	
 
 
 	vec3 transformedPosition = position;
 	vec3 objectNormal = vec3( normal );
 	vec4 newObjNormal = vec4(objectNormal, 1.);
 	
-	newObjNormal *= rotationMatrix(vec3(0., 0., 1. ), (1. - mouseTrail) * 3.14 * 2. * velocity + 1.);
-	newObjNormal *= rotationMatrix(vec3(1., 0., 0. ), 3.14 * .5);
+	newObjNormal *= rotationMatrix(vec3(0., 0., 1. ), (1. - mouseTrail) * 3.14 * 2. * velocity) + vAppear * 3.14 - 3.14 ;
+	newObjNormal *= rotationMatrix(vec3(1., 0., 0. ), 3.14 * 0.5);
 
+	transformed.z -= -1.9 * (1.-mouseTrail) * velocity + sin(uTime * 2. + toCenter) * 0.1 - sin(vAppear * 3.14) * 2. - 3.;
 	objectNormal = newObjNormal.rgb;
 
 	#include <dynamicBaseVert>
@@ -102,6 +109,7 @@ void main()	{
 	vViewPosition = - mvPosition.xyz;
     vWorldPosition = modelMatrix * instance * transformed;
 	vZVal = transformed.z;
+
     // vWorldPosition = modelMatrix * instanceMatrix * transformed;
 
 }

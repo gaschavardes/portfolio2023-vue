@@ -68,7 +68,7 @@ export default class SceneTransition {
 			runBackwards: reversed,
 			value: way,
 			duration: duration,
-			ease: 'power2.out',
+			ease: 'power2.inOut',
 			onStart: () => {
 				store.targetScene = sceneB.name
 				store.leavingScene = sceneA.name
@@ -81,6 +81,10 @@ export default class SceneTransition {
 
 				sceneA.activeTransition = true
 				sceneB.activeTransition = true
+
+				sceneA.bloomPass.enabled = true
+				sceneB.bloomPass.enabled = true
+
 				if(way === 1) {
 					sceneB.start()
 				} else {
@@ -90,9 +94,12 @@ export default class SceneTransition {
 			onComplete: () => {
 				// sceneA.stop()
 				store.leavingScene = ''
+				console.log('STOP')
+
 				// Disable all passes apart from the render pass of the transitioned scene
 				if(way === 1) {
 					sceneA.stop()
+					sceneA.bloomPass.enabled = false
 					sceneA.renderPass.enabled = false
 					sceneB.renderPass.enabled = true
 					store.WebGL.activeScene = sceneB
@@ -107,6 +114,7 @@ export default class SceneTransition {
 					sceneB.activeTransition = false
 				} else {
 					sceneB.stop()
+					sceneB.bloomPass.enabled = false
 					sceneB.renderPass.enabled = false
 					sceneA.renderPass.enabled = true
 					store.WebGL.activeScene = sceneB

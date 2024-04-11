@@ -3,6 +3,7 @@ import { GridMaterial, BackFaceGrid, TokenMaterial, BackFaceToken } from '../mat
 import store from '../store'
 import { E } from '../utils'
 import GlobalEvents from '../utils/GlobalEvents'
+import gsap from 'gsap'
 export default class InteractiveGrid extends Group {
 	constructor() {
 		super()
@@ -17,7 +18,36 @@ export default class InteractiveGrid extends Group {
 		this.rotation.set(-.5, 0, 0)
 		this.position.set(0, 0, -5)
 		E.on(GlobalEvents.RESIZE, this.onResize)
+		E.on('App:start', () => {
+			this.appear()
+		})
 	}
+
+	appear() {
+		console.log('coucou')
+		this.appearTimeline = gsap.timeline({ paused: true })
+		this.appearTimeline.addLabel('tokenAppear')
+		this.appearTimeline.fromTo(this.tokenMaterial.uniforms.uAppear, { value: 0}, { value: 1, duration: 2}, 'tokenAppear')
+		this.appearTimeline.to(this.token.rotation, { z: Math.PI * 2, duration: 1}, 'tokenAppear+=0.5')
+		this.appearTimeline.to(this.token.position, { y: -3, z: 7, duration: 1.2, ease: "back.out(5)"}, 'tokenAppear+=0.5')
+
+		this.appearTimeline.addLabel('gridAppear')
+		this.appearTimeline.fromTo(this.gridMaterial.uniforms.uAppear, { value: 0},
+			{ 
+				value: 30,
+				duration: 2,
+				onUpdate: () => {
+					this.backfaceMaterial.uniforms.uAppear.value = this.gridMaterial.uniforms.uAppear.value
+				}
+		}, 'gridAppear-=.5')
+		
+
+		// gsap.delayedCall(3, () =>{
+		// 	this.appearTimeline.play()
+		// 	console.log('wesh')
+		// })
+	}
+
 	createGrid() {
 		this._instanceDummy = new Object3D()
 	
@@ -61,6 +91,7 @@ export default class InteractiveGrid extends Group {
 		this.add(this.items)
 	}
 
+
 	createSingle() {
 		const geometry = this.token
 		this.backfaceTokenFbo = new WebGLRenderTarget(store.window.w, store.window.h)
@@ -69,7 +100,7 @@ export default class InteractiveGrid extends Group {
 			backfaceMap: this.backfaceTokenFbo.texture,
 			envMap: this.envTokenFbo.texture,
 			tNormal: this.normalMap,
-			tMatCap: this.matCap,
+			tMatCap: this.matCapToken,
 			resolution: new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
 		})
 		this.backfaceTokenMaterial = new BackFaceToken({
@@ -77,7 +108,7 @@ export default class InteractiveGrid extends Group {
 		})
 		this.token = new Mesh(geometry, this.backfaceTokenMaterial)
 		this.token.rotation.set(Math.PI * 0.75, 0, 0)
-		this.token.position.set(0, -3, 7)
+		this.token.position.set(0, 3, 0)
 		this.token.scale.set(3, 3, 3)
 		this.add(this.token)
 	}
@@ -115,13 +146,18 @@ export default class InteractiveGrid extends Group {
 	}
 
 	stop() {
-		store.RAFCollection.remove(this.onRaf.bind(this), 0)
+		store.RAFCollection.remove(this.onRaf, 0)
+		this.appearTimeline.seek(0)
+		this.appearTimeline.pause()
 	}
 	start() {
-		store.RAFCollection.add(this.onRaf.bind(this), 0)
+		store.RAFCollection.add(this.onRaf, 0)
+		gsap.delayedCall(.5, () => {
+			this.appearTimeline.play()
+		})
 	}
 
-	onRaf() {
+	onRaf = () => {
 		// Lerp uPos0 to mouse
 		let v3 = new Vector2()
 		v3.copy(this.mouse)
@@ -145,6 +181,9 @@ export default class InteractiveGrid extends Group {
 		this.backfaceMaterial.uniforms.uPos1.value = this.gridMaterial.uniforms.uPos1.value
 		this.backfaceMaterial.uniforms.uPos0.value = this.gridMaterial.uniforms.uPos0.value
 
+		this.tokenMaterial.uniforms.uPos0.value = this.gridMaterial.uniforms.uPos0.value
+		this.backfaceTokenMaterial.uniforms.uPos0.value = this.gridMaterial.uniforms.uPos0.value
+
 		this.items.material = this.backfaceMaterial
 		store.WebGL.renderer.setRenderTarget(this.backfaceFbo)
 		store.WebGL.renderer.render(store.LabScene, store.LabScene.camera)
@@ -158,8 +197,6 @@ export default class InteractiveGrid extends Group {
 		this.items.visible = false
 		this.token.visible = true
 		this.items.material = this.gridMaterial
-		this.gridMaterial.depthTest = false
-		this.gridMaterial.depthWrite = false
 		this.gridMaterial.uniforms.uHideZ.value = 1
 		this.gridMaterial.uniforms.envMap.value = this.envFbo.clone().texture
 		store.WebGL.renderer.setRenderTarget(this.envFbo)
@@ -185,7 +222,7 @@ export default class InteractiveGrid extends Group {
 		this.gridMaterial.uniforms.uHideZ.value = 0
 		// this.items.material = this.gridMaterial
 
-		this.token.rotation.z = store.WebGL.globalUniforms.uTime.value * 0.5
+		// this.token.rotation.z = store.WebGL.globalUniforms.uTime.value * 0.5
 	}
 	load() {
 		store.AssetLoader.loadGltf(`/models/tokenThin.glb`).then(gltf => {
@@ -199,8 +236,11 @@ export default class InteractiveGrid extends Group {
 		store.AssetLoader.loadTexture(`/textures/tokenNormal1.png`, { flipY: false}).then(texture => {
 			this.normalMap = texture
 		})
-		store.AssetLoader.loadTexture(`/textures/cosmo3.png`).then(texture => {
+		store.AssetLoader.loadTexture(`/textures/diamond1.png`).then(texture => {
 			this.matCap = texture
+		})
+		store.AssetLoader.loadTexture(`/textures/diamond1.png`).then(texture => {
+			this.matCapToken = texture
 		})
 	}
 

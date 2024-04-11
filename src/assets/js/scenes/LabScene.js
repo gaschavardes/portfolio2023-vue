@@ -65,7 +65,6 @@ export default class LabScene extends Scene {
 		E.on('App:start', () => {
 			// this.createFbo()
 			this.build()
-			this.addEvents()
 		})
 	}
 
@@ -96,12 +95,12 @@ export default class LabScene extends Scene {
 		this.fxaaPass.material.uniforms.resolution.value.x = 1 / (store.window.w * store.WebGL.renderer.getPixelRatio())
 		this.fxaaPass.material.uniforms.resolution.value.y = 1 / (store.window.fullHeight * store.WebGL.renderer.getPixelRatio())
 
-		this.bloomPass = new UnrealBloomPass(new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio()), 1.5, 1, .9)
+		this.bloomPass = new UnrealBloomPass(new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio()), 1.5, 1., .7)
 		this.bloomPass.enabled = true
 	
 		this.composer.addPass(this.renderScene)
 		// this.composer.addPass(this.screenFxPass)
-		this.composer.addPass(this.bloomPass)
+		// this.composer.addPass(this.bloomPass)
 
 		this.renderPass = new RenderPass(this, this.camera)
 		this.renderPass.name = this.name
@@ -117,8 +116,9 @@ export default class LabScene extends Scene {
 
 		this.savePass.name = `${this.name} Final`
 		this.savePass.enabled = false
-		store.WebGL.composerPasses.add(this.renderPass, 20)
+		store.WebGL.composerPasses.add(this.renderPass, 19)
 		store.WebGL.composerPasses.add(this.savePass, 21)
+		store.WebGL.composerPasses.add(this.bloomPass, 20)
 	}
 
 	createFbo() {
@@ -144,22 +144,30 @@ export default class LabScene extends Scene {
 		E.on(GlobalEvents.RESIZE, this.onResize)
 		store.RAFCollection.add(this.onRaf, 1)
 	}
+	removeEvents() {
+		E.off(GlobalEvents.RESIZE, this.onResize)
+		store.RAFCollection.remove(this.onRaf, 1)
+	}
+
 
 	start() {
-		// this.removeEvents()
+		this.addEvents()
+		// store.MainScene.bloomPass.threshold = 0.5
 		for (const key in this.components) {
 			this.components[key].start && this.components[key].start()
 		}
 	}
 
 	stop() {
-		// this.removeEvents()
+		this.removeEvents()
 		for (const key in this.components) {
 			this.components[key].stop && this.components[key].stop()
 		}
 	}
 
 	onRaf = () => {
+		// store.MainScene.bloomPass.threshold = 0.1
+		// console.log(store.MainScene.bloomPass.threshold )
 		this.controls.enabled && this.controls.update()
 
 		if (this.controls.enabled) {

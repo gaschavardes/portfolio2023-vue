@@ -19,7 +19,6 @@ export default class Background extends Mesh {
 		this.renderOrder = 1
 		this.appaearProgress = 0
 		this.load()
-		store.RAFCollection.add(this.animate, 0)
 		this.targetScroll = 0
 
 	}
@@ -30,6 +29,13 @@ export default class Background extends Mesh {
 
 	mouseMove = () => {
 		
+	}
+
+	stop() {
+		store.RAFCollection.remove(this.animate, 0)
+	}
+	start() {
+		store.RAFCollection.add(this.animate, 0)
 	}
 
 	animate = () => {
