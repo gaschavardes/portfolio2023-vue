@@ -15,7 +15,13 @@ varying vec3 worldPosition;
 varying vec3 eyeVector;
 varying float vZVal;
 varying float vAppear;
+varying float vOpacity;
 uniform float uAppear;
+uniform float uLeave;
+attribute float random;
+#ifndef PI
+#define PI 3.141592653589793
+#endif
 
 // NOISE 
 
@@ -43,6 +49,11 @@ float sdSegment( in vec2 p, in vec2 a, in vec2 b )
     return length( pa - ba*h );
 }
 
+float backOut(float t) {
+  float f = 1.0 - t;
+  return 1.0 - (pow(f, 3.0) - f * sin(f * PI));
+}
+
 float EaseInOutSine(float x)
 { 
     return -(cos(PI * x) - 1.0) / 2.0;
@@ -59,6 +70,7 @@ void main()	{
 	vec4 newPos = instanceMatrix[3];
 	float toCenter = length(newPos.xy);
 	vCenterDistance = toCenter;
+	float randomProgress = 1. - smoothstep(random, random + 1., uLeave);
 
 
 	vAppear = smoothstep(uAppear, uAppear - 5., vCenterDistance);
@@ -75,7 +87,7 @@ void main()	{
 	float velocity = EaseInOutSine(smoothstep(0., 0.2, uVel));
 	velocity = 1.;
 
-	transformed *= rotationMatrix(vec3(0., 0., 1. ), (1. - mouseTrail) * 3.14 * 2. * velocity + vAppear * 3.14 - 3.14 );
+	transformed *= rotationMatrix(vec3(0., 0., 1. ), (1. - mouseTrail) * 3.14 * 2. * velocity + vAppear * 3.14 - 3.14 + (1. -randomProgress) * 2. * PI);
 	transformed *= rotationMatrix(vec3(1., 0., 0. ), 3.14 * .5);
 
 	
@@ -85,10 +97,10 @@ void main()	{
 	vec3 objectNormal = vec3( normal );
 	vec4 newObjNormal = vec4(objectNormal, 1.);
 	
-	newObjNormal *= rotationMatrix(vec3(0., 0., 1. ), (1. - mouseTrail) * 3.14 * 2. * velocity) + vAppear * 3.14 - 3.14 ;
+	newObjNormal *= rotationMatrix(vec3(0., 0., 1. ), (1. - mouseTrail) * 3.14 * 2. * velocity + vAppear * 3.14 - 3.14 + (1. -randomProgress) * 2. * PI);
 	newObjNormal *= rotationMatrix(vec3(1., 0., 0. ), 3.14 * 0.5);
 
-	transformed.z -= -1.9 * (1.-mouseTrail) * velocity + sin(uTime * 2. + toCenter) * 0.1 - sin(vAppear * 3.14) * 2. - 3.;
+	transformed.z -= -1.9 * (1.-mouseTrail) * velocity + sin(uTime * 2. + toCenter) * 0.1 - sin(vAppear * 3.14) * 2. - 3. - backOut(randomProgress) * 3.;
 	objectNormal = newObjNormal.rgb;
 
 	#include <dynamicBaseVert>
@@ -109,6 +121,7 @@ void main()	{
 	vViewPosition = - mvPosition.xyz;
     vWorldPosition = modelMatrix * instance * transformed;
 	vZVal = transformed.z;
+	vOpacity = smoothstep(0., 0.2, randomProgress);
 
     // vWorldPosition = modelMatrix * instanceMatrix * transformed;
 

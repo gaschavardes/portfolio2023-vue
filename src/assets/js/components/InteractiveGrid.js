@@ -1,4 +1,4 @@
-import { Group, WebGLRenderTarget, InstancedMesh, Object3D, Raycaster, PlaneGeometry, Mesh, Vector2, MeshBasicMaterial } from 'three'
+import { Group, WebGLRenderTarget, InstancedBufferAttribute, InstancedMesh, Object3D, Raycaster, PlaneGeometry, Mesh, Vector2, MeshBasicMaterial } from 'three'
 import { GridMaterial, BackFaceGrid, TokenMaterial, BackFaceToken } from '../materials'
 import store from '../store'
 import { E } from '../utils'
@@ -27,12 +27,11 @@ export default class InteractiveGrid extends Group {
 	}
 
 	appear() {
-		console.log('coucou')
 		this.appearTimeline = gsap.timeline({ paused: true })
 		this.appearTimeline.addLabel('tokenAppear')
 		this.appearTimeline.fromTo(this.tokenMaterial.uniforms.uAppear, { value: 0}, { value: 2, duration: 4}, 'tokenAppear')
 		this.appearTimeline.to(this.token.rotation, { z: Math.PI * 2, duration: 1}, 'tokenAppear+=0.5')
-		this.appearTimeline.to(this.token.position, { y: -3, z: 7, duration: 1.2, ease: "back.out(5)"}, 'tokenAppear+=0.5')
+		this.appearTimeline.to(this.token.position, { y: 0, z: 4, duration: 1.2, ease: "back.out(5)"}, 'tokenAppear+=0.5')
 
 		this.appearTimeline.addLabel('gridAppear', '-=2')
 		this.appearTimeline.fromTo(this.gridMaterial.uniforms.uAppear, { value: 0},
@@ -44,14 +43,8 @@ export default class InteractiveGrid extends Group {
 				}
 		}, 'gridAppear-=.5')
 		
-
-		// gsap.delayedCall(3, () =>{
-		// 	this.appearTimeline.play()
-		// 	console.log('wesh')
-		// })
-
 		this.tokenLeaveTimeline = gsap.timeline({ paused: true })
-		this.tokenLeaveTimeline.to(this.token.position, { y: 4, duration: 1.2}, 0)
+		this.tokenLeaveTimeline.to(this.token.position, { y: 5.8, duration: 1.2}, 0)
 		this.tokenLeaveTimeline.to(this.tokenMaterial.uniforms.uIOR, { value: 1, duration: 1.2}, 0)
 		this.tokenLeaveTimeline.to(this.token.scale, { x: 1, y: 1, z: 1, duration: 1.2}, 0)
 
@@ -59,8 +52,8 @@ export default class InteractiveGrid extends Group {
 
 	introLeave(e) {
 		this.tokenLeaveTimeline.progress(e)
-		console.log(this.tokenMaterial.uniforms.uIOR.value)
-		// this.tokenMaterial.uniforms.uLeave.value = e
+		this.gridMaterial.uniforms.uLeave.value = e * 6
+		this.backfaceMaterial.uniforms.uLeave.value = e * 6
 		// this.backfaceTokenMaterial.uniforms.uLeave.value = e
 		// this.token
 		// this.gridMaterial.uniforms.uLeave.value = e
@@ -77,6 +70,7 @@ export default class InteractiveGrid extends Group {
 		// const geometry = new CylinderGeometry( size, size, 0.2, 32 ); 
 		const geometry = this.token
 		// const geometry = new BoxGeometry( size, size, size); 
+		this.randoms = []
 		this.backfaceFbo = new WebGLRenderTarget(store.window.w, store.window.h)
 		this.envFbo = new WebGLRenderTarget(store.window.w, store.window.h)
 		this.gridMaterial = new GridMaterial({
@@ -99,11 +93,17 @@ export default class InteractiveGrid extends Group {
 				y * size - gridSize/2 + size / 2. + offset * y,
 				0, 
 			);
+			this.randoms.push(Math.random() * 5)
+
 			this._instanceDummy.scale.set(0.7, 0.7, 0.7)
 			this._instanceDummy.updateMatrix()
 			this.items.setMatrixAt(i, this._instanceDummy.matrix)
 			i++;
 		}
+		this.items.geometry.setAttribute(
+			'random',
+			new InstancedBufferAttribute(new Float32Array(this.randoms), 1)
+		)
 		this.items.instanceMatrix.needsUpdate = true;
 		this.items.computeBoundingSphere();
 		this.add(this.items)
@@ -125,10 +125,10 @@ export default class InteractiveGrid extends Group {
 			tNormal: this.normalMap,
 		})
 		this.token = new Mesh(geometry, this.backfaceTokenMaterial)
-		this.token.rotation.set(Math.PI * 0.75, 0, 0)
-		this.token.position.set(0, 3, 0)
-		this.token.scale.set(3, 3, 3)
-		this.add(this.token)
+		this.token.rotation.set(Math.PI * 0.5, 0, 0)
+		this.token.position.set(0, 0, -1)
+		this.token.scale.set(2.5, 2.5, 2.5)
+		store.LabScene.add(this.token)
 	}
 	mouseInteraction() {
 		const hitplane = new Mesh(
@@ -167,6 +167,14 @@ export default class InteractiveGrid extends Group {
 		store.RAFCollection.remove(this.onRaf, 0)
 		this.appearTimeline.seek(0)
 		this.appearTimeline.pause()
+
+		this.tokenLeaveTimeline.seek(0)
+		this.tokenLeaveTimeline.pause()
+		this.token.position.set(0, 0, -1)
+		this.token.scale.set(2.5, 2.5, 2.5)
+		this.gridMaterial.uniforms.uLeave.value = 0
+		this.backfaceMaterial.uniforms.uLeave.value = 0
+
 	}
 	start() {
 		store.RAFCollection.add(this.onRaf, 0)
@@ -176,6 +184,7 @@ export default class InteractiveGrid extends Group {
 	}
 
 	onRaf = () => {
+	
 		// Lerp uPos0 to mouse
 		let v3 = new Vector2()
 		v3.copy(this.mouse)
@@ -195,6 +204,7 @@ export default class InteractiveGrid extends Group {
 		this.gridMaterial.uniforms.uVel.value = this.vel.length() *2
 		this.gridMaterial.uniforms.uPos1.value.add(this.vel)
 		
+		if(this.tokenLeaveTimeline.progress() < 0.999){
 		this.backfaceMaterial.uniforms.uVel.value = this.gridMaterial.uniforms.uVel.value
 		this.backfaceMaterial.uniforms.uPos1.value = this.gridMaterial.uniforms.uPos1.value
 		this.backfaceMaterial.uniforms.uPos0.value = this.gridMaterial.uniforms.uPos0.value
@@ -219,12 +229,16 @@ export default class InteractiveGrid extends Group {
 		this.gridMaterial.uniforms.envMap.value = this.envFbo.clone().texture
 		store.WebGL.renderer.setRenderTarget(this.envFbo)
 		store.WebGL.renderer.render(store.LabScene, store.LabScene.camera)
+		this.items.visible = true
+
+		} else {
+			this.items.visible = false
+		}
 		
 
 		this.token.material = this.backfaceTokenMaterial
 		store.WebGL.renderer.setRenderTarget(this.backfaceTokenFbo)
 		store.WebGL.renderer.render(store.LabScene, store.LabScene.camera)
-		this.items.visible = true
 		this.token.visible = false
 		store.WebGL.renderer.setRenderTarget(this.envTokenFbo)
 		store.WebGL.renderer.render(store.LabScene, store.LabScene.camera)
@@ -254,7 +268,7 @@ export default class InteractiveGrid extends Group {
 		store.AssetLoader.loadTexture(`/textures/tokenNormal1.png`, { flipY: false}).then(texture => {
 			this.normalMap = texture
 		})
-		store.AssetLoader.loadTexture(`/textures/diamond1.png`).then(texture => {
+		store.AssetLoader.loadTexture(`/textures/misc18.png`).then(texture => {
 			this.matCap = texture
 		})
 		store.AssetLoader.loadTexture(`/textures/diamond1.png`).then(texture => {

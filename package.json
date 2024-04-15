@@ -11,6 +11,7 @@
     "@studio-freight/lenis": "^1.0.42",
     "@tweakpane/plugin-essentials": "^0.1.8",
     "@unseenco/e": "^2.3.0",
+    "cannon": "^0.6.2",
     "core-js": "^3.8.3",
     "glsl-noise": "^0.0.0",
     "glslify-loader": "^2.0.0",

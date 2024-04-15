@@ -24,7 +24,8 @@ export default class BackFaceGrid extends ShaderMaterial {
 				uAnimate: {value: 0},
 				uVel: { value: 0},
 				tNormal: { value: options.tNormal},
-				uAppear: { value: 0}
+				uAppear: { value: 0},
+				uLeave: { value: 0}
 			}
 		})
 	}

@@ -20,6 +20,8 @@ import GridMaterial from './grid/GridMaterial'
 import BackFaceGrid from './grid/BackFaceGrid'
 import TokenMaterial from './token/TokenMaterial'
 import BackFaceToken from './token/BackFaceToken'
+import DropMaterial from './drop/DropMaterial'
+import BackDropMaterial from './backDrop/BackDropMaterial'
 
 // materials
 import BasicMaterial from './basic/BasicMaterial'
@@ -51,5 +53,7 @@ export {
 	GridMaterial,
 	BackFaceGrid,
 	TokenMaterial, 
-	BackFaceToken
+	BackFaceToken,
+	DropMaterial,
+	BackDropMaterial
 }

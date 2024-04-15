@@ -3,8 +3,8 @@
 		<section class="lab_intro" id="thetop" ref="intro">
 
 		</section>
-		<section class="exp">
-			<div class="exp-item">
+		<section class="exp" >
+			<div v-for="(item, key) in exps" :key="key" :class="item" ref="exps">
 
 			</div>
 		</section>
@@ -28,6 +28,9 @@
 			activeVideo: 'crosswire',
 			activeDestination: 'the projects',
 			animateTimeOut: null,
+			exps: [
+				"bubble"	
+			]
 		}
 	},
 	components: {
@@ -40,6 +43,9 @@
 	},
 	beforeUnmount(){
 		this.introScroll.kill()
+		this.$refs.exps.forEach(el => {
+			el.trigger.kill()
+		})
 	},
 	methods: {
 		appear() {
@@ -61,16 +67,35 @@
 					E.emit('introProgress', { value: self.progress})
 				},
 				onEnter:() => {
-					console.log('KIKOU ENTER')
 				},
 				onEnterBack:() => {
-					console.log('KIKOU ENTER')
 				},
 				onLeave:() => {
-					console.log('KIKOU Leave')
 				}
 			})
-			console.log(this.introScroll)
+			this.$refs.exps.forEach(el => {
+				el.trigger = ScrollTrigger.create({
+					trigger: el,
+					start: 'top top',
+					end: `+=${store.window.h}`,
+					scrub: 1,
+					onUpdate: function() {
+						E.emit('bubbleProgress', { value: self.progress})
+					},
+					onEnter:function(){
+						E.emit('bubbleEnter', { value: 1})
+					},
+					onEnterBack:() => {
+						E.emit('bubbleEnter', { value: -1})
+					},
+					onLeave:() => {
+						E.emit('bubbleLeave', { value: -1})
+					},
+					onLeaveBack:() => {
+						E.emit('bubbleLeave', { value: 1})
+					}
+				})
+			})
 		}
 	}
   }

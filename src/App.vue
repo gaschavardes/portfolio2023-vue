@@ -83,8 +83,11 @@ export default {
 				ScrollTrigger.defaults({
 					scroller: this.$refs.scrollContainer
 				})
-			}, 2000)
+				store.Lenis.scrollTo(0, { immediate: true})
+				
+			}, 1000)
 			next()
+			console.log("KOUKOU")
 		})
 	})
 	
@@ -156,6 +159,13 @@ a:not(.button) {}
 	left: 0;
 	pointer-events: none;
 	touch-action: none;
+}
+
+nav{
+	position: fixed;
+	top: 20px;
+	left: 20px;
+	z-index: 1000;
 }
 
 #texture {

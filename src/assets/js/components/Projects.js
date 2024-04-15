@@ -17,7 +17,6 @@ export default class Projects extends Group {
 		this.dummy = new Object3D()
 		this.progress = 0
 		this.load()
-		store.RAFCollection.add(this.animate, 4)
 		E.on(GlobalEvents.RESIZE, this.onResize)
 		this.yPos = -10
 		this.progressEased = 0
@@ -101,6 +100,8 @@ export default class Projects extends Group {
 	}
 
 	start = () => {
+		store.RAFCollection.add(this.animate, 4)
+
 		this.video =  qs('video#videoContainer')
 		this.videos = qsa('.video_preload video')
 		this.videos.forEach(el => {
@@ -111,7 +112,18 @@ export default class Projects extends Group {
 
 	}
 	stop() {
-		if(this.timeline) this.timeline.kill()
+		if(this.timeline) {
+		
+			this.progress = 0
+			this.yPos = -10
+			this.progressEased = 0
+			this.timeline.progress(0)
+			this.timeline.pause()
+			this.timeline.kill()
+			this.animate()
+		}
+		store.RAFCollection.remove(this.animate, 4)
+
 	}
 
 	createTimeline() {
@@ -128,6 +140,8 @@ export default class Projects extends Group {
 	}
 
 	animate = () => {
+		console.log('projects animate', this.progressEased)
+		
 		if(this.timeline) {
 			this.progressEased += (this.progress - this.progressEased) * 0.1
 			this.timeline.progress(this.progressEased)

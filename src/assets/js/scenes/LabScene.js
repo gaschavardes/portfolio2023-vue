@@ -3,6 +3,9 @@ import { Color, PerspectiveCamera, LinearFilter, CameraHelper, OrthographicCamer
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import InteractiveGrid from '../components/InteractiveGrid'
+import Text from '../components/Text'
+import MarchingCubes from '../components/MarchingCubes'
+import Exp1 from '../components/Exp1'
 import store from '../store'
 import { E, SavePass } from '../utils'
 import GlobalEvents from '../utils/GlobalEvents'
@@ -50,10 +53,12 @@ export default class LabScene extends Scene {
 
 		/* Add scene components */
 		this.components = {
-			// MarchingCubes: new MarchingCubes(),
 			// aiSphere: new AISphere()
 			// imageSequence: new ImageSequence()
-			interactiveGrid: new InteractiveGrid()
+			interactiveGrid: new InteractiveGrid(),
+			exp1: new Exp1(),
+			// MarchingCubes: new MarchingCubes(),
+			// text: new Text()
 			// background: new Background(),
 			// text: new Text()
 			// letter: new Letter(),
@@ -73,10 +78,12 @@ export default class LabScene extends Scene {
 		this.composer.setSize(store.window.w, store.window.h)
 		// Build components and add to scene
 		for (const key in this.components) {
+			console.log(this.components[key])
 			this.components[key].build(this.objectData)
 			this.add(this.components[key])
 		}
 
+		console.log('LAB SCENE', this)
 	
 		this.setupEnvironment()
 		// this.waterTexture = new WaterTexture({ debug: true })
@@ -95,7 +102,7 @@ export default class LabScene extends Scene {
 		this.fxaaPass.material.uniforms.resolution.value.x = 1 / (store.window.w * store.WebGL.renderer.getPixelRatio())
 		this.fxaaPass.material.uniforms.resolution.value.y = 1 / (store.window.fullHeight * store.WebGL.renderer.getPixelRatio())
 
-		this.bloomPass = new UnrealBloomPass(new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio()), 1.5, 1., .7)
+		this.bloomPass = new UnrealBloomPass(new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio()), 1.5, 1., .95)
 		this.bloomPass.enabled = true
 	
 		this.composer.addPass(this.renderScene)
@@ -143,6 +150,9 @@ export default class LabScene extends Scene {
 	addEvents() {
 		E.on(GlobalEvents.RESIZE, this.onResize)
 		store.RAFCollection.add(this.onRaf, 1)
+		E.on('bubble enter', () => {
+			console.log('OOOOOO')
+		})
 	}
 	removeEvents() {
 		E.off(GlobalEvents.RESIZE, this.onResize)

@@ -25,12 +25,13 @@ export default class BasicMaterial extends ShaderMaterial {
 					matCapMap: { value: options.tMatCap},
 					uNormalStrength: { value: 1},
 					uNormalScale: { value: 1},
-					uBlendMode: { value: 4},
+					uBlendMode: { value: 2},
 					uRoughness: { value: 0 },
 					uDiffuseMatcapBlend: { value: 1},
 					uEnvMapBlend: { value: 0},
 					uHideZ: { value: 0},
-					uAppear: { value: 0}
+					uAppear: { value: 0},
+					uLeave: { value: 0}
 				},
 				defines: {
 					// USE_INSTANCING: true,

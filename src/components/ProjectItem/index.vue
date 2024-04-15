@@ -31,8 +31,10 @@
 	},
 	mounted() {
 		this.split()
-
 	},
+	// onBeforeUnmount() {
+		
+	// },
 	methods: {
 		split() {
 			this.$refs.title.split = new SplitText(this.$refs.title, {type:'chars, words, lines', charsClass:'char', linesClass:'line', wordsClass:'word'})

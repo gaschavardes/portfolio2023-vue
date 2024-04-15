@@ -1,57 +1,11 @@
-// // #include <defaultFrag>
-// #include <dynamicBaseFragPars>
-
-// // uniform vec3 uColor;
-// uniform sampler2D uMap;
-// uniform vec2 resolution;
-// uniform float uWindowRatio;
-// uniform vec2 uRatio;
-// uniform sampler2D tDiffuse;
-// // varying vec3 vNormal;
-// varying vec2 vUv;
-// varying vec3 worldNormal;
-// varying float vCenterDistance;
-// varying vec3 eyeVector;
-// varying float vZVal;
-// uniform sampler2D backfaceMap;
-// uniform float uHideZ;
-
-
-
-// void main() {
-// 	float a = .33;
-// 	float ior = 1.;
-
-// 	vec2 fragCoord = vUv * resolution;
-//     vec2 uvScreen = gl_FragCoord.xy /resolution.xy;
-
-// 	vec4 backface = texture2D(backfaceMap, uvScreen);
-// 	vec3 backfaceNormal = backface.rgb;
-// 	vec3 normal = normalize(worldNormal * (1.0 - a) - backfaceNormal * a);
-// 	vec3 refracted = refract(eyeVector, normal, 1.0/ior);
-// 	normal += refracted;
-	
-// 	// normal = normalize( normalMatrix * normal );
-
-
-// 	#include <dynamicBaseFrag>
-// 	gl_FragColor.a = mix(1., smoothstep(0.6, 0.5, vZVal), uHideZ);
-// 	// gl_FragColor = matcapColor;
-// 	gl_FragColor = mix(texture2D(tDiffuse, uvScreen), gl_FragColor, uHideZ);
-// 	// gl_FragColor = vec4(normal, 1.);
-// 	// #include <encodingFrag>
-// 	// gl_FragColor.rgb -= vCenterDistance * 0.05;
-// }
-
 #include <defaultFrag>
 #include <dynamicBaseFragPars>
 uniform sampler2D envMap;
-uniform sampler2D uMap;
 uniform sampler2D textureMap;
 uniform sampler2D normalMap;
 uniform sampler2D backfaceMap;
 uniform sampler2D matCapMap;
-// uniform sampler2D tMatcap;
+uniform sampler2D uMatcap;
 uniform vec2 resolution;
 uniform float uProgress;
 uniform float uFresnelVal;
@@ -63,18 +17,15 @@ varying vec3 eyeVector;
 varying vec3 viewDirection;
 varying vec2 vUv; 
 varying vec3 worldPosition;
-varying float vZVal;
-varying float vAppear;
-varying float vOpacity;
-uniform float uHideZ;
+varying float zVal;
 
 
 // float ior = 2.4;
 // float a = .5;
 // float diffuse = 0.2;
 
-float ior = 1.;
-float diffuse = 0.2;
+float ior = .5;
+float diffuse = 0.5;
 
 vec3 fogColor = vec3(1.0);
 vec3 reflectionColor = vec3(1.0);
@@ -109,6 +60,7 @@ vec2 matcap(vec3 eye, vec3 normal) {
 }
 
 void main() {
+	float ior = 5.;
 	float a = .5;
 	// get screen coordinates
 	vec2 uv = gl_FragCoord.xy / resolution;
@@ -132,12 +84,12 @@ void main() {
 	vec3 backfaceNormal = backface.rgb;
 	float backfaceDepth = backface.a;
 
-	vec3 tangent = normalize( vTangent );
-	vec3 bitangent = normalize( vBitangent );
-	mat3 vTBN = mat3( tangent, bitangent, worldNormal );
-	vec3 mapN = texture2D( tNormal, vUv ).xyz * 2.0 - 1.0;
-	vec3 normalVal = normalize( vTBN * mapN );
-	vec3 normal = normalVal * (1.0 - a) - backfaceNormal * a ;
+	// vec3 tangent = normalize( vTangent );
+	// vec3 bitangent = normalize( vBitangent );
+	// mat3 vTBN = mat3( tangent, bitangent, worldNormal );
+	// vec3 mapN = texture2D( tNormal, vUv ).xyz * 2.0 - 1.0;
+	// vec3 normalVal = normalize( vTBN * mapN );
+	vec3 normal = worldNormal * (1.0 - a) - backfaceNormal * a;
 	// calculate refraction and add to the screen coordinates
 	vec3 refracted = refract(eyeVector, normal, 1.0/ior);
 	uv += refracted.xy;
@@ -192,7 +144,7 @@ void main() {
 	refractCol.rgb = mix(refractCol.rgb, fogColor, thickness * diffuse);
 	// mix the refraction color and reflection color
 	refractCol.rgb = mix(refractCol.rgb, matCap.rgb, f * uFresnelVal);
-	// refractCol += 0.3;
+
 	vec3 viewDir = normalize( vViewPosition );
 
 	#ifdef USE_MATCAP
@@ -240,23 +192,13 @@ void main() {
 	#else
 		// vec3 outgoingLight = refractCol.rgb;
 	#endif
-	
-	vec4 map = texture2D(uMap, vUv);
-	// gl_FragColor = map;	
-	outgoingLight = mix(map.rgb, outgoingLight, 1.);
+
 
 	gl_FragColor = vec4(final.rgb, 1.0);
 
 
+
 	gl_FragColor = vec4(outgoingLight, 1.);
-	gl_FragColor.rgb *= 1. + sin(vAppear * 3.14) * 10.;
-	gl_FragColor.a = vAppear * vOpacity;
-
-	// gl_FragColor = texture2D(envMap, gl_FragCoord.xy / resolution);
-	// gl_FragColor = mix(texture2D(envMap, uv), gl_FragColor, uHideZ);
-	// gl_FragColor = texture2D(envMap, gl_FragCoord.xy / resolution);	
-
+	// gl_FragColor = matcapColor;
 	
-
 }
-
