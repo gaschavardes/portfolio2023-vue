@@ -1,6 +1,8 @@
 import {MarchingCubes} from 'three/examples/jsm/objects/MarchingCubes';
-import { Mesh, WebGLRenderTarget} from 'three/src/Three'
+import { Mesh, WebGLRenderTarget, Vector2} from 'three/src/Three'
 import { DropMaterial, BackDropMaterial } from '../materials'
+import { E } from '../utils'
+import GlobalEvents from '../utils/GlobalEvents'
 import store from '../store'
 import gsap from 'gsap'
 export default class Drop extends Mesh {
@@ -22,9 +24,9 @@ export default class Drop extends Mesh {
 		this.fboCreate()
 
 
-		const resolution = 80;
+		const resolution = 60;
 		this.material = this.dropMaterial
-		this.effect = new MarchingCubes( resolution, this.material, true, true, 100000 );
+		this.effect = new MarchingCubes( resolution, this.material, true, true, 10000);
 		this.effect.position.set( 0, 0, 0 );
 
 		this.effect.enableUvs = true;
@@ -35,7 +37,7 @@ export default class Drop extends Mesh {
 
 			speed: 1.0,
 			numBlobs: 10,
-			resolution: 208,
+			resolution: 1,
 			isolation: 0,
 
 			floor: false,
@@ -47,8 +49,14 @@ export default class Drop extends Mesh {
 		};
 
 		this.effect.position.set(0, 0, 12)
-		this.effect.scale.set(10, 10, 4.)
+
+		if(store.isMobile) {
+			this.effect.scale.set(7, 7, 4.)
+		} else {
+			this.effect.scale.set(10, 10, 4.)
+		}
 		this.add( this.effect );
+		E.on(GlobalEvents.RESIZE, this.onResize)
 		
 	}
 
@@ -112,7 +120,7 @@ export default class Drop extends Mesh {
 		for ( let i = 0; i < numblobs; i ++ ) {
 
 			let ballx = Math.sin( i + 1.26 * time * ( 1.03 + 0.5 * Math.cos( 0.21 * i ) )  + i * Math.PI * 0.2) * this.introVal * 0.1 + 0.5 ;
-			let bally = Math.abs( Math.cos( i + 1.12 * time * Math.cos( 1.22 + 0.1424 * i ) )) * 0.1 + 0.5 - (this.introVal - 0.8) * 0.1 * this.way ; // dip into the floor
+			let bally = Math.abs( Math.cos( i + 1.12 * time * Math.cos( 1.22 + 0.1424 * i ) )) * 0.1 + 0.45 - (this.introVal - 0.8) * 0.1 * this.way ; // dip into the floor
 			let ballz = Math.cos( i + 1.32 * time * 0.1 * Math.sin( ( 0.92 + 0.53 * i ) ) ) * 0.1 + 0.5 ;
 
 			// const ballx = 0.5;
@@ -164,8 +172,6 @@ export default class Drop extends Mesh {
 
 		store.WebGL.renderer.setRenderTarget(null)
 
-		this.effect.visible = true
-
 		this.effect.material = this.dropMaterial
 		this.effect.material.uniforms.uTime.value = store.WebGL.globalUniforms.uTime.value
 	}
@@ -174,5 +180,10 @@ export default class Drop extends Mesh {
 		store.AssetLoader.loadTexture(`/textures/cosmo3.png`).then(texture => {
 			this.matCap = texture
 		})
+	}
+	onResize = () => {
+		this.dropMaterial.uniforms.resolution.value = new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
+		this.envFbo.setSize(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
+		this.backfaceFbo.setSize(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
 	}
 }

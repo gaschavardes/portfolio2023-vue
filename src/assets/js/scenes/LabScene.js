@@ -78,12 +78,10 @@ export default class LabScene extends Scene {
 		this.composer.setSize(store.window.w, store.window.h)
 		// Build components and add to scene
 		for (const key in this.components) {
-			console.log(this.components[key])
 			this.components[key].build(this.objectData)
 			this.add(this.components[key])
 		}
 
-		console.log('LAB SCENE', this)
 	
 		this.setupEnvironment()
 		// this.waterTexture = new WaterTexture({ debug: true })
@@ -150,9 +148,7 @@ export default class LabScene extends Scene {
 	addEvents() {
 		E.on(GlobalEvents.RESIZE, this.onResize)
 		store.RAFCollection.add(this.onRaf, 1)
-		E.on('bubble enter', () => {
-			console.log('OOOOOO')
-		})
+	
 	}
 	removeEvents() {
 		E.off(GlobalEvents.RESIZE, this.onResize)
@@ -177,7 +173,6 @@ export default class LabScene extends Scene {
 
 	onRaf = () => {
 		// store.MainScene.bloomPass.threshold = 0.1
-		// console.log(store.MainScene.bloomPass.threshold )
 		this.controls.enabled && this.controls.update()
 
 		if (this.controls.enabled) {

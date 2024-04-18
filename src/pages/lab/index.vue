@@ -76,8 +76,8 @@
 			this.$refs.exps.forEach(el => {
 				el.trigger = ScrollTrigger.create({
 					trigger: el,
-					start: 'top top',
-					end: `+=${store.window.h}`,
+					start: 'top center',
+					end: `bottom top`,
 					scrub: 1,
 					onUpdate: function() {
 						E.emit('bubbleProgress', { value: self.progress})

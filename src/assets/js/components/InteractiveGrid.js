@@ -9,6 +9,7 @@ export default class InteractiveGrid extends Group {
 		super()
 		this.vel = new Vector2()
 		this.load()
+		this.renderOrder = 20
 	}
 	build() {
 		this.createGrid()
@@ -18,8 +19,12 @@ export default class InteractiveGrid extends Group {
 		this.rotation.set(-.5, 0, 0)
 		this.position.set(0, 0, -5)
 		E.on(GlobalEvents.RESIZE, this.onResize)
-		E.on('App:start', () => {
+		E.on('LoaderOut', () => {
 			this.appear()
+
+			gsap.delayedCall(.5, () => {
+				this.appearTimeline.play()
+			})
 		})
 		E.on('introProgress', (e) => {
 			this.introLeave(e.value)
@@ -177,10 +182,18 @@ export default class InteractiveGrid extends Group {
 
 	}
 	start() {
+		if(this.appearTimeline){
+			this.appearTimeline.seek(0)
+			this.appearTimeline.pause()
+		}
+		
 		store.RAFCollection.add(this.onRaf, 0)
-		gsap.delayedCall(.5, () => {
-			this.appearTimeline.play()
-		})
+		if(store.loaderOut){
+			gsap.delayedCall(.5, () => {
+				this.appearTimeline.play()
+			})
+		}
+		
 	}
 
 	onRaf = () => {
@@ -204,7 +217,7 @@ export default class InteractiveGrid extends Group {
 		this.gridMaterial.uniforms.uVel.value = this.vel.length() *2
 		this.gridMaterial.uniforms.uPos1.value.add(this.vel)
 		
-		if(this.tokenLeaveTimeline.progress() < 0.999){
+		if(this.tokenLeaveTimeline && this.tokenLeaveTimeline.progress() < 0.999){
 		this.backfaceMaterial.uniforms.uVel.value = this.gridMaterial.uniforms.uVel.value
 		this.backfaceMaterial.uniforms.uPos1.value = this.gridMaterial.uniforms.uPos1.value
 		this.backfaceMaterial.uniforms.uPos0.value = this.gridMaterial.uniforms.uPos0.value

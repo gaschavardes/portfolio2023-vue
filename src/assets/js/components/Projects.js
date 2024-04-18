@@ -140,8 +140,6 @@ export default class Projects extends Group {
 	}
 
 	animate = () => {
-		console.log('projects animate', this.progressEased)
-		
 		if(this.timeline) {
 			this.progressEased += (this.progress - this.progressEased) * 0.1
 			this.timeline.progress(this.progressEased)

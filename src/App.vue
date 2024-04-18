@@ -62,12 +62,11 @@ export default {
 	})
 
 	E.on('LoaderOut', () => {
-		this.router.afterEach((to) => {
+		this.router.afterEach(() => {
 			// const nextComponent = to.matched[0].components.default
 			// const prevComponent = from.matched[0].components.default
 			this.$nextTick(() => {
 				this.$refs.routerEl.appear()
-				E.emit('sceneChange', { value: to.name})
 			});
 		})
 	})
@@ -75,10 +74,7 @@ export default {
 
 	E.on('LoaderOut', () => {
 		this.router.beforeEach((to, from, next) => {
-			console.log('BLABLBLA')
-			console.log(store.Lenis)
 			setTimeout(() => {
-				console.log('reset')
 				store.Lenis.dimensions.resize()
 				ScrollTrigger.defaults({
 					scroller: this.$refs.scrollContainer
@@ -86,8 +82,9 @@ export default {
 				store.Lenis.scrollTo(0, { immediate: true})
 				
 			}, 1000)
+			E.emit('sceneChange', { value: to.name})
+
 			next()
-			console.log("KOUKOU")
 		})
 	})
 	
@@ -96,7 +93,6 @@ export default {
 	document.documentElement.style.setProperty('--vh', `${vh}px`)
 	
 	E.on('PageLoaded', () => {
-		console.log(this.$refs.scrollContainer)
 		store.Lenis = new Lenis({
 			wrapper: this.$refs.scrollContainer,
 			// content: document.querySelector('body'),
@@ -163,9 +159,18 @@ a:not(.button) {}
 
 nav{
 	position: fixed;
-	top: 20px;
-	left: 20px;
-	z-index: 1000;
+    top: 30px;
+    left: 30px;
+    z-index: 1000;
+    transform: translateX(-100%) translateY(100%) rotate(90deg);
+    transform-origin: 100% 0%;
+	a{
+		font-family: "unbounded";
+		text-decoration: none;
+		color: white;
+		font-weight: bolder;
+	}
+	
 }
 
 #texture {

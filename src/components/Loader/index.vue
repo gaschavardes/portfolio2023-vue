@@ -67,6 +67,7 @@
 				onComplete:() => {
 					gsap.to(that.$el, { autoAlpha: 0, duration: 0.5})
 					E.emit('LoaderOut')
+					store.loaderOut = true
 				}
 			})
 		}

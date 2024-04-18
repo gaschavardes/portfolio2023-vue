@@ -216,7 +216,7 @@
 					this.$refs.pingTitle.appear()
 					this.$refs.scrollCta.appear = true
 				}, 1000)
-			}, 700)
+			}, 2000)
 		},
 		setScrollTrigger() {
 			this.$refs.projects.forEach((el, index) => {
