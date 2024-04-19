@@ -87,7 +87,6 @@ export default class InteractiveGrid extends Group {
 		}
 		this.gridMaterial.uniforms.uLeave.value = e * 6
 		this.backfaceMaterial.uniforms.uLeave.value = e * 6
-		console.log(e)
 		// this.backfaceTokenMaterial.uniforms.uLeave.value = e
 		// this.token
 		// this.gridMaterial.uniforms.uLeave.value = e

@@ -9,7 +9,7 @@
 
 			</div>
 			
-			<svg :class="{show : appear}" viewBox="0 0 100 100">
+			<svg :class="{show : appear, reverse: destination === 'thetop'}" viewBox="0 0 100 100">
 				<path d="M 60 30 L 40 50 L 60 70"/>
 				<circle ref="circle" cx="50" cy="50" r="35"/>
 			</svg>
@@ -24,7 +24,9 @@
   export default {
 	name: 'loader-component',
 	props: {
-		destination: String
+		destination: String,
+		min: Number,
+		max: Number
 	},
 	watch: {
 		destination(val) {
@@ -54,7 +56,7 @@
 	methods: {
 		scrollTo(){
 			const destination = this.destination.replace(/\s/g, '').replace(/[0-9]/g, '')
-			store.Lenis.scrollTo(`#${destination}`, { offset: destination !== 'thetop' ? store.window.h * 0.5 : 0, duration: destination !== 'thetop' ? 1 : 5 })
+			store.Lenis.scrollTo(`#${destination}`, { offset: destination !== 'thetop' ? store.window.h * 0.5 : 0, duration: destination !== 'thetop' ? this.$props.min : this.$props.max })
 		}
 	}
   }

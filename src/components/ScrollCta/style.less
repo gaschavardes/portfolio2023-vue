@@ -62,6 +62,10 @@
 	svg{
 		width: 50px;
 		pointer-events: none;
+		transition: transform 0.5s cubic-bezier(.3,.67,.55,1.13);
+		&.reverse{
+			transform: rotate3d(0, 0, 1, 180deg);
+		}
 		
 		path{
 			stroke: white;

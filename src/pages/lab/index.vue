@@ -1,10 +1,11 @@
 <template class="lab_page">
 	<div class="lab_page">
+		<ScrollCta :destination="activeDestination" :min="3" :max="3" ref="scrollCta"/>
 		<section class="lab_intro" id="thetop" ref="intro">
 
 		</section>
 		<section class="exp" >
-			<div v-for="(item, key) in exps" :key="key" :class="item" ref="exps">
+			<div v-for="(item, key) in exps" :key="key" :class="item" :id="item" ref="exps">
 
 			</div>
 		</section>
@@ -16,6 +17,7 @@
   import gsap from 'gsap'
   import ScrollTrigger from 'gsap/ScrollTrigger'
   import { E } from '@/assets/js/utils'
+  import ScrollCta from '../../components/ScrollCta'
 
   gsap.registerPlugin(ScrollTrigger)
   export default {
@@ -25,21 +27,27 @@
 			publicPath: process.env.BASE_URL,
 			projectProgress: 0,
 			activeVideo: 'crosswire',
-			activeDestination: 'the projects',
+			activeDestination: 'the drop',
 			animateTimeOut: null,
 			exps: [
-				"bubble"	
+				"thedrop"	
 			]
 		}
 	},
 	components: {
+		ScrollCta
 	},
 	mounted() {
 		setTimeout(() => {
 			this.setScrollTrigger()
 			ScrollTrigger.refresh()
 		}, 2000)
+
+		E.on('LoaderOut', () => {
+			this.appear()
+		})
 	},
+
 	beforeUnmount(){
 		this.introScroll.kill()
 		this.$refs.exps.forEach(el => {
@@ -47,12 +55,13 @@
 		})
 	},
 	methods: {
-		appear() {
-			// setTimeout(() => {
-			// 	this.setScrollTrigger()
-			// 	ScrollTrigger.refresh()
-			// }, 1000)
+		appear(){
+		gsap.delayedCall(2, () => {
+			this.$refs.scrollCta.appear = true
+		})
+
 		},
+		
 		initLab: () => {
 			
 		},
@@ -67,9 +76,11 @@
 				},
 				onEnter:() => {
 					// E.emit('introEnter')
+					this.activeDestination = 'thedrop'
 				},
 				onEnterBack:() => {
 					E.emit('introEnter')
+					this.activeDestination = 'thedrop'
 				},
 				onLeave:() => {
 					E.emit('introLeave')
@@ -84,12 +95,11 @@
 					onUpdate: function() {
 						E.emit('bubbleProgress', { value: self.progress})
 					},
-					onEnter:function(){
-						console.log('Trigger enter')
+					onEnter:() => {
+						this.activeDestination = 'thetop'
 						E.emit('bubbleEnter', { value: 1})
 					},
 					onEnterBack:() => {
-						console.log('Trigger enter')
 						E.emit('bubbleEnter', { value: -1})
 					},
 					onLeave:() => {

@@ -1,6 +1,6 @@
 <template>
 	<section class="home" id="thetop">
-		<ScrollCta :destination="activeDestination" ref="scrollCta"/>
+		<ScrollCta :destination="activeDestination" :min="2" :max="5" ref="scrollCta"/>
 		<section class="intro" ref="intro">
 			<div class="intro__text" ref="introContent">
 				I'm Gaspard Chavardes,<br>

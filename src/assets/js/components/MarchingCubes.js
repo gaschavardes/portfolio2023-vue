@@ -24,7 +24,7 @@ export default class Drop extends Mesh {
 		this.fboCreate()
 
 
-		const resolution = 70;
+		const resolution = 80;
 		this.material = this.dropMaterial
 		this.effect = new MarchingCubes( resolution, this.material, true, true, 10000);
 		this.effect.position.set( 0, 0, 0 );
@@ -78,15 +78,12 @@ export default class Drop extends Mesh {
 	enter(e) {
 		this.way = e.value
 		if(this.leaveAnim) this.leaveAnim.kill()
-		console.log(this.leaveAnim)
 		store.RAFCollection.add(this.animate)
-		console.log('ENTER BUBBLE')
 		this.appearAnim = gsap.to(this, {introVal: 0.8, duration: 3})
 	}
 	leave(e) {
 		this.way = e.value
 		if(this.appearAnim) this.appearAnim.kill()
-		console.log('LEAVE BUBBLE')
 		this.leaveAnim = gsap.to(this, {introVal: 7, duration: 3, onComplete: () => {
 			store.RAFCollection.remove(this.animate)
 		}})
@@ -95,7 +92,6 @@ export default class Drop extends Mesh {
 		this.way = 1
 		gsap.set(this, {introVal: 7})
 		this.animate()
-		console.log('STOP BUBBLE')
 		if(this.leaveAnim) this.leaveAnim.kill()
 		if(this.appearAnim) this.appearAnim.kill()
 		store.RAFCollection.remove(this.animate)
