@@ -9,11 +9,11 @@ export default class RibonMaterial extends RawShaderMaterial {
 		options = mergeDeep(
 			{
 				uniforms: {
-					uColor: { value: new Color(0xffffff) },
+					uColor: { value: new Color(0xFEEB00) },
 					uMap : { value: options.uMap},
 					uTime : store.WebGL.globalUniforms.uTime,
 					uAppear : { value : 0},
-					uSide: { value: options.uSide}
+					uSide: { value: options.uSide},
 				},
 				defines: {
 				}

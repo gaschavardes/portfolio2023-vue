@@ -7,7 +7,7 @@
 				A creative developper based in France<br>
 				Former Hands Agency and Unseen,<br>
 				I'm now available for some freelance jobs<br>
-				Don't hesitate to <LinkComponent href="mailto:chavardes.gaspard@gmail.com" text="ping me" ref="pingTitle"/><br>
+				Don't hesitate to <LinkComponent href="mailto:chavardes.gaspard@gmail.com" text="contact me" ref="pingTitle"/><br>
 			</div>
 		</section>
 		<section class="projects" id="theprojects" ref="projectContainer">

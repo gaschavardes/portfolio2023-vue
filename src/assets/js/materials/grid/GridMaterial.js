@@ -31,7 +31,8 @@ export default class BasicMaterial extends ShaderMaterial {
 					uEnvMapBlend: { value: 0},
 					uHideZ: { value: 0},
 					uAppear: { value: 0},
-					uLeave: { value: 0}
+					uLeave: { value: 0},
+					uMobile: { value: store.isMobile ? 0 : 1}
 				},
 				defines: {
 					// USE_INSTANCING: true,

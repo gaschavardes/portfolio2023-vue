@@ -14,7 +14,9 @@ export default class InteractiveGrid extends Group {
 	build() {
 		this.createGrid()
 		this.createSingle()
+
 		this.mouseInteraction()
+		
 		// store.RAFCollection.add(this.onRaf.bind(this), 0)
 		this.rotation.set(-.5, 0, 0)
 		this.position.set(0, 0, -5)
@@ -49,7 +51,7 @@ export default class InteractiveGrid extends Group {
 		}, 'gridAppear-=.5')
 		
 		this.tokenLeaveTimeline = gsap.timeline({ paused: true })
-		this.tokenLeaveTimeline.to(this.token.position, { y: 5.8, duration: 1.2}, 0)
+		this.tokenLeaveTimeline.to(this.token.position, { y: 5.5, duration: 1.2}, 0)
 		this.tokenLeaveTimeline.to(this.tokenMaterial.uniforms.uIOR, { value: 1, duration: 1.2}, 0)
 		this.tokenLeaveTimeline.to(this.token.scale, { x: 1, y: 1, z: 1, duration: 1.2}, 0)
 
@@ -214,11 +216,15 @@ export default class InteractiveGrid extends Group {
 		v3.multiplyScalar(0.9)
 		this.vel.add(v3)
 		// Add the lerped velocity
-		this.gridMaterial.uniforms.uVel.value = this.vel.length() *2
-		this.gridMaterial.uniforms.uPos1.value.add(this.vel)
+		if(!store.isMobile) {
+			this.gridMaterial.uniforms.uVel.value = this.vel.length() *2
+			this.gridMaterial.uniforms.uPos1.value.add(this.vel)
+		}
+		
 		
 		if(this.tokenLeaveTimeline && this.tokenLeaveTimeline.progress() < 0.999){
 		this.backfaceMaterial.uniforms.uVel.value = this.gridMaterial.uniforms.uVel.value
+		
 		this.backfaceMaterial.uniforms.uPos1.value = this.gridMaterial.uniforms.uPos1.value
 		this.backfaceMaterial.uniforms.uPos0.value = this.gridMaterial.uniforms.uPos0.value
 

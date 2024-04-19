@@ -18,7 +18,7 @@ float dot_pattern(vec2 uv)
 
 void main() {
 	vec4 texture = texture2D(uMap, vec2(vUv.x * 4. + uTime * 0.2, vUv.y));
-
+	texture.rgb *= uColor;
 
     gl_FragColor = vec4(min(texture.rgb - vNormal.x * 5., vec3(0.9)), 1.);
 

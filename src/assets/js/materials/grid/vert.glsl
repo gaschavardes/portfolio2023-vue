@@ -19,6 +19,7 @@ varying float vOpacity;
 uniform float uAppear;
 uniform float uLeave;
 attribute float random;
+uniform float uMobile;
 #ifndef PI
 #define PI 3.141592653589793
 #endif
@@ -80,7 +81,7 @@ void main()	{
 	// transformed.z += sin(uTime * 2. + toCenter) * 0.3;
 
 	float mouseTrail = sdSegment(newPos.xy, uPos0, uPos1);
-	mouseTrail = smoothstep(1., 3. , mouseTrail);
+	mouseTrail = smoothstep(1., 3. , mouseTrail) * uMobile;
 	// mouseTrail *= (smoothstep(0., 0.3, uVel * mouseTrail));
 
 	// transformed *= 1. + (1.0-mouseTrail) * 2.;

@@ -4,8 +4,13 @@
 	<Loader />
 	<div ref="scrollContainer" class="scroll-container">
 		<nav v-if="location.name">
-			<router-link v-if="location.name === 'Home'" to="lab">Lab</router-link>
-			<router-link v-else to="/">home</router-link>
+			<svg :class="{show : appear}" viewBox="0 0 100 100">
+				<circle ref="circle" cx="50" cy="50" r="35"/>
+			</svg>
+			<transition name="fade" mode="out-in">
+				<router-link v-if="navLocation === 'Home'" to="lab">LAB</router-link>
+				<router-link v-else-if="navLocation === 'Lab'" to="/">HO<br>ME</router-link>
+			</transition>
 		</nav>
 		<!-- <Home ref="home"/> -->
 		<!-- <RouterView ref="router" /> -->
@@ -38,7 +43,9 @@ export default {
   },
   data: () =>{
 	return {
-		location: {}
+		location: {},
+		navLocation : '',
+		appear: false
 	}
   },
   created() {
@@ -50,6 +57,7 @@ export default {
 	this.router =  useRouter();
 
 	E.on('PageLoaded',() => {
+			this.navLocation = this.location.name
 			setTimeout(() => {
 				if(this.location.name === 'Home') {
 				store.MainScene.start()
@@ -62,6 +70,7 @@ export default {
 	})
 
 	E.on('LoaderOut', () => {
+		this.appear = true
 		this.router.afterEach(() => {
 			// const nextComponent = to.matched[0].components.default
 			// const prevComponent = from.matched[0].components.default
@@ -74,6 +83,8 @@ export default {
 
 	E.on('LoaderOut', () => {
 		this.router.beforeEach((to, from, next) => {
+			this.navLocation = ''
+			this.appear = false
 			setTimeout(() => {
 				store.Lenis.dimensions.resize()
 				ScrollTrigger.defaults({
@@ -83,7 +94,10 @@ export default {
 				
 			}, 1000)
 			E.emit('sceneChange', { value: to.name})
-
+			setTimeout(() => {
+				this.navLocation = this.location.name
+				this.appear = true
+			}, 2000)
 			next()
 		})
 	})
@@ -159,16 +173,82 @@ a:not(.button) {}
 
 nav{
 	position: fixed;
-    top: 30px;
-    left: 30px;
+    top: 20px;
+    left: 20px;
     z-index: 1000;
-    transform: translateX(-100%) translateY(100%) rotate(90deg);
-    transform-origin: 100% 0%;
 	a{
 		font-family: "unbounded";
 		text-decoration: none;
 		color: white;
 		font-weight: bolder;
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, calc(-50% - 2px));
+	}
+
+	svg{
+		width: 70px;
+		pointer-events: none;
+		
+		path{
+			stroke: white;
+			fill: none;
+			stroke-width: 2;
+			stroke-dasharray: 0 70;
+			transition: stroke-dasharray 0.5s, transform 0.5s ease;
+			transform-origin: 50% 50%;
+			transform: rotateY(0);
+		}
+		circle{
+			stroke: #FFF;
+			stroke-width: 2;
+			stroke-dasharray: calc(255px * 0) 250px;
+			fill: none;
+			transform: rotate(180deg);
+			transform-origin: 50% 50%;
+			transition: stroke-width 0.5s, stroke-dasharray 0.5s, transform 0.5s;
+		}
+
+		&.show{
+			pointer-events: auto;
+			circle{
+				stroke-dasharray: calc(255px * 1) 250px;
+				transform: rotate(360deg);
+			}
+			path{
+				stroke-dasharray: 70 70;
+				transition-delay: 0.2s;
+			}
+		}
+	}
+
+	&:hover{
+		@media (hover: hover) {
+			svg{
+				&.show{
+					circle{
+						// transform: rotateX(180deg);
+						// stroke-dasharray: calc(255px * 0) 250px;
+						transition: stroke-width 0.5s, stroke-dasharray 0s, transform 0s;
+						stroke-width: 3;
+						animation: 0.5s ease-out 0s forwards  circleHover;
+					}
+					path{
+						transform: scale(0.8);
+					}
+				}
+			
+			}
+		}
+		
+	}
+
+	@keyframes circleHover {
+		0% { transform: rotateX(180deg); stroke-dasharray: calc(255px * 1) 250px; }
+		49% { transform: rotateX(180deg); stroke-dasharray: calc(255px * 0) 250px;  }
+		50% {transform: rotateX(0deg); stroke-dasharray: calc(255px * 0) 250px; }
+		100% {transform: rotateX(0deg); stroke-dasharray: calc(255px * 1) 250px; }
 	}
 	
 }
@@ -237,6 +317,8 @@ body {
 	{
 	opacity: 0;
 }
+
+
 
 
 

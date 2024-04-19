@@ -134,10 +134,10 @@ export default class Text extends Group {
 	}
 
 	enter() {
-		gsap.to(this.mesh.material.uniforms.uAppear, { value: 1, duration: 1})
+		gsap.to(this.mesh.material.uniforms.uAppear, { value: 1, duration: 1.5, ease: 'power2.inOut'})
 	}
 	leave() {
-		gsap.to(this.mesh.material.uniforms.uAppear, { value: 0, duration: 1})
+		gsap.to(this.mesh.material.uniforms.uAppear, { value: 0, duration: 1, ease: 'power2.inOut'})
 	}
 	// leave(e) {
 	// 	// this.way = e.value
