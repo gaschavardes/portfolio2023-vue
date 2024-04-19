@@ -228,7 +228,7 @@ export default class InteractiveGrid extends Group {
 	}
 
 	movementEase = () => {
-		this.introProgressTemp += (this.introProgress - this.introProgressTemp ) * 0.5
+		this.introProgressTemp += (this.introProgress - this.introProgressTemp ) * 0.3
 		this.introLeave(this.introProgressTemp)
 	}
 

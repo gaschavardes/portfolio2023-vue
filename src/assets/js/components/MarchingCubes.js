@@ -5,6 +5,9 @@ import { E } from '../utils'
 import GlobalEvents from '../utils/GlobalEvents'
 import store from '../store'
 import gsap from 'gsap'
+// import { createNoise3D } from 'simplex-noise';
+
+// const noise = new createNoise3D()
 export default class Drop extends Mesh {
 	constructor(){
 		super()
@@ -120,7 +123,6 @@ export default class Drop extends Mesh {
 		const strength = .5 / ( ( Math.sqrt( numblobs ) - 1 ) / 4 + 1 );
 
 		for ( let i = 0; i < numblobs; i ++ ) {
-
 			let ballx = Math.sin( i + 1.26 * time * ( 1.03 + 0.5 * Math.cos( 0.21 * i ) )  + i * Math.PI * 0.2) * this.introVal * 0.1 + 0.5 ;
 			let bally = Math.abs( Math.cos( i + 1.12 * time * Math.cos( 1.22 + 0.1424 * i ) )) * 0.1 + 0.45 - (this.introVal - 0.8) * 0.1 * this.way ; // dip into the floor
 			let ballz = Math.cos( i + 1.32 * time * 0.1 * Math.sin( ( 0.92 + 0.53 * i ) ) ) * 0.1 + 0.5 ;
