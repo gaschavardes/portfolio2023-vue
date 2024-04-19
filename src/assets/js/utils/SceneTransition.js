@@ -97,6 +97,7 @@ export default class SceneTransition {
 			onComplete: () => {
 				// sceneA.stop()
 				// console.log(nextPage)
+				E.emit('transitionEnded')
 				store.leavingScene = ''
 
 				// Disable all passes apart from the render pass of the transitioned scene

@@ -198,7 +198,7 @@
 		})
 
 		E.on('LoaderOut', () => {
-			this.appear()
+			gsap.delayedCall(1, this.appear)
 			this.$refs.projects.forEach((el) => {
 				if(el.projectTl) el.projectsTl.kill()
 			})
@@ -215,13 +215,13 @@
 	},
 	methods: {
 		appear() {
-			setTimeout(() => {
+			// setTimeout(() => {
 				this.$refs.introContent.classList.add('show')
 				setTimeout(() => {
 					this.$refs.pingTitle.appear()
 					this.$refs.scrollCta.appear = true
 				}, 1000)
-			}, 2000)
+			// }, 2000)
 		},
 		setScrollTrigger() {
 			this.$refs.projects.forEach((el, index) => {

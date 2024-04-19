@@ -75,7 +75,9 @@ export default {
 			// const nextComponent = to.matched[0].components.default
 			// const prevComponent = from.matched[0].components.default
 			this.$nextTick(() => {
-				this.$refs.routerEl.appear()
+				E.on('transitionEnded', () => {
+					this.$refs.routerEl.appear()
+				})
 			});
 		})
 	})

@@ -44,7 +44,10 @@
 		}, 2000)
 
 		E.on('LoaderOut', () => {
-			this.appear()
+			gsap.delayedCall(2, () => {
+				this.appear()
+			})
+
 		})
 	},
 
@@ -56,10 +59,7 @@
 	},
 	methods: {
 		appear(){
-		gsap.delayedCall(2, () => {
 			this.$refs.scrollCta.appear = true
-		})
-
 		},
 		
 		initLab: () => {
