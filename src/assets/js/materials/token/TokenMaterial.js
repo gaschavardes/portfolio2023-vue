@@ -25,7 +25,7 @@ export default class BasicMaterial extends ShaderMaterial {
 					matCapMap: { value: options.tMatCap},
 					uNormalStrength: { value: 1},
 					uNormalScale: { value: 1},
-					uBlendMode: { value: 2},
+					uBlendMode: { value: 4},
 					uRoughness: { value: 0 },
 					uDiffuseMatcapBlend: { value: 1 },
 					uEnvMapBlend: { value: 0},
