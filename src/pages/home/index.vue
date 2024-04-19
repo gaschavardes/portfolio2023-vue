@@ -200,9 +200,9 @@
 		E.on('LoaderOut', () => {
 			this.appear()
 			this.$refs.projects.forEach((el) => {
-				el.projectsTl.kill()
+				if(el.projectTl) el.projectsTl.kill()
 			})
-			this.containerTl.kill()
+			if(this.containerTl) this.containerTl.kill()
 			this.setScrollTrigger()
 		})
 

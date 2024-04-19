@@ -17,6 +17,7 @@ export default class Exp1 extends Group {
 		this.worldInit = 0
 		this.renderOrder = 10
 		this.isIn = false
+		this.visible = false
 		// store.RAFCollection.add(this.animate, 0)
 		this.targetScroll = 0
 		this.components = {
@@ -81,6 +82,7 @@ export default class Exp1 extends Group {
 
 	enter(e){
 		if(this.isIn) return
+		this.visible = true
 		this.isIn = true
 		store.RAFCollection.add(this.animate)
 		for (const key in this.components) {
