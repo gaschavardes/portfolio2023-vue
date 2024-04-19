@@ -1,7 +1,7 @@
 // First, I'm going to set 2 local constants
 import { Clock, Vector3 } from 'three'
 import { createNoise3D } from 'simplex-noise';
-const baseForce = 50;
+const baseForce = 30;
 const off = 0.05;
 
 const noise = new createNoise3D()
