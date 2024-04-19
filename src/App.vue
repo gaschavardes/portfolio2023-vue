@@ -184,7 +184,12 @@ nav{
 		position: absolute;
 		left: 50%;
 		top: 50%;
+		width: 70px;
+		height: 70px;
 		transform: translate(-50%, calc(-50% - 2px));
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	svg{
