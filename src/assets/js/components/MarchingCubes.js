@@ -24,7 +24,7 @@ export default class Drop extends Mesh {
 		this.fboCreate()
 
 
-		const resolution = 60;
+		const resolution = 70;
 		this.material = this.dropMaterial
 		this.effect = new MarchingCubes( resolution, this.material, true, true, 10000);
 		this.effect.position.set( 0, 0, 0 );

@@ -129,7 +129,7 @@ void main() {
 	float frontfaceDepth = worldPosition.z;
 
 	vec4 backface = texture2D(backfaceMap, uv);
-	vec3 backfaceNormal = backface.rgb;
+	vec3 backfaceNormal = backface.rgb * 0.1;
 	float backfaceDepth = backface.a;
 
 	vec3 tangent = normalize( vTangent );
@@ -137,7 +137,7 @@ void main() {
 	mat3 vTBN = mat3( tangent, bitangent, worldNormal );
 	vec3 mapN = texture2D( tNormal, vUv ).xyz * 2.0 - 1.0;
 	vec3 normalVal = normalize( vTBN * mapN );
-	vec3 normal = normalVal * (1.0 - a) - backfaceNormal * a;
+	vec3 normal = normalVal * (1.0 - a) - (backfaceNormal) * a;
 	// calculate refraction and add to the screen coordinates
 	vec3 refracted = refract(eyeVector, normal, 1.0/ior);
 	uv += refracted.xy;
@@ -146,7 +146,7 @@ void main() {
 	vec4 matCap = texture2D(matCapMap, matCapUv);
 
 	// sample the background texture
-	vec4 tex = texture2D(envMap, uv);
+	vec4 tex = mix(texture2D(envMap, uv), vec4(1., 1., 1., 1.), 1.);
 
 	vec4 final = tex;
 

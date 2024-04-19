@@ -199,6 +199,11 @@
 
 		E.on('LoaderOut', () => {
 			this.appear()
+			this.$refs.projects.forEach((el) => {
+				el.projectsTl.kill()
+			})
+			this.containerTl.kill()
+			this.setScrollTrigger()
 		})
 
 	},

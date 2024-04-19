@@ -42,7 +42,7 @@ export default class InteractiveGrid extends Group {
 			// store.LabScene.components.interactiveGri
 			gsap.delayedCall(0.2, () => {
 				store.RAFCollection.remove(this.onRaf, 0)
-				gsap.to(this.tokenMaterial.uniforms.uPos0.value, {x: 0, y: -20, z: 0})
+				gsap.to(this.tokenMaterial.uniforms.uPos0.value, {x: 0, y: -40, z: 0})
 			})
 			// store.RAFCollection.remove(this.onRaf, 0)
 			// gsap.to(this.tokenMaterial.uniforms.uPos0.value, {x: 0, y: -20, z: 0})
@@ -105,8 +105,8 @@ export default class InteractiveGrid extends Group {
 		const geometry = this.token
 		// const geometry = new BoxGeometry( size, size, size); 
 		this.randoms = []
-		this.backfaceFbo = new WebGLRenderTarget(store.window.w, store.window.h)
-		this.envFbo = new WebGLRenderTarget(store.window.w, store.window.h)
+		this.backfaceFbo = new WebGLRenderTarget(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
+		this.envFbo = new WebGLRenderTarget(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
 		this.gridMaterial = new GridMaterial({
 			backfaceMap: this.backfaceFbo.texture,
 			envMap: this.envFbo.texture,
