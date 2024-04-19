@@ -10,14 +10,14 @@ export default class RAFCollection {
 	add(cb, index) {
 		this.callbacks.push({ index, cb })
 		this.callbacks.sort(this.sort)
-		console.log(this.callbacks)
+		// console.log(this.callbacks)
 	}
 
 	remove(cb) {
 		for (let i = 0; i < this.callbacks.length; i++) {
 			if (this.callbacks[i].cb === cb) this.callbacks.splice(i, 1)
 		}
-		console.log(this.callbacks)
+		// console.log(this.callbacks)
 	}
 
 	sort(a, b) {

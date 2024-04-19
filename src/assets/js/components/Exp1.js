@@ -52,6 +52,12 @@ export default class Exp1 extends Group {
 			this.components.text2.animate()
 		}})
 
+		// E.on('sceneChange', () => {
+		// 	if(store.isSafari){
+
+		// 	}
+		// })
+
 	}
 
 	addEvents() {

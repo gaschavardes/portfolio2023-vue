@@ -31,6 +31,22 @@ export default class InteractiveGrid extends Group {
 		E.on('introProgress', (e) => {
 			this.introLeave(e.value)
 		})
+		E.on('introEnter', this.onEnter)
+		E.on('introLeave', this.onLeave)
+	}
+
+	onLeave = () => {
+		if(store.isSafari){
+			// store.LabScene.components.interactiveGri
+			store.RAFCollection.remove(this.onRaf, 0)
+		}
+	}
+
+	onEnter = () => {
+		if(store.isSafari){
+			// store.LabScene.components.interactiveGri
+			store.RAFCollection.add(this.onRaf, 0)
+		}
 	}
 
 	appear() {
@@ -199,7 +215,6 @@ export default class InteractiveGrid extends Group {
 	}
 
 	onRaf = () => {
-	
 		// Lerp uPos0 to mouse
 		let v3 = new Vector2()
 		v3.copy(this.mouse)

@@ -67,10 +67,13 @@
 					E.emit('introProgress', { value: self.progress})
 				},
 				onEnter:() => {
+					// E.emit('introEnter')
 				},
 				onEnterBack:() => {
+					E.emit('introEnter')
 				},
 				onLeave:() => {
+					E.emit('introLeave')
 				}
 			})
 			this.$refs.exps.forEach(el => {
