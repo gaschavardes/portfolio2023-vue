@@ -1,4 +1,4 @@
-import { Color, Group, Mesh, PlaneBufferGeometry, Vector3, RepeatWrapping} from 'three'
+import { Color, Group, Mesh, PlaneGeometry, Vector3, RepeatWrapping} from 'three'
 import { RibonMaterial } from '../materials';
 import store from '../store'
 import C from 'cannon'
@@ -42,7 +42,7 @@ export default class Text extends Group {
 	}
 
 	setText() {
-		this.geometry = new PlaneBufferGeometry(20, 1, this.size.x, this.size.y)
+		this.geometry = new PlaneGeometry(20, 1, this.size.x, this.size.y)
 		this.material = new RibonMaterial({
 			uMap: this.texture,
 			uSide: this.side

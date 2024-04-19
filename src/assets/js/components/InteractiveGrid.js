@@ -36,17 +36,19 @@ export default class InteractiveGrid extends Group {
 	}
 
 	onLeave = () => {
-		if(store.isSafari){
+		// if(store.isSafari){
 			// store.LabScene.components.interactiveGri
 			store.RAFCollection.remove(this.onRaf, 0)
-		}
+			gsap.to(this.tokenMaterial.uniforms.uPos0.value, {x: 0, y: -20, z: 0})
+			this.backfaceTokenMaterial.uniforms.uPos0.value = this.tokenMaterial.uniforms.uPos0.value
+		// }
 	}
 
 	onEnter = () => {
-		if(store.isSafari){
+		// if(store.isSafari){
 			// store.LabScene.components.interactiveGri
 			store.RAFCollection.add(this.onRaf, 0)
-		}
+		// }
 	}
 
 	appear() {
