@@ -76,16 +76,18 @@
 			this.$refs.exps.forEach(el => {
 				el.trigger = ScrollTrigger.create({
 					trigger: el,
-					start: 'top center',
+					start: 'top bottom',
 					end: `bottom top`,
-					scrub: 1,
+					scrub: 3,
 					onUpdate: function() {
 						E.emit('bubbleProgress', { value: self.progress})
 					},
 					onEnter:function(){
+						console.log('Trigger enter')
 						E.emit('bubbleEnter', { value: 1})
 					},
 					onEnterBack:() => {
+						console.log('Trigger enter')
 						E.emit('bubbleEnter', { value: -1})
 					},
 					onLeave:() => {

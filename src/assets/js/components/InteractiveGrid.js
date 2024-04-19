@@ -223,32 +223,32 @@ export default class InteractiveGrid extends Group {
 		
 		
 		if(this.tokenLeaveTimeline && this.tokenLeaveTimeline.progress() < 0.999){
-		this.backfaceMaterial.uniforms.uVel.value = this.gridMaterial.uniforms.uVel.value
-		
-		this.backfaceMaterial.uniforms.uPos1.value = this.gridMaterial.uniforms.uPos1.value
-		this.backfaceMaterial.uniforms.uPos0.value = this.gridMaterial.uniforms.uPos0.value
+			this.backfaceMaterial.uniforms.uVel.value = this.gridMaterial.uniforms.uVel.value
+			
+			this.backfaceMaterial.uniforms.uPos1.value = this.gridMaterial.uniforms.uPos1.value
+			this.backfaceMaterial.uniforms.uPos0.value = this.gridMaterial.uniforms.uPos0.value
 
-		this.tokenMaterial.uniforms.uPos0.value = this.gridMaterial.uniforms.uPos0.value
-		this.backfaceTokenMaterial.uniforms.uPos0.value = this.gridMaterial.uniforms.uPos0.value
+			this.tokenMaterial.uniforms.uPos0.value = this.gridMaterial.uniforms.uPos0.value
+			this.backfaceTokenMaterial.uniforms.uPos0.value = this.gridMaterial.uniforms.uPos0.value
 
-		this.items.material = this.backfaceMaterial
-		store.WebGL.renderer.setRenderTarget(this.backfaceFbo)
-		store.WebGL.renderer.render(store.LabScene, store.LabScene.camera)
+			this.items.material = this.backfaceMaterial
+			store.WebGL.renderer.setRenderTarget(this.backfaceFbo)
+			store.WebGL.renderer.render(store.LabScene, store.LabScene.camera)
 
-		store.WebGL.renderer.setRenderTarget(null)
-		this.gridMaterial.uniforms.envMap.value = this.envFbo.texture
-		this.gridMaterial.depthTest = true
-		this.gridMaterial.depthWrite = true
-		this.gridMaterial.uniforms.uHideZ.value = 0
+			store.WebGL.renderer.setRenderTarget(null)
+			this.gridMaterial.uniforms.envMap.value = this.envFbo.texture
+			this.gridMaterial.depthTest = true
+			this.gridMaterial.depthWrite = true
+			this.gridMaterial.uniforms.uHideZ.value = 0
 
-		this.items.visible = false
-		this.token.visible = true
-		this.items.material = this.gridMaterial
-		this.gridMaterial.uniforms.uHideZ.value = 1
-		this.gridMaterial.uniforms.envMap.value = this.envFbo.clone().texture
-		store.WebGL.renderer.setRenderTarget(this.envFbo)
-		store.WebGL.renderer.render(store.LabScene, store.LabScene.camera)
-		this.items.visible = true
+			this.items.visible = false
+			this.token.visible = true
+			this.items.material = this.gridMaterial
+			this.gridMaterial.uniforms.uHideZ.value = 1
+			this.gridMaterial.uniforms.envMap.value = this.envFbo.clone().texture
+			store.WebGL.renderer.setRenderTarget(this.envFbo)
+			store.WebGL.renderer.render(store.LabScene, store.LabScene.camera)
+			this.items.visible = true
 
 		} else {
 			this.items.visible = false

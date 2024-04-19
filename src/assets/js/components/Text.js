@@ -134,10 +134,15 @@ export default class Text extends Group {
 	}
 
 	enter() {
+		store.RAFCollection.add(this.animate)
 		gsap.to(this.mesh.material.uniforms.uAppear, { value: 1, duration: 1.5, ease: 'power2.inOut'})
 	}
 	leave() {
-		gsap.to(this.mesh.material.uniforms.uAppear, { value: 0, duration: 1, ease: 'power2.inOut'})
+		gsap.to(this.mesh.material.uniforms.uAppear, { value: 0, duration: 1, ease: 'power2.inOut',
+			onComplete: () => {
+				store.RAFCollection.remove(this.animate)
+			}
+		})
 	}
 	// leave(e) {
 	// 	// this.way = e.value
@@ -153,11 +158,10 @@ export default class Text extends Group {
 	}
 	start() {
 		// store.RAFCollection.add(this.animate)
-		store.RAFCollection.add(this.animate)
+		// store.RAFCollection.add(this.animate)
 	}
 
 	animate = () => {
-
 		// store.world.gravity.set(0, -10 + Math.sin(t) * 20, 0)
 		this.updatePhysics();
 		// if(this.mesh) this.mesh.rotation.set(0, store.WebGL.globalUniforms.uTime.value, store.WebGL.globalUniforms.uTime.value)

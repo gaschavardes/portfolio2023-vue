@@ -16,6 +16,7 @@ export default class Exp1 extends Group {
 		this.load()
 		this.worldInit = 0
 		this.renderOrder = 10
+		this.isIn = false
 		// store.RAFCollection.add(this.animate, 0)
 		this.targetScroll = 0
 		this.components = {
@@ -69,21 +70,27 @@ export default class Exp1 extends Group {
 		E.off('bubbleLeave', (e) => {
 			this.leave(e)
 		})
+		store.RAFCollection.remove(this.animate)
 	}
 
 	enter(e){
+		if(this.isIn) return
+		this.isIn = true
 		store.RAFCollection.add(this.animate)
 		for (const key in this.components) {
 			this.components[key].enter && this.components[key].enter(e)
 		}
 	}
 	leave(e){
+		if(!this.isIn) return
+		this.isIn = false
 		store.RAFCollection.remove(this.animate)
 		for (const key in this.components) {
 			this.components[key].leave && this.components[key].leave(e)
 		}
 	}
 	stop(){
+		this.isIn = false
 		for (const key in this.components) {
 			this.components[key].leave && this.components[key].stop()
 		}
