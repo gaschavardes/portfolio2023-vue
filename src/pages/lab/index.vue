@@ -15,7 +15,6 @@
   import './style.less'
   import gsap from 'gsap'
   import ScrollTrigger from 'gsap/ScrollTrigger'
-  import store from '@/assets/js/store'
   import { E } from '@/assets/js/utils'
 
   gsap.registerPlugin(ScrollTrigger)
@@ -39,7 +38,7 @@
 		setTimeout(() => {
 			this.setScrollTrigger()
 			ScrollTrigger.refresh()
-		}, 1000)
+		}, 2000)
 	},
 	beforeUnmount(){
 		this.introScroll.kill()
@@ -61,7 +60,7 @@
 			this.introScroll =  ScrollTrigger.create({
 				trigger: this.$refs.intro,
 				start: 'top top',
-				end: `+=${store.window.h}`,
+				end: `bottom top`,
 				scrub: 1,
 				onUpdate: function(self) {
 					E.emit('introProgress', { value: self.progress})
@@ -79,7 +78,7 @@
 			this.$refs.exps.forEach(el => {
 				el.trigger = ScrollTrigger.create({
 					trigger: el,
-					start: 'top bottom',
+					start: 'top top',
 					end: `bottom top`,
 					scrub: 3,
 					onUpdate: function() {

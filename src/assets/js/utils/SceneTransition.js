@@ -4,6 +4,7 @@ import transitionFrag from '../materials/transition/transitionFrag.glsl'
 import store from "../store"
 import gsap from "gsap"
 import { E } from "../utils"
+import GlobalEvents from '../utils/GlobalEvents'
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass"
 
 export default class SceneTransition {
@@ -16,6 +17,7 @@ export default class SceneTransition {
 		this.origDuration = options.duration
 		this.duration = options.duration
 		this.setTransitionThresholds()
+		E.on(GlobalEvents.RESIZE, this.onResize)
 	}
 
 	setTransitionThresholds() {
@@ -137,5 +139,8 @@ export default class SceneTransition {
 
 			}
 		}, 0)
+	}
+	onResize = () => {
+		this.transitionPass.uniforms.uResolution.value = new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
 	}
 }

@@ -10,6 +10,8 @@ export default class InteractiveGrid extends Group {
 		this.vel = new Vector2()
 		this.load()
 		this.renderOrder = 20
+		this.introProgressTemp = 0
+		this.introProgress = 0
 	}
 	build() {
 		this.createGrid()
@@ -29,7 +31,7 @@ export default class InteractiveGrid extends Group {
 			})
 		})
 		E.on('introProgress', (e) => {
-			this.introLeave(e.value)
+			this.introProgress = e.value
 		})
 		E.on('introEnter', this.onEnter)
 		E.on('introLeave', this.onLeave)
@@ -38,8 +40,12 @@ export default class InteractiveGrid extends Group {
 	onLeave = () => {
 		// if(store.isSafari){
 			// store.LabScene.components.interactiveGri
-			store.RAFCollection.remove(this.onRaf, 0)
-			gsap.to(this.tokenMaterial.uniforms.uPos0.value, {x: 0, y: -20, z: 0})
+			gsap.delayedCall(0.2, () => {
+				store.RAFCollection.remove(this.onRaf, 0)
+				gsap.to(this.tokenMaterial.uniforms.uPos0.value, {x: 0, y: -20, z: 0})
+			})
+			// store.RAFCollection.remove(this.onRaf, 0)
+			// gsap.to(this.tokenMaterial.uniforms.uPos0.value, {x: 0, y: -20, z: 0})
 			this.backfaceTokenMaterial.uniforms.uPos0.value = this.tokenMaterial.uniforms.uPos0.value
 		// }
 	}
@@ -76,9 +82,12 @@ export default class InteractiveGrid extends Group {
 	}
 
 	introLeave(e) {
-		this.tokenLeaveTimeline.progress(e)
+		if(this.tokenLeaveTimeline) {
+			this.tokenLeaveTimeline.progress(e)
+		}
 		this.gridMaterial.uniforms.uLeave.value = e * 6
 		this.backfaceMaterial.uniforms.uLeave.value = e * 6
+		console.log(e)
 		// this.backfaceTokenMaterial.uniforms.uLeave.value = e
 		// this.token
 		// this.gridMaterial.uniforms.uLeave.value = e
@@ -189,6 +198,8 @@ export default class InteractiveGrid extends Group {
 	}
 
 	stop() {
+		this.introProgressTemp = this.introProgress = 0
+		store.RAFCollection.remove(this.movementEase)
 		store.RAFCollection.remove(this.onRaf, 0)
 		this.appearTimeline.seek(0)
 		this.appearTimeline.pause()
@@ -202,6 +213,7 @@ export default class InteractiveGrid extends Group {
 
 	}
 	start() {
+		store.RAFCollection.add(this.movementEase)
 		if(this.appearTimeline){
 			this.appearTimeline.seek(0)
 			this.appearTimeline.pause()
@@ -214,6 +226,11 @@ export default class InteractiveGrid extends Group {
 			})
 		}
 		
+	}
+
+	movementEase = () => {
+		this.introProgressTemp += (this.introProgress - this.introProgressTemp ) * 0.5
+		this.introLeave(this.introProgressTemp)
 	}
 
 	onRaf = () => {

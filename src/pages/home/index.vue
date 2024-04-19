@@ -182,7 +182,7 @@
 	},
 	mounted() {
 		store.projects = this.projects
-		gsap.delayedCall(1, this.setScrollTrigger)
+		gsap.delayedCall(2, this.setScrollTrigger)
 
 		this.$refs.introContent.split = new SplitText(this.$refs.introContent, {type: 'lines, words', linesClass:"line", wordsClass: 'word'})
 		this.$refs.introContent.split.lines.forEach((el, i) => {

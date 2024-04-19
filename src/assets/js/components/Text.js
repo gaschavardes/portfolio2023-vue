@@ -135,10 +135,10 @@ export default class Text extends Group {
 
 	enter() {
 		store.RAFCollection.add(this.animate)
-		gsap.to(this.mesh.material.uniforms.uAppear, { value: 1, duration: 1.5, ease: 'power2.inOut'})
+		gsap.to(this.mesh.material.uniforms.uAppear, { value: 1, duration: store.isMobile ? 3 : 1.5, ease: 'power2.inOut'})
 	}
 	leave() {
-		gsap.to(this.mesh.material.uniforms.uAppear, { value: 0, duration: 1, ease: 'power2.inOut',
+		gsap.to(this.mesh.material.uniforms.uAppear, { value: 0, duration: store.isMobile ? 2 : 1, ease: 'power2.inOut',
 			onComplete: () => {
 				store.RAFCollection.remove(this.animate)
 			}
