@@ -1,5 +1,5 @@
 import {MarchingCubes} from 'three/examples/jsm/objects/MarchingCubes';
-import { Mesh, WebGLRenderTarget, Vector2} from 'three/src/Three'
+import { Mesh, WebGLRenderTarget, Vector2, PlaneGeometry, MeshBasicMaterial, Raycaster} from 'three/src/Three'
 import { DropMaterial, BackDropMaterial } from '../materials'
 import { E } from '../utils'
 import GlobalEvents from '../utils/GlobalEvents'
@@ -14,6 +14,7 @@ export default class Drop extends Mesh {
 		this.tick = 0
 		this.introVal = 7
 		this.way = 1
+		this.bubbleMainPos = new Vector2()
 		this.load()
 	}
 
@@ -42,6 +43,7 @@ export default class Drop extends Mesh {
 			numBlobs: 10,
 			resolution: 1,
 			isolation: 0,
+			size: 0.1,
 
 			floor: false,
 			wallx: false,
@@ -51,15 +53,22 @@ export default class Drop extends Mesh {
 
 		};
 
+		this.bubblePos = []
+		for ( let i = 0; i < 10; i ++ ) {
+			this.bubblePos.push(new Vector2)
+		}
+
 		this.effect.position.set(0, 0, 12)
 
 		if(store.isMobile) {
 			this.effect.scale.set(7, 7, 4.)
 		} else {
-			this.effect.scale.set(10, 10, 4.)
+			this.effect.scale.set(12, 12, 4.)
 		}
 		this.add( this.effect );
 		E.on(GlobalEvents.RESIZE, this.onResize)
+
+		this.mouseInteraction()
 		
 	}
 
@@ -105,7 +114,48 @@ export default class Drop extends Mesh {
 		this.animate()
 	}
 
+	mouseInteraction() {
+		const hitplane = new Mesh(
+			new PlaneGeometry(),
+			new MeshBasicMaterial()
+		) 
+		hitplane.scale.setScalar(50)
+		hitplane.position.set(0, 0,  12)
+		// hitplane.rotation.x = -Math.PI/2
+		hitplane.updateMatrix()
+		hitplane.updateMatrixWorld()
+		let raycaster = new Raycaster()
+		// this.add(hitplane)
+
+		this.mouse = new Vector2()
+		let v2 = new Vector2()
+		window.addEventListener('mousemove', (ev)=>{
+			let x = ev.clientX / (window.innerWidth)  - 0.5
+			let y = ev.clientY / (window.innerHeight)  - 0.5
+
+			v2.x = x *2;
+			v2.y = -y *2;
+			raycaster.setFromCamera(v2, store.LabScene.camera)
+
+			let intersects = raycaster.intersectObject(hitplane)
+
+			if(intersects.length > 0){
+				let first = intersects[0]
+				this.mouse.x = first.point.x
+				this.mouse.y = first.point.y
+			}
+		})
+	}
+
 	updateCubes( object, time, numblobs, floor, wallx, wallz ) {
+
+		// console.log(this.mouse)
+		// let v3 = new Vector2()
+		// v3.copy(this.mouse)
+		// v3.sub(this.bubbleMainPos)
+		// v3.multiplyScalar(0.1)
+		// this.bubbleMainPos.add(v3)
+		// console.log(this.bubbleMainPos)
 
 		object.reset();
 		// fill the field with some metaballs
@@ -123,8 +173,18 @@ export default class Drop extends Mesh {
 		const strength = .5 / ( ( Math.sqrt( numblobs ) - 1 ) / 4 + 1 );
 
 		for ( let i = 0; i < numblobs; i ++ ) {
-			let ballx = Math.sin( i + 1.26 * time * ( 1.03 + 0.5 * Math.cos( 0.21 * i ) )  + i * Math.PI * 0.2) * this.introVal * 0.1 + 0.5 ;
-			let bally = Math.abs( Math.cos( i + 1.12 * time * Math.cos( 1.22 + 0.1424 * i ) )) * 0.1 + 0.45 - (this.introVal - 0.8) * 0.1 * this.way ; // dip into the floor
+			if(!store.isMobile) {
+				let v3 = new Vector2()
+				v3.copy(this.mouse)
+				this.bubblePos[i]
+				v3.sub(this.bubblePos[i])
+				v3.multiplyScalar(1/((i+2) * 5))
+				this.bubblePos[i].add(v3)
+			}
+		
+
+			let ballx = this.bubblePos[i].x / 12 + Math.sin( i + 1.26 * time * ( 1.03 + 0.5 * Math.cos( 0.21 * i ) )  + i * Math.PI * 0.2) * this.introVal * 0.1 + 0.5 ;
+			let bally = this.bubblePos[i].y / 12 + Math.abs( Math.cos( i + 1.12 * time * Math.cos( 1.22 + 0.1424 * i ) )) * 0.1 + 0.45 - (this.introVal - 0.8) * 0.1 * this.way ; // dip into the floor
 			let ballz = Math.cos( i + 1.32 * time * 0.1 * Math.sin( ( 0.92 + 0.53 * i ) ) ) * 0.1 + 0.5 ;
 
 			// const ballx = 0.5;
@@ -162,7 +222,7 @@ export default class Drop extends Mesh {
 	animate = () => {
 		this.tick++
 		this.updateCubes( this.effect, store.WebGL.globalUniforms.uTime.value, this.effectController.numBlobs, this.effectController.floor, this.effectController.wallx, this.effectController.wallz );
-
+		console.log(this.effect)
 
 		this.effect.visible = false
 		store.WebGL.renderer.setRenderTarget(this.envFbo)
