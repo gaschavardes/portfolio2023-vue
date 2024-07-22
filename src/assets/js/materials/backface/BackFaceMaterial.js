@@ -14,6 +14,8 @@ export default class BackFaceMaterial extends ShaderMaterial {
 				uStartingTime: { value: 0 },
 				uAppear: { value: 0 },
 				uMouse: { value: Vector2},
+				uPos0: { value: new Vector2()},
+				uPos1: { value: new Vector2()}
 			}
 		})
 	}

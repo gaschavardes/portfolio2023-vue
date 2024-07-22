@@ -222,7 +222,6 @@ export default class Drop extends Mesh {
 	animate = () => {
 		this.tick++
 		this.updateCubes( this.effect, store.WebGL.globalUniforms.uTime.value, this.effectController.numBlobs, this.effectController.floor, this.effectController.wallx, this.effectController.wallz );
-		console.log(this.effect)
 
 		this.effect.visible = false
 		store.WebGL.renderer.setRenderTarget(this.envFbo)

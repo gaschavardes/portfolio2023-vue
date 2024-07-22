@@ -23,6 +23,7 @@ import BackFaceToken from './token/BackFaceToken'
 import DropMaterial from './drop/DropMaterial'
 import BackDropMaterial from './backDrop/BackDropMaterial'
 import RibonMaterial from './ribon/RibonMaterial'
+import DomTextMaterial from './domText/DomTextMaterial'
 
 // materials
 import BasicMaterial from './basic/BasicMaterial'
@@ -57,5 +58,6 @@ export {
 	BackFaceToken,
 	DropMaterial,
 	BackDropMaterial,
-	RibonMaterial
+	RibonMaterial,
+	DomTextMaterial
 }

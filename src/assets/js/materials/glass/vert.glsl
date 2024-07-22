@@ -21,6 +21,9 @@ uniform vec2 uMouse;
 varying vec3 vReflect;
 varying float vBackface;
 varying float zVal;
+uniform vec2 uPos0;
+uniform vec2 uPos1;
+varying float vCenterDistance;
 
 float easeInQuart(float x) {
 return x * x * x * x;
@@ -48,6 +51,11 @@ mat4 rotationMatrix(vec3 axis, float angle)
 														oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
 														oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
 														0.0,                                0.0,                                0.0,                                1.0);
+}
+
+float EaseInOutSine(float x)
+{ 
+    return -(cos(PI * x) - 1.0) / 2.0;
 }
 
 vec3 scale(vec3 v, float val) {
@@ -149,6 +157,14 @@ float pnoise(vec3 P, vec3 rep) {
     return 2.2 * n_xyz;
 }
 
+float sdSegment( in vec2 p, in vec2 a, in vec2 b )
+{
+    vec2 pa = p-a, ba = b-a;
+    float h = clamp( dot(pa,ba)/dot(ba,ba), 0.0, 1.0 );
+    return length( pa - ba*h );
+}
+
+
 const float noiseFreq = 0.5;
 const float noiseStrength = 2.;
 const float noiseTime = 0.1;
@@ -158,6 +174,12 @@ void main() {
 
 	float progressVal = easeInQuart(max(uProgress + center.y, 0.)) * 0.001;
 	vec3 pos = position;
+
+	// // MOUSE INTERACTION
+	// float toCenter = length(center.xy);
+	// vCenterDistance = toCenter;
+	// float mouseTrail = sdSegment(center.xy, uPos0, uPos1);
+	// mouseTrail = smoothstep(0., 5. , mouseTrail);
 
     vec3 objectNormal = vec3(normal);
     vec3 transformedNormal = objectNormal;
@@ -173,6 +195,19 @@ void main() {
 	translatePos.z += progressVal * random.z * sin(sign(letterCenter.z) * random.z ) * 0.1 + displacement.z;
 	translatePos.x += progressVal * random.x * sign(letterCenter.x) * random.x * 0.0005 + displacement.x;
 	translatePos.y += progressVal * random.y * 0.05 + displacement.y;
+
+
+	// MOUSE INTERACTION
+	float toCenter = length(center.xy);
+	vCenterDistance = toCenter;
+	float mouseTrail = sdSegment(center.xy + translatePos.xy, uPos0, uPos1);
+	mouseTrail = EaseInOutSine(smoothstep(0., 10. , mouseTrail));
+
+	float vel = EaseInOutSine(min(length( uPos0 - uPos1), 1.)) * clamp(1. - progressVal * 0.5, 0., 1.) * (1. - uAppear);
+
+	translatePos.z += (1. - mouseTrail) * 5. * center.z * vel;
+	translatePos.x += (1. - mouseTrail) * (random.x - 10.) * vel * 0.1;
+	translatePos.y += (1. - mouseTrail) * (random.y - 10.) * vel * 0.1;
 
 	if(center.x > 0. || center.x < 0.){
 		pos = position - center;
@@ -201,6 +236,8 @@ void main() {
 
 	
 
+	
+
 
 	vec4 worldPosition = modelMatrix * vec4( pos, 1.0);
 
@@ -223,6 +260,6 @@ void main() {
 	vViewPosition = - mvPosition.xyz;
 	
 	gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-	vBackface = clamp(progressVal * 10., 0., 1.);
+	vBackface = clamp(progressVal * 10. + (1. - mouseTrail) * vel * 10., 0., 1.);
 	zVal = pos.z;
 }

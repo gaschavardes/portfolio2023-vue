@@ -1,5 +1,5 @@
 import { GlassMaterial, BackFaceMaterial } from '../materials'
-import { Mesh, WebGLRenderTarget, PlaneGeometry, Group, BufferGeometry, BufferAttribute, Vector3, Box3, Vector2 } from 'three/src/Three'
+import { Mesh, WebGLRenderTarget, MeshBasicMaterial, Raycaster, PlaneGeometry, Group, BufferGeometry, BufferAttribute, Vector3, Box3, Vector2 } from 'three/src/Three'
 import store from '../store'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
@@ -19,6 +19,7 @@ export default class Letter extends Group {
 		this.centers = {}
 		this.easedMouse = new Vector2()
 		this.easedMouseTemp = new Vector2()
+		this.vel = new Vector2()
 		this.easedScroll = 0
 		// this.parent = options.parent
 		this.intro = document.querySelector('.intro')
@@ -38,8 +39,10 @@ export default class Letter extends Group {
 		// this.quad = this.createBackground()
 		this.item = new Group()
 		this.scale.setScalar(store.isMobile ? 0.05 : 0.1)
+		// this.position.z = -150
 		this.fboCreate()
 
+		this.mouseInteraction()
 
 		this.scrollTrigger = ScrollTrigger.create({
 			trigger: this.intro, 
@@ -320,8 +323,66 @@ export default class Letter extends Group {
 		})
 	}
 
+	mouseInteraction() {
+		const hitplane = new Mesh(
+			new PlaneGeometry(),
+			new MeshBasicMaterial()
+		) 
+		hitplane.scale.setScalar(150)
+		hitplane.position.set(0, 0, -150)
+		// hitplane.rotation.x = -Math.PI/2
+		hitplane.updateMatrix()
+		hitplane.updateMatrixWorld()
+		let raycaster = new Raycaster()
+		// this.add(hitplane)
+
+		this.mouse = new Vector2()
+		let v2 = new Vector2()
+		window.addEventListener('mousemove', (ev)=>{
+			let x = ev.clientX / (window.innerWidth)  - 0.5
+			let y = ev.clientY / (window.innerHeight)  - 0.5
+
+			v2.x = x *2;
+			v2.y = -y *2;
+			raycaster.setFromCamera(v2, store.MainScene.camera)
+
+			let intersects = raycaster.intersectObject(hitplane)
+
+			if(intersects.length > 0){
+				let first = intersects[0]
+				this.mouse.x = first.point.x
+				this.mouse.y = first.point.y
+			}
+		})
+	}
+
 	animate = () => {
+
 		if (!this.item) return
+
+		// Lerp uPos0 to mouse
+		let v3 = new Vector2()
+		v3.copy(this.mouse)
+
+		v3.sub(this.GlassMaterial.uniforms.uPos0.value)
+		v3.multiplyScalar(0.1)
+		this.GlassMaterial.uniforms.uPos0.value.add(v3)
+		// Get uPos1 Lerp speed 
+		v3.copy(this.GlassMaterial.uniforms.uPos0.value)
+		v3.sub(this.GlassMaterial.uniforms.uPos1.value)
+		v3.multiplyScalar(0.05)
+		// Lerp the speed
+		v3.sub(this.vel)
+		v3.multiplyScalar(0.5)
+		this.vel.add(v3)
+
+		this.item.material.uniforms.uPos1.value.add(this.vel)
+		this.backfaceMaterial.uniforms.uPos0.value = this.GlassMaterial.uniforms.uPos0.value
+		this.backfaceMaterial.uniforms.uPos1.value = this.GlassMaterial.uniforms.uPos1.value
+		
+		// this.GlassMaterial.uniforms.uPos0
+
+
 		// Ease Mouse movement
 		this.easedMouseTemp.subVectors(store.pointer.glNormalized, this.easedMouse)
 		this.easedMouseTemp.multiplyScalar(0.1)
@@ -338,7 +399,7 @@ export default class Letter extends Group {
 
 		this.GlassMaterial.uniforms.uTime.value = store.WebGL.globalUniforms.uTime.value
 
-		if(this.easedScroll < 0.9) {
+		if(this.easedScroll < 0.99) {
 			if(store.MainScene.bloomPass) {
 				store.MainScene.bloomPass.threshold = 0.93
 			}
@@ -351,6 +412,8 @@ export default class Letter extends Group {
 
 	
 			this.item.material = this.backfaceMaterial
+			this.backfaceMaterial.uniforms.uPos0.value = this.GlassMaterial.uniforms.uPos0.value
+			this.backfaceMaterial.uniforms.uPos1.value = this.GlassMaterial.uniforms.uPos1.value
 			store.WebGL.renderer.setRenderTarget(this.backfaceFboBroken)
 			store.WebGL.renderer.render(store.MainScene, store.MainScene.activeCamera)
 	
@@ -359,6 +422,8 @@ export default class Letter extends Group {
 	
 			store.WebGL.renderer.setRenderTarget(null)
 			this.fullItem.material = this.backfaceMaterial
+			this.backfaceMaterial.uniforms.uPos0.value = new Vector2(1000, 1000)
+			this.backfaceMaterial.uniforms.uPos1.value = new Vector2(1000, 1000)
 			store.WebGL.renderer.setRenderTarget(this.backfaceFbo)
 	
 			// store.WebGL.renderer.clearDepth()

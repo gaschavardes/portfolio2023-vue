@@ -1,6 +1,6 @@
 <template>
 	<section class="home" id="thetop">
-		<ScrollCta :destination="activeDestination" :min="2" :max="5" ref="scrollCta"/>
+		<ScrollCta :destination="activeDestination" :min="10" :max="5" ref="scrollCta"/>
 		<section class="intro" ref="intro">
 			<div class="intro__text" ref="introContent">
 				I'm Gaspard Chavardes,<br>
@@ -240,8 +240,10 @@
 							this.activeDestination = 'contact'
 						}
 						setTimeout(() => {
-							this.$refs.videoTexture[index].play()
-							this.$refs.videoTexture[index].currentTime = 0
+							if(this.$refs.videoTexture[index]){
+								this.$refs.videoTexture[index].play()
+								this.$refs.videoTexture[index].currentTime = 0
+							}
 						}, 100)
 					}
 				},
@@ -249,8 +251,12 @@
 					el.leave()
 					if(el.data.media) {
 						setTimeout(() => {
-							this.$refs.videoTexture[index].play()
-							this.$refs.videoTexture[index].currentTime = 0
+							if(this.$refs.videoTexture[index]){
+								this.$refs.videoTexture[index].play()
+								this.$refs.videoTexture[index].currentTime = 0
+							}
+							
+							
 						}, 100)
 					}
 				},
@@ -272,8 +278,11 @@
 					el.leave()
 					if(el.data.media) {
 						setTimeout(() => {
-							this.$refs.videoTexture[index].play()
-							this.$refs.videoTexture[index].currentTime = 0
+							if(this.$refs.videoTexture[index]){
+								this.$refs.videoTexture[index].play()
+								this.$refs.videoTexture[index].currentTime = 0
+							}
+							
 						}, 100)
 					}
 				},
@@ -306,11 +315,15 @@
 
 				},
 				onLeaveBack: () => {
-					this.$refs.scrollCta.mobileHidden = true
+					if(this.$refs.scrollCta) {
+						this.$refs.scrollCta.mobileHidden = true
+					}
 					this.activeDestination = 'the projects'
 				},
 				onEnter: () => {
-					this.$refs.scrollCta.mobileHidden = false
+					if(this.$refs.scrollCta) {
+						this.$refs.scrollCta.mobileHidden = true
+					}
 				},
 				onEnterBack: () => {
 					this.$refs.contact.classList.remove('show')

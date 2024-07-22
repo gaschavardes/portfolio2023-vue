@@ -26,7 +26,9 @@ export default class GlassMaterial extends ShaderMaterial {
 				uRefractPower: { value: options.refractPower },
 				uBlendMode: { value: 1},
 				uDiffuseMatcapBlend: { value : 0.6},
-				uMatcap: {value: options.matcap}
+				uMatcap: {value: options.matcap},
+				uPos0: { value: new Vector2()},
+				uPos1: { value: new Vector2()}
 			},
 			defines: {
 				REFRACT: options.refract,

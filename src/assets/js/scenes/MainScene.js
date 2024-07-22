@@ -5,6 +5,7 @@ import Background from '../components/Background'
 // import Hello from '../components/Hello'
 import Letter from '../components/Letter'
 import Projects from '../components/Projects'
+import DomText from '../components/DomText'
 import store from '../store'
 import { E, SavePass } from '../utils'
 import GlobalEvents from '../utils/GlobalEvents'
@@ -26,7 +27,7 @@ export default class MainScene extends Scene {
 			controls: window.urlParams.has('controls')
 		}
 
-		this.camera = new PerspectiveCamera(45, store.window.w / store.window.h, 2, 50)
+		this.camera = new PerspectiveCamera(45, store.window.w / store.window.h, 2, 1000)
 		this.camera.position.z = 15
 		this.add(this.camera)
 
@@ -66,7 +67,8 @@ export default class MainScene extends Scene {
 			// sim: new Sim(),
 			background: new Background(),
 			letter: new Letter(),
-			projects: new Projects()
+			projects: new Projects(),
+			domText: new DomText()
 		}
 
 		this.load()
