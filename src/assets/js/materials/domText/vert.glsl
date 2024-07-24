@@ -14,9 +14,12 @@ attribute vec2 aUVID;
 varying vec2 vUV1;
 varying vec2 vUV2;
 varying vec2 vAUVID;
+varying vec2 vUv;
 uniform vec2 uSpriteSize;
 uniform float uYpos;
-
+uniform float uScroll;
+uniform float uMaxScroll;
+uniform float uMaxUv;
 
 // NOISE 
 vec3 mod289(vec3 x) {
@@ -100,7 +103,7 @@ float pnoise(vec3 P, vec3 rep) {
 }
 
 const float noiseFreq = 1.;
-const float noiseStrength = 20.;
+const float noiseStrength = 30.;
 const float noiseTime = 0.1;
 
 mat4 translationMatrix(vec3 axis)
@@ -136,37 +139,57 @@ mat3 rotateZ(float theta) {
 
 void main()	{
     #include <normalsVert>
-
+	vUv = uv;
 	vColor = colorVal;
 
 	vec4 newPos = vec4(position, 1.);
 
-	vec4 worldPosition = vec4(position, 1.);
+	vec4 worldPosition = vec4(newPos.rgb, 1.);
 	worldPosition = instanceMatrix * worldPosition;
 	worldPosition = modelViewMatrix * instanceMatrix * newPos;
 
-	float noiseFact = 1. - smoothstep(5., 3., worldPosition.y) * smoothstep(-5., -3., worldPosition.y);
+	// vec3 scrollDisplace = vec3(0., mod(uScroll,uMaxScroll * 2.), 0.);
+
+	// float noiseFact = 1. - smoothstep(10., 5., worldPosition.y) * smoothstep(-10., -5., worldPosition.y);
+	// noiseFact *= 0.;
 	// newPos.x += (1. - noiseFact) * 10.;
 
-	float borderNoise =  smoothstep( uSpriteSize.x * 0.01, 0., aUVID.x)
-	 + smoothstep( uSpriteSize.x * 0.99, uSpriteSize.x, aUVID.x) 
-	 + smoothstep( uSpriteSize.y * 0.99, uSpriteSize.y, aUVID.y)
-	 + smoothstep( uSpriteSize.y * 0.01, 0., aUVID.y);
-	borderNoise *= 0.03;
+	// float borderNoise =  smoothstep( uSpriteSize.x * 0.01, 0., aUVID.x)
+	//  + smoothstep( uSpriteSize.x * 0.99, uSpriteSize.x, aUVID.x) 
+	//  + smoothstep( uSpriteSize.y * 0.99, uSpriteSize.y, aUVID.y)
+	//  + smoothstep( uSpriteSize.y * 0.01, 0., aUVID.y);
+	// borderNoise *= 0.03;
+
+	// vec3 displacement = vec3(
+    //     pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(101.0, random, random)) * noiseStrength * 30. * (noiseFact),
+    //    - abs(pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(202.0, random, random)) * noiseStrength)  * (noiseFact) + (uScroll),
+    //     pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(202.0)) * noiseStrength * (noiseFact) * 0.1
+    // );
+	// displacement.y = mod(displacement.y,uMaxScroll * 2.);
+	mat4 instance = instanceMatrix;
+
+	// displacement *= rotateZ(sin(-uYpos * 0.1));
+	// instance *= translationMatrix(displacement);
+
+	// instance[3][1] = mod(instance[3][1] + uScroll * uMaxScroll * 0.5, uMaxScroll * 2.) - uMaxScroll;
+	instance[3][1] = mod(instance[3][1] + (uScroll + 0.5) * uMaxScroll, uMaxScroll) - uMaxScroll * 0.5 ;
+	float yPos = instance[3][1];
+	vec2 newUvId = vec2(aUVID.x, mod(aUVID.y + uScroll * uMaxUv , uMaxUv));
+    vUV1 = ((uv + newUvId) / uSpriteSize);
+	vAUVID = aUVID;
+
+	float noiseFact = 1. - smoothstep(uMaxScroll, uMaxScroll * 0.5 - uMaxScroll * .1,  yPos) * smoothstep(-uMaxScroll,-uMaxScroll * 0.5 + uMaxScroll * .1,  yPos);
+	// float noiseFact = smoothstep(-uMaxScroll * 0.5 + uMaxScroll * .1, -uMaxScroll * 0.5,  instance[3][1]);
+	noiseFact *= 0.1;
 
 	vec3 displacement = vec3(
         pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(101.0, random, random)) * noiseStrength * 30. * (noiseFact),
-       - abs(pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(202.0, random, random)) * noiseStrength)  * (noiseFact),
+        abs(pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(202.0, random, random)) * noiseStrength * 100.) * (noiseFact) * sign(yPos),
         pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(202.0)) * noiseStrength * (noiseFact) * 0.1
     );
-	mat4 instance = instanceMatrix;
 
-	displacement *= rotateZ(sin(-uYpos * 0.1));
 	instance *= translationMatrix(displacement);
 
-    vUV1 = (uv + aUVID) / uSpriteSize;
-	vAUVID = aUVID;
-
-    gl_Position = projectionMatrix * modelViewMatrix * instanceMatrix * newPos;
-	vProgress = noiseFact;
+    gl_Position = projectionMatrix * modelViewMatrix * instance * newPos;
+	// vProgress = noiseFact;
 }

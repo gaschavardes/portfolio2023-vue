@@ -1,4 +1,4 @@
-import { AdditiveBlending, Color, RawShaderMaterial, Vector2 } from 'three'
+import { Color, RawShaderMaterial, Vector2 } from 'three'
 import { mergeDeep } from '../../utils'
 import store from '../../store'
 import vertexShader from './vert.glsl'
@@ -17,7 +17,10 @@ export default class DomTextMaterial extends RawShaderMaterial {
 					uSpriteSize: options.uniforms.spriteSize,
 					uHoverValY: { value: 0},
 					uHoverValH: { value: 0},
-					uYpos: {value: 0}
+					uYpos: {value: 0},
+					uScroll: { value: 0},
+					uMaxScroll: options.uniforms.uMaxScroll ,
+					uMaxUv: options.uniforms.uMaxUv 
 				},
 				defines: {
 				}
@@ -30,7 +33,8 @@ export default class DomTextMaterial extends RawShaderMaterial {
 			uniforms: options.uniforms,
 			defines: options.defines,
 			toneMapped: false,
-			blending: AdditiveBlending 
+			transparent: true,
+			// blending: AdditiveBlending 
 		})
 
 		this.globalUniforms = options.globalUniforms

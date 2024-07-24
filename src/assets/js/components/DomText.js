@@ -22,10 +22,29 @@ export default class DomText extends Group{
 		// this.material = new DomTextMaterial({
 		// 	uResolution: new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
 		// })
-		this.scale.set(1.08, 1.08, 0)
+		this.scale.set(1.13, 1.13, 0)
 
 		this.position.set(0, 0, 0)
+		this.setScale()
+		console.log(store.MainScene.camera)
+	
 		this.adjustAscenderRatio = 0.2
+	}
+
+	setScale() {
+	
+		this.z = store.window.h / Math.tan(store.MainScene.camera.fov * Math.PI / 360) * 0.5;
+		this.zScale = store.MainScene.camera.position.z / this.z
+
+		this.scale.set(
+			store.window.w * this.zScale, store.window.h * this.zScale, 1.0
+		);
+		
+		// this.position.set(   
+		// 	(0 + rect.width * 0.5 - store.window.w * 0.5) * this.zScale,
+		// 	(0 - rect.height * 0.5 + store.window.h * 0.5) * this.zScale,
+		// 	0.0
+		// );
 	}
 
 	createParticle() {
@@ -34,12 +53,12 @@ export default class DomText extends Group{
 		// const image = texture.source.data
 
 		
-		const size = new Vector2(store.window.w, store.window.h)
+		const size = new Vector2(store.window.w * 0.05, store.window.h * 0.07 )
 		
 		const particles = []
 		const aIDs = []
 		const aUVIDs = []
-		const step = 1
+		const step = 0.1
 		for (let y = 0, y2 = size.y; y < y2; y = y + step) {
 			for (let x = 0, x2 = size.x; x < x2; x = x + step) {
 				// if (data.data[(y * 4 * data.width) + (x * 4) + 3] > 128) {
@@ -47,6 +66,8 @@ export default class DomText extends Group{
 						x : (x - size.x * 0.5),
 						y : (y - size.y * 0.5),
 					};
+					this.lastY = particle.y
+				
 					particles.push(particle);
 					aIDs.push(x + 1)
 					// aUVIDs.push(x % data.height)
@@ -55,6 +76,8 @@ export default class DomText extends Group{
 				// }
 			}
 		}
+		this.particleMaxY = (particles[particles.length - 1].y + step * 0.5 + Math.abs(particles[0].y - step * 0.5))
+		console.log(aUVIDs[aUVIDs.length - 1])
 		// const color = []
 		const random = []
 		this.instance = new InstancedMesh(
@@ -63,12 +86,15 @@ export default class DomText extends Group{
 				uniforms: {
 					resolution: { value: new Vector2(store.window.w * store.window.dpr, store.window.h * store.window.dpr)},
 					spriteSize: {value: new Vector2(size.x / step, size.y / step ) },
-					uTexture: { value: null }
+					uTexture: { value: null },
+					uScroll : { value: 0},
+					uMaxScroll: {value: this.particleMaxY},
+					uMaxUv: { value: aUVIDs[aUVIDs.length - 1]}
 				}
 			}),
 			particles.length
 		)
-		let scale = 0.0062 * 2
+		let scale = 1
 		this.dummy.scale.set(scale,scale,1)
 		particles.forEach((el, i) => {
 			this.dummy.position.set(el.x * scale, el.y * scale, 0)
@@ -83,7 +109,8 @@ export default class DomText extends Group{
 		this.instance.geometry.setAttribute('aID', new InstancedBufferAttribute(new Float32Array(aIDs), 1))
 		this.instance.geometry.setAttribute('aUVID', new InstancedBufferAttribute(new Float32Array(aUVIDs), 2))
 		this.add(this.instance)
-		this.instance.position.set(0, 0, 10)
+		this.instance.scale.set(1/ size.x, 1/size.y, 1)
+		this.instance.position.set(0, 0, 0)
 		
 		this.instance.visible = true
 
@@ -420,7 +447,7 @@ export default class DomText extends Group{
 				el.text,
 				el.styleVal.textAlign === 'center' ? (this.canvas.width ) * 0.5  : el.position.left * this.pixelRatio + el.x * this.pixelRatio,
 				y,
-				Math.ceil((this.canvas.width * 0.98)),
+				Math.ceil((this.canvas.width * 0.95)),
 				parseFloat(el.styleVal.lineHeight) * this.pixelRatio
 			)
 			// if(el.isHover){
@@ -480,6 +507,8 @@ export default class DomText extends Group{
 			this.context.restore()
 		})
 		this.CanvasTexture.needsUpdate = true
+		this.instance.material.uniforms.uScroll.value = this.LenisScroll / store.window.h
+		console.log(this.LenisScroll / store.window.h)
 	}
 
 	load() {
@@ -505,6 +534,8 @@ export default class DomText extends Group{
 		if(!store.isMobile){
 			this.LenisScroll = 0
 		}
+
+		this.setScale()
 		
 		// this.CanvasTexture.needsUpdate = true
 		

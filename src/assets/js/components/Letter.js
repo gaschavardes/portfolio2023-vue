@@ -444,7 +444,7 @@ export default class Letter extends Group {
 			if(this.item.visible) this.item.visible = false
 			store.MainScene.components.projects.instance.visible = true
 			if(store.MainScene.bloomPass) {
-				store.MainScene.bloomPass.threshold = 0.99
+				store.MainScene.bloomPass.threshold = 0.995
 			}
 		}
 		

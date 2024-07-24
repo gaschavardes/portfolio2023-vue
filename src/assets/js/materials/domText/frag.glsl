@@ -9,6 +9,7 @@ uniform sampler2D uTexture;
 varying vec2 vUV1;
 varying vec2 vUV2;
 varying vec2 vAUVID;
+varying vec2 vUv;
 uniform vec2 uSpriteSize;
 
 
@@ -20,13 +21,17 @@ void main() {
 
 	float highlight = smoothstep(0.1, 0.05, vProgress) * smoothstep(0.0001, 0.01, vProgress);
 
-	// vec4 textureMain = texture2D(uTexture, vUV1);
+	vec4 textureMain = texture2D(uTexture, vUV1);
 
 	// vec4 textureMain = texture2D(uTexture, UV1Bis);
-	vec4 textureMain = texture2D(uTexture, UV1Bis);
+	// vec4 textureMain = texture2D(uTexture, UV1Bis);
 	// vec4 textureMain2 = texture2D(uTexture, vUV2);
 	// vec4 textureMain = texture2D(uTexture, gl_FragCoord.xy);
 
-	gl_FragColor = vec4(vec3(clamp(textureMain.rgb, vec3(0.), vec3(0.97))) , 1.);
+	// gl_FragColor = vec4(vec3(.35) , 1.);
+
+	gl_FragColor = vec4(textureMain.rgb, 1.);
+	gl_FragColor = textureMain * 0.99;
+	// gl_FragColor = vec4(vUV1, 0., 1.);
 	// gl_FragColor = vec4(1., 0., 0., 1.);
 }
