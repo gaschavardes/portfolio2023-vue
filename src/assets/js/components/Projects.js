@@ -1,7 +1,7 @@
 import { Group, PlaneGeometry, Color, Vector2, Object3D, InstancedMesh, InstancedBufferAttribute, VideoTexture} from 'three'
 import { ParticleMaterial } from '../materials'
 import store from '../store'
-import gsap from 'gsap'
+// import gsap from 'gsap'
 import { E, qs, qsa } from '../utils'
 import GlobalEvents from '../utils/GlobalEvents'
 // import { copyObjectDataTransforms } from '../utils'
@@ -50,7 +50,7 @@ export default class Projects extends Group {
 		const particles = []
 		const aIDs = []
 		const aUVIDs = []
-		const step = store.isMobile ? 4 : 2
+		const step = store.isMobile ? 4 : 10
 		for (let y = 0, y2 = size.y; y < y2; y = y + step) {
 			for (let x = 0, x2 = size.x; x < x2; x = x + step) {
 				// if (data.data[(y * 4 * data.width) + (x * 4) + 3] > 128) {
@@ -127,16 +127,16 @@ export default class Projects extends Group {
 	}
 
 	createTimeline() {
-		this.timeline = gsap.timeline({ paused: true })
-		for (let index = 0; index < store.projects.length; index++) {
-			this.timeline
-			.call(() => { this.instance.material.uniforms.videoTexture.value = this.videos[index].texture})
-			.to(this, {  yPos: 0 })
-			.to(this, {  yPos: 10, ease: 'none' })
-			.set(this, {  yPos: -10, ease: 'none' })
-			.call(() => { this.instance.material.uniforms.videoTexture.value = this.videos[index].texture})
-			// .call(this.textureUpdate)
-		}
+		// this.timeline = gsap.timeline({ paused: true })
+		// for (let index = 0; index < store.projects.length; index++) {
+		// 	this.timeline
+		// 	.call(() => { this.instance.material.uniforms.videoTexture.value = this.videos[index].texture})
+		// 	.to(this, {  yPos: 0 })
+		// 	.to(this, {  yPos: 10, ease: 'none' })
+		// 	.set(this, {  yPos: -10, ease: 'none' })
+		// 	.call(() => { this.instance.material.uniforms.videoTexture.value = this.videos[index].texture})
+		// 	// .call(this.textureUpdate)
+		// }
 	}
 
 	animate = () => {

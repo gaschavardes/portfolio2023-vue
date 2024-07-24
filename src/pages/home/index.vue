@@ -96,7 +96,7 @@
 					}
 				},
 				{
-					name: "Rémy Martin x Lee Broom",
+					name: "Rémy Martin",
 					media: "leeBroom",
 					// "type": "video",
 					slug:'remy martin',
@@ -107,7 +107,7 @@
 					}
 				},
 				{
-					name: "Bompard Shoppable Experience",
+					name: "Eric Bompard",
 					media: "bompard",
 					type: "video",
 					slug:'bompard',
@@ -269,8 +269,10 @@
 							this.activeDestination = 'contact'
 						}
 						setTimeout(() => {
-							this.$refs.videoTexture[index].play()
-							this.$refs.videoTexture[index].currentTime = 0
+							if(this.$refs.videoTexture[index]){
+								this.$refs.videoTexture[index].play()
+								this.$refs.videoTexture[index].currentTime = 0
+							}
 						}, 100)
 					}
 				},

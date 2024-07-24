@@ -2,30 +2,31 @@
 
 uniform vec3 uColor;
 uniform vec2 uResolution;
-uniform vec2 uTextureRatio;
-uniform sampler2D uTexture;
 varying vec3 vNormal;
+varying vec3 vColor;
+varying float vProgress;
+uniform sampler2D uTexture;
+varying vec2 vUV1;
+varying vec2 vUV2;
+varying vec2 vAUVID;
+uniform vec2 uSpriteSize;
 
 
 void main() {
-	vec2 screenUV = gl_FragCoord.xy / uResolution;
+    vec2 screenUV = gl_FragCoord.xy / uResolution;
 
+	vec2 UV1Bis = (screenUV + vAUVID) / uSpriteSize;
+	float noiseFact = smoothstep(0.9, 0.8, screenUV.y) *  smoothstep(0.1, 0.2, screenUV.y);
 
-	vec2 ratioImg = vec2(
-		min((uResolution.x / uResolution.y) / (uTextureRatio.x / uTextureRatio.y), 1.0),
-		min((uResolution.y / uResolution.x) / (uTextureRatio.y / uTextureRatio.x), 1.0)
-    );
+	float highlight = smoothstep(0.1, 0.05, vProgress) * smoothstep(0.0001, 0.01, vProgress);
 
-	float ratioX = min((ratioImg.x / ratioImg.y), 1.);
-	float ratioY = min((ratioImg.y / ratioImg.x), 1.);
-	
- 	vec2 newUv = vec2(
-        screenUV.x  * ratioX - ratioX * 0.5 + 0.5,
-        screenUV.y * ratioY - ratioY * 0.5 + 0.5
-    );
+	// vec4 textureMain = texture2D(uTexture, vUV1);
 
-	vec4 texture = texture2D(uTexture, screenUV);
+	// vec4 textureMain = texture2D(uTexture, UV1Bis);
+	vec4 textureMain = texture2D(uTexture, UV1Bis);
+	// vec4 textureMain2 = texture2D(uTexture, vUV2);
+	// vec4 textureMain = texture2D(uTexture, gl_FragCoord.xy);
 
-    gl_FragColor = vec4(texture.rgb, texture.a * 0.8 * smoothstep(1., 0.9, screenUV.y));
-	// gl_FragColor = vec4(screenUV, 0., 0.);
+	gl_FragColor = vec4(vec3(clamp(textureMain.rgb, vec3(0.), vec3(0.97))) , 1.);
+	// gl_FragColor = vec4(1., 0., 0., 1.);
 }

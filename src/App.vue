@@ -72,6 +72,7 @@ export default {
 	E.on('LoaderOut', () => {
 		this.appear = true
 		this.router.afterEach(() => {
+			console.log('AFTER')
 			// const nextComponent = to.matched[0].components.default
 			// const prevComponent = from.matched[0].components.default
 			this.$nextTick(() => {
@@ -79,6 +80,14 @@ export default {
 					this.$refs.routerEl.appear()
 				})
 			});
+			setTimeout(() => {
+				store.Lenis.dimensions.resize()
+				ScrollTrigger.defaults({
+					scroller: this.$refs.scrollContainer
+				})
+				this.navLocation = this.location.name
+				this.appear = true
+			}, 1000)
 		})
 	})
 	
@@ -88,19 +97,16 @@ export default {
 			this.navLocation = ''
 			this.appear = false
 			setTimeout(() => {
-				store.Lenis.dimensions.resize()
-				ScrollTrigger.defaults({
-					scroller: this.$refs.scrollContainer
-				})
+				next()
 				store.Lenis.scrollTo(0, { immediate: true})
-				
+
 			}, 1000)
 			E.emit('sceneChange', { value: to.name})
 			setTimeout(() => {
 				this.navLocation = this.location.name
 				this.appear = true
-			}, 2000)
-			next()
+			}, 1000)
+
 		})
 	})
 	

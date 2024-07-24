@@ -1,11 +1,10 @@
 .project__item{
-	height: 100vh;
+	// height: 100vh;
 	position: relative;
-	margin-bottom: 25vh;
-	pointer-events: none;
+	// pointer-events: none;
 	
 	.content{
-		position: fixed;
+		// position: fixed;
 		bottom: 20px;
 		left: 20px;
 		text-align: left;
@@ -18,9 +17,13 @@
 			color: white;
 		}
 		h2{
-			font-size: 60px;
-			max-width: min(60vw, 650px);
+			font-size: 120px;
+			z-index: 100;
+			// max-width: min(60vw, 650px);
 			margin-bottom: 10px;
+			opacity: 1;
+			color: red;
+			text-align: center;
 			@media screen and (max-width: 400px) {
 				max-width: 300px;
 				margin-bottom: 10px;
@@ -29,10 +32,11 @@
 		}
 		h4{
 			font-size: 16px;
+			display: none;
 		}
 		.char{
 			--wght: 900;
-			opacity: 0;
+			// opacity: 0;
 			// font-weight: 900;
 			// font-variation-settings: 'wght' var(--wght);;
 		}

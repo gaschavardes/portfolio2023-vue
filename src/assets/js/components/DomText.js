@@ -1,6 +1,6 @@
 
 
-import { Texture, Mesh, PlaneGeometry, Vector2} from 'three'
+import { Texture, Group, PlaneGeometry, Vector2, InstancedMesh, InstancedBufferAttribute, Object3D} from 'three'
 import { E } from '../utils'
 import GlobalEvents from '../utils/GlobalEvents'
 import store from '../store'
@@ -10,35 +10,99 @@ import { DomTextMaterial } from '../materials'
 // import {TextTexture} from '../TextTexture'
 
 gsap.registerPlugin(SplitText)
-export default class DomText extends Mesh{
+export default class DomText extends Group{
 	constructor(){
 		super()
 		this.items = []
 		this.images = []
 		this.svg = []
-		this.textOption = ['P', 'A', 'SPAN', 'DIV']
+		this.textOption = ['H2', 'P', 'A', 'SPAN', 'DIV']
 		this.load()
 		this.geometry = new PlaneGeometry()
-		this.material = new DomTextMaterial({
-			uResolution: new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
-		})
-		this.scale.set(100, 100, 100)
+		// this.material = new DomTextMaterial({
+		// 	uResolution: new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
+		// })
+		this.scale.set(1.08, 1.08, 0)
 
-		this.position.set(0, 0, -10)
-		this.adjustAscenderRatio = 0.06
+		this.position.set(0, 0, 0)
+		this.adjustAscenderRatio = 0.2
+	}
+
+	createParticle() {
+		this.dummy = new Object3D()
+		// const texture = store.MainScene.backgroundTexture
+		// const image = texture.source.data
+
+		
+		const size = new Vector2(store.window.w, store.window.h)
+		
+		const particles = []
+		const aIDs = []
+		const aUVIDs = []
+		const step = 1
+		for (let y = 0, y2 = size.y; y < y2; y = y + step) {
+			for (let x = 0, x2 = size.x; x < x2; x = x + step) {
+				// if (data.data[(y * 4 * data.width) + (x * 4) + 3] > 128) {
+					const particle = {
+						x : (x - size.x * 0.5),
+						y : (y - size.y * 0.5),
+					};
+					particles.push(particle);
+					aIDs.push(x + 1)
+					// aUVIDs.push(x % data.height)
+					aUVIDs.push(x / step)
+					aUVIDs.push(y / step)
+				// }
+			}
+		}
+		// const color = []
+		const random = []
+		this.instance = new InstancedMesh(
+			new PlaneGeometry(step, step),
+			new DomTextMaterial({
+				uniforms: {
+					resolution: { value: new Vector2(store.window.w * store.window.dpr, store.window.h * store.window.dpr)},
+					spriteSize: {value: new Vector2(size.x / step, size.y / step ) },
+					uTexture: { value: null }
+				}
+			}),
+			particles.length
+		)
+		let scale = 0.0062 * 2
+		this.dummy.scale.set(scale,scale,1)
+		particles.forEach((el, i) => {
+			this.dummy.position.set(el.x * scale, el.y * scale, 0)
+			this.dummy.updateMatrix()
+			// color.push(...[el.color.x, el.color.y, el.color.z] )
+			random.push(Math.random() * 10)
+			this.instance.setMatrixAt(i, this.dummy.matrix)
+		})
+		this.instance.instanceMatrix.needsUpdate = true
+		// this.instance.geometry.setAttribute('colorVal', new InstancedBufferAttribute(new Float32Array(color), 3))
+		this.instance.geometry.setAttribute('random', new InstancedBufferAttribute(new Float32Array(random), 1))
+		this.instance.geometry.setAttribute('aID', new InstancedBufferAttribute(new Float32Array(aIDs), 1))
+		this.instance.geometry.setAttribute('aUVID', new InstancedBufferAttribute(new Float32Array(aUVIDs), 2))
+		this.add(this.instance)
+		this.instance.position.set(0, 0, 10)
+		
+		this.instance.visible = true
+
 	}
 	build() {
-		this.setCanvas()
 		// this.setWords()
 		
 
 		this.addEvents()
+		this.createParticle()
 		store.RAFCollection.add(this.writeTexture, 0)
+		this.setCanvas()
+
+
 	}
 
-	add(item){
+	addEl(item){
 		if(this.textOption.indexOf(item.el.nodeName) > -1 ){
-			this.items.push({dom: item.el, opacity:item.opacity, x: item.x, y: item.y, id: item.id})
+			this.items.push({dom: item.el, opacity:item.opacity, x: item.x, y: item.y, id: item.id, isHover: false})
 			this.setWords(this.items[this.items.length - 1])
 			this.LenisScroll = store.Lenis.scroll
 			
@@ -74,6 +138,22 @@ export default class DomText extends Mesh{
 					
 				}})
 
+			}
+		})
+	}
+
+	hover(elm){
+		this.items.forEach((el) => {
+			if(el.dom === elm) {
+				el.isHover = true
+			}
+		})
+	}
+
+	hoverLeave(elm){
+		this.items.forEach((el) => {
+			if(el.dom === elm) {
+				el.isHover = false
 			}
 		})
 	}
@@ -168,7 +248,7 @@ export default class DomText extends Mesh{
 
 	addEvents() {
 		E.on('domCanvasAdd', (e) => {
-			this.add(e)
+			this.addEl(e)
 		})
 		E.on('domSvgUpdate', (e) => {
 			this.updateSvg(e)
@@ -179,6 +259,12 @@ export default class DomText extends Mesh{
 		})
 		E.on('domCanvasOpacity', (e) => {
 			this.opacityChange(e.el, e.value)
+		})
+		E.on('domCanvasHover', (e) => {
+			this.hover(e.el)
+		})
+		E.on('domCanvasHoverLeave', (e) => {
+			this.hoverLeave(e.el)
 		})
 		E.on('domCanvasLeave', (e) => {
 			this.itemLeave(e)
@@ -204,7 +290,7 @@ export default class DomText extends Mesh{
 	setCanvas() {
 		this.canvas = document.createElement("canvas");
 		this.CanvasTexture = new Texture(this.canvas)
-		this.material.uniforms.uTexture.value = this.CanvasTexture
+		this.instance.material.uniforms.uTexture.value = this.CanvasTexture
 
         this.context = this.canvas.getContext("2d");
 		// document.documentElement.appendChild(this.canvas)
@@ -279,6 +365,7 @@ export default class DomText extends Mesh{
         var words = text.split(' ');
 		words = words.map((el, i) => (i !== words.length - 1) ? el + ' ' : el)
         var line = '';
+		let lineNum = 1
 		words.forEach(el => {
 			const dashArray = el.split('-')
 			if(dashArray.length > 1) {
@@ -296,6 +383,7 @@ export default class DomText extends Mesh{
             context.fillText(line, x, y);
             line = words[n];
             y += lineHeight;
+			lineNum++
           }
           else {
             line = testLine;
@@ -315,6 +403,7 @@ export default class DomText extends Mesh{
           }
         }
         context.fillText(line, x, y);
+		return { lineNumb: lineNum}
       }
 
 	writeTexture = () => {
@@ -324,15 +413,46 @@ export default class DomText extends Mesh{
 			this.context.fillStyle = `rgba(255, 255, 255, ${el.opacity})`;
 			this.context.font = el.styleVal.fontStyle + " " + el.styleVal.fontWeight + " " + parseFloat(el.styleVal.fontSize) * this.pixelRatio + "px " + el.styleVal.fontFamily;
 			if(el.styleVal.textAlign === 'center') this.context.textAlign = 'center'
-			this.wrapText(
+			// console.log(el.isHover)
+			const y = (el.position.top + parseInt(el.styleVal.marginBottom) +  parseFloat(el.styleVal.lineHeight) -  this.LenisScroll - el.adjustTopPos) * this.pixelRatio + el.y * this.pixelRatio
+			el.textDrawn = this.wrapText(
 				this.context,
 				el.text,
 				el.styleVal.textAlign === 'center' ? (this.canvas.width ) * 0.5  : el.position.left * this.pixelRatio + el.x * this.pixelRatio,
-				(el.position.top + parseInt(el.styleVal.marginBottom) +  parseFloat(el.styleVal.lineHeight) -  this.LenisScroll - el.adjustTopPos) * this.pixelRatio + el.y * this.pixelRatio,
-				Math.ceil((el.position.width + parseFloat(el.styleVal.fontSize) * 0.5)* this.pixelRatio),
+				y,
+				Math.ceil((this.canvas.width * 0.98)),
 				parseFloat(el.styleVal.lineHeight) * this.pixelRatio
 			)
+			// if(el.isHover){
+			// 	this.material.uniforms.uHoverValY.value = y / (store.window.h *  this.pixelRatio)
+			// 	this.material.uniforms.uHoverValH.value = parseFloat(el.styleVal.lineHeight) / (store.window.h)
+			// 	// console.log( this.material.uniforms.uHoverVal.value)
+			// }
 		})
+
+		for (let index = 0; index < this.items.length; index++) {
+			const el = this.items[index];
+			if(el.isHover){
+				const y = (el.position.top + parseInt(el.styleVal.marginBottom) +  parseFloat(el.styleVal.lineHeight) * el.textDrawn.lineNumb -  this.LenisScroll - el.adjustTopPos) * this.pixelRatio + el.y * this.pixelRatio
+				this.instance.material.uniforms.uHoverValY.value = y / (store.window.h *  this.pixelRatio)
+				this.instance.material.uniforms.uHoverValH.value = el.textDrawn.lineNumb * parseFloat(el.styleVal.lineHeight) / (store.window.h)
+				break
+			} else {
+				this.instance.material.uniforms.uHoverValY.value = 100
+			}
+		}
+
+		// this.items.forEach((el) => {
+		// 	if(el.isHover){
+		// 		const y = (el.position.top + parseInt(el.styleVal.marginBottom) +  parseFloat(el.styleVal.lineHeight) -  this.LenisScroll - el.adjustTopPos) * this.pixelRatio + el.y * this.pixelRatio
+		// 		this.material.uniforms.uHoverValY.value = y / (store.window.h *  this.pixelRatio)
+		// 		this.material.uniforms.uHoverValH.value = parseFloat(el.styleVal.lineHeight) / (store.window.h)
+		// 		console.log('COUCOU IN')
+		// 	} else {
+		// 		this.material.uniforms.uHoverValH.value = 0
+		// 		console.log('COUCOU OUT')
+		// 	}
+		// })
 
 		this.images.forEach(el => {
 			this.context.save()
@@ -369,7 +489,8 @@ export default class DomText extends Mesh{
 	onResize = () => {
 
 		this.CanvasTexture = new Texture(this.canvas)
-		this.material.uniforms.uTexture.value = this.CanvasTexture
+		// this.material.uniforms.uTexture.value = this.CanvasTexture
+		this.instance.material.uniforms.uTexture.value = this.CanvasTexture
 		this.setCanvasSize()
 		this.items.forEach(el => {
 			this.setWords(el)
@@ -387,6 +508,6 @@ export default class DomText extends Mesh{
 		
 		// this.CanvasTexture.needsUpdate = true
 		
-		this.material.uniforms.uResolution.value = new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
+		this.instance.material.uniforms.uResolution.value = new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
 	}
 }
