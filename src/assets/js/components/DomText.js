@@ -1,12 +1,12 @@
 
 
-import { Texture, Group, PlaneGeometry, Vector2, InstancedMesh, InstancedBufferAttribute, Object3D} from 'three'
+import { Texture, Mesh, WebGLRenderTarget, Group, PlaneGeometry, Vector2, InstancedMesh, InstancedBufferAttribute, Object3D} from 'three'
 import { E } from '../utils'
 import GlobalEvents from '../utils/GlobalEvents'
 import store from '../store'
 import gsap from 'gsap'
 import SplitText from '../utils/gsap/SplitText'
-import { DomTextMaterial } from '../materials'
+import { DomTextMaterial, HoverMaterial, NonHoverMaterial } from '../materials'
 // import {TextTexture} from '../TextTexture'
 
 gsap.registerPlugin(SplitText)
@@ -20,6 +20,7 @@ export default class DomText extends Group{
 		this.load()
 		this.geometry = new PlaneGeometry()
 		this.isAnimated = false
+		this.squareOpacity = 1
 		// this.material = new DomTextMaterial({
 		// 	uResolution: new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
 		// })
@@ -28,6 +29,8 @@ export default class DomText extends Group{
 		this.position.set(0, 0, 0)
 		this.setScale()
 		console.log(store.MainScene.camera)
+
+
 	
 		this.adjustAscenderRatio = 0.13
 	}
@@ -49,6 +52,11 @@ export default class DomText extends Group{
 	}
 
 	createParticle() {
+
+		this.target = new WebGLRenderTarget(
+			store.window.w * store.WebGL.renderer.getPixelRatio(),
+			store.window.h * store.WebGL.renderer.getPixelRatio()
+		)
 		this.dummy = new Object3D()
 		// const texture = store.MainScene.backgroundTexture
 		// const image = texture.source.data
@@ -116,14 +124,41 @@ export default class DomText extends Group{
 		this.instance.position.set(0, 0, 0)
 		
 		this.instance.visible = true
-
+		this.instance.layers.set(1)
 	}
+
+	createPlanes(){
+		this.renderPlane1 = new Mesh(
+			new PlaneGeometry(),
+			new HoverMaterial({
+				uniforms: {
+					uTexture: this.target.texture
+				}
+			})
+		)
+
+		this.renderPlane = new Mesh(
+			new PlaneGeometry(),
+			new NonHoverMaterial({
+				uniforms: {
+					uTexture: this.target.texture
+				}
+			})
+		)
+		this.add(this.renderPlane1)
+		this.renderPlane1.scale.setScalar(150)
+		this.add(this.renderPlane)
+		this.renderPlane.scale.setScalar(150)
+	}
+
+
 	build() {
 		// this.setWords()
 		
 
 		this.addEvents()
 		this.createParticle()
+		this.createPlanes()
 		store.RAFCollection.add(this.writeTexture, 0)
 		this.setCanvas()
 
@@ -176,12 +211,14 @@ export default class DomText extends Group{
 		this.items.forEach((el) => {
 			if(el.dom === elm.el) {
 				if(elm.val === 0){
-					gsap.to(this.instance.material.uniforms.uShadow, { value: 0, duration: 0.2, onComplete: () => {
+					this.instance.material.uniforms.uDisplaceVal.value = 0;
+					gsap.to(this, { squareOpacity: 0, duration: 0.3, onComplete: () => {
 						el.hoverValue = 0
-						this.instance.material.uniforms.uShadow.value = 1
+						this.squareOpacity = 1
+						this.instance.material.uniforms.uDisplaceVal.value = 1;
 					}})
 				} else {
-					this.instance.material.uniforms.uShadow.value = 1
+					this.squareOpacity = 1
 					el.hoverValue = elm.val
 				}
 			}
@@ -486,6 +523,8 @@ export default class DomText extends Group{
 				gradient.addColorStop(0, "red");
 				gradient.addColorStop(1, "black");
 				const yHover = (el.position.top + parseInt(el.styleVal.marginBottom)-  this.LenisScroll ) * this.pixelRatio + el.y * this.pixelRatio
+				this.context.save()
+				this.context.globalAlpha = this.squareOpacity
 				this.context.beginPath()
 				this.context.rect(
 					// el.position.left * this.pixelRatio + el.x * this.pixelRatio - 10,
@@ -498,6 +537,7 @@ export default class DomText extends Group{
 				this.context.fillStyle = gradient;
 				this.context.fill()
 				this.context.closePath()
+				this.context.restore()
 			// }
 		})
 
@@ -540,6 +580,19 @@ export default class DomText extends Group{
 		// })
 		this.CanvasTexture.needsUpdate = true
 		this.instance.material.uniforms.uScroll.value = this.LenisScroll / store.window.h
+		
+		store.MainScene.activeCamera.layers.set(1)
+		this.instance.visible = true
+		this.renderPlane1.visible = false
+		store.WebGL.renderer.setRenderTarget(this.target)
+		store.WebGL.renderer.render(store.MainScene, store.MainScene.activeCamera)
+		this.instance.visible = false
+		this.renderPlane1.visible = true
+		store.WebGL.renderer.setRenderTarget(null)
+		store.MainScene.activeCamera.layers.set(0)
+
+		this.renderPlane1.material.uniforms.uTexture.value = this.target.texture
+		this.renderPlane.material.uniforms.uTexture.value = this.target.texture
 	}
 
 	load() {

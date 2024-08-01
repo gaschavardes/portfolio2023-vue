@@ -54,4 +54,7 @@ void main() {
 	// Test non additive
 	gl_FragColor.rgb = vec3(textureMain.b * 1.) + vec3(0., 0., 0.) * (vHoverDisplace - textureMain.b) * vHoverDisplace ;
 	gl_FragColor.a = min(textureMain.b * 0.98 + textureBlack.b * 0.98 * smoothstep(.9, 1., vHoverDisplace) * uShadow, .97);
+
+	gl_FragColor.rgb = mix(vec3(1., 0., 0.), vec3(0., 1., 0.), textureMain.b - textureMain.r );
+	gl_FragColor.a = textureMain.b;
 }

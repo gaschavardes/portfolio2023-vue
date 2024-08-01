@@ -24,6 +24,8 @@ import DropMaterial from './drop/DropMaterial'
 import BackDropMaterial from './backDrop/BackDropMaterial'
 import RibonMaterial from './ribon/RibonMaterial'
 import DomTextMaterial from './domText/DomTextMaterial'
+import HoverMaterial from './planeHover/HoverMaterial'
+import NonHoverMaterial from './planeNonHover/NonHoverMaterial'
 
 // materials
 import BasicMaterial from './basic/BasicMaterial'
@@ -59,5 +61,7 @@ export {
 	DropMaterial,
 	BackDropMaterial,
 	RibonMaterial,
-	DomTextMaterial
+	DomTextMaterial,
+	HoverMaterial,
+	NonHoverMaterial
 }

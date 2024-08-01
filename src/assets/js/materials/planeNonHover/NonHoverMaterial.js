@@ -4,42 +4,25 @@ import store from '../../store'
 import vertexShader from './vert.glsl'
 import fragmentShader from './frag.glsl'
 
-export default class DomTextMaterial extends RawShaderMaterial {
+export default class NonHoverMaterial extends RawShaderMaterial {
 	constructor(options = {}) {
-		console.log(options)
 		options = mergeDeep(
 			{
 				uniforms: {
-					uTexture: options.uniforms.uTexture,
+					uResolution: { value: new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())},
 					uColor: { value: new Color(0xffffff) },
-					uResolution: {value: new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())},
-					uTime: store.WebGL.globalUniforms.uTime,
-					uSpriteSize: options.uniforms.spriteSize,
-					uHoverValY: { value: -10},
-					uHoverValH: { value: 0},
-					uYpos: {value: 0},
-					uScroll: { value: 0},
-					uMaxScroll: options.uniforms.uMaxScroll,
-					uMaxWidth: options.uniforms.uMaxWidth,
-					uMaxUv: options.uniforms.uMaxUv,
-					uHoverProgress: { value: 50},
-					uShadow: { value: 1},
-					uDisplaceVal: { value: 1}
+					uTexture: options.uniforms.uTexture
 				},
 				defines: {
 				}
 			}, options)
-
-
+			console.log(options.uniforms.uTexture)
 		super({
 			vertexShader,
 			fragmentShader,
 			uniforms: options.uniforms,
 			defines: options.defines,
-			toneMapped: true,
 			transparent: true,
-			depthWrite: false,
-			// blending: AdditiveBlending,
 		})
 
 		this.globalUniforms = options.globalUniforms

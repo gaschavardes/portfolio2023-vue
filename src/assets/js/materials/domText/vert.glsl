@@ -25,6 +25,7 @@ uniform float uHoverValY;
 uniform float uHoverValH;
 uniform float uHoverProgress;
 uniform sampler2D uTexture;
+uniform float uDisplaceVal;
 varying float vHoverDisplace;
 
 #define PI 3.1415926538
@@ -185,7 +186,7 @@ void main()	{
         sin(displaceText.r * PI) * 2.
     );
 
-	instance *= translationMatrix(displacement + hoverDisplace);
+	instance *= translationMatrix(displacement + hoverDisplace * uDisplaceVal);
 
     gl_Position = projectionMatrix * modelViewMatrix * instance * newPos;
 	// vProgress = noiseFact;
