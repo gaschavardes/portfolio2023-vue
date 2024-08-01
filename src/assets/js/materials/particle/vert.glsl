@@ -3,18 +3,30 @@
 varying vec3 vNormal;
 varying vec3 vColor;
 varying float vProgress;
+varying float vRotation;
+varying float vRotationVal;
+varying float vRotationGoal;
 attribute vec3 colorVal;
 attribute float random;
 attribute mat4 instanceMatrix;
 uniform vec2 uResolution;
 uniform float uTime;
+uniform float uMaxSize;
 
 attribute float aID;
 attribute vec2 aUVID;
+attribute vec2 aUVIDNeg;
 varying vec2 vUV1;
 varying vec2 vUV2;
 uniform vec2 uSpriteSize;
 uniform float uYpos;
+uniform vec2 uPos1;
+uniform vec2 uPos0;
+uniform vec2 uVel;
+uniform float uRotation;
+uniform float uRotationProgress;
+
+#define PI 3.14159265359
 
 // NOISE 
 vec3 mod289(vec3 x) {
@@ -143,7 +155,7 @@ void main()	{
 	worldPosition = instanceMatrix * worldPosition;
 	worldPosition = modelViewMatrix * instanceMatrix * newPos;
 
-	float noiseFact = 1. - smoothstep(5., 3., worldPosition.y) * smoothstep(-5., -3., worldPosition.y);
+	float noiseFact = 0.;
 	// newPos.x += (1. - noiseFact) * 10.;
 
 	float borderNoise =  smoothstep( uSpriteSize.x * 0.01, 0., aUVID.x)
@@ -159,11 +171,26 @@ void main()	{
     );
 	mat4 instance = instanceMatrix;
 
-	displacement *= rotateZ(sin(-uYpos * 0.1));
-	instance *= translationMatrix(displacement);
 
-    vUV1 = (uv + aUVID) / uSpriteSize;
+	vec3 mousePos = vec3(uPos0 - uVel * distance(vec2(0., 0.), (vec2(instanceMatrix[3][0], instanceMatrix[3][1])) + random) *  0.03, 0.);
+
+	// instance *= rotationMatrix(vec3(0., 1., 0.), uRotation);
+	// instance[3].rgb -= instanceMatrix[3].rgb;
+	// instance[3].rgb += instanceMatrix[3].rgb;
+	float radiusProgress = smoothstep(uMaxSize * (uRotationProgress - 0.1), uMaxSize * uRotationProgress, length(instanceMatrix[3].rg));
+	instance *= translationMatrix(displacement + mousePos + vec3(0., 0, 100. * sin(radiusProgress * PI)));
+	instance *= rotationMatrix(vec3(0., 1., 0.), (uRotation - PI * radiusProgress) * -sign(instanceMatrix[3].r));
+
+
+
+	vProgress = noiseFact;
+	vRotation = radiusProgress;
+	vRotationGoal = uRotation;
+	vRotationVal = uRotation - PI * radiusProgress;
+    // vUV1 = (uv + aUVID) / uSpriteSize;
+	vUV1 = mix((uv + aUVID) / uSpriteSize, (uv + aUVIDNeg) / uSpriteSize, abs(sin(vRotationVal * 0.5)));
+	// vUV1 = (uv + aUVID) / uSpriteSize;
 
     gl_Position = projectionMatrix * modelViewMatrix * instance * newPos;
-	vProgress = noiseFact;
+
 }

@@ -19,6 +19,7 @@ export default class DomText extends Group{
 		this.textOption = ['H2', 'P', 'A', 'SPAN', 'DIV']
 		this.load()
 		this.geometry = new PlaneGeometry()
+		this.isAnimated = false
 		// this.material = new DomTextMaterial({
 		// 	uResolution: new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())
 		// })
@@ -28,7 +29,7 @@ export default class DomText extends Group{
 		this.setScale()
 		console.log(store.MainScene.camera)
 	
-		this.adjustAscenderRatio = 0.2
+		this.adjustAscenderRatio = 0.13
 	}
 
 	setScale() {
@@ -77,6 +78,7 @@ export default class DomText extends Group{
 			}
 		}
 		this.particleMaxY = (particles[particles.length - 1].y + step * 0.5 + Math.abs(particles[0].y - step * 0.5))
+		this.particleMaxX = (particles[particles.length - 1].x + step * 0.5 + Math.abs(particles[0].x - step * 0.5))
 		console.log(aUVIDs[aUVIDs.length - 1])
 		// const color = []
 		const random = []
@@ -89,6 +91,7 @@ export default class DomText extends Group{
 					uTexture: { value: null },
 					uScroll : { value: 0},
 					uMaxScroll: {value: this.particleMaxY},
+					uMaxWidth: { value: this.particleMaxX },
 					uMaxUv: { value: aUVIDs[aUVIDs.length - 1]}
 				}
 			}),
@@ -100,7 +103,7 @@ export default class DomText extends Group{
 			this.dummy.position.set(el.x * scale, el.y * scale, 0)
 			this.dummy.updateMatrix()
 			// color.push(...[el.color.x, el.color.y, el.color.z] )
-			random.push(Math.random() * 10)
+			random.push(Math.random() * 100)
 			this.instance.setMatrixAt(i, this.dummy.matrix)
 		})
 		this.instance.instanceMatrix.needsUpdate = true
@@ -129,7 +132,7 @@ export default class DomText extends Group{
 
 	addEl(item){
 		if(this.textOption.indexOf(item.el.nodeName) > -1 ){
-			this.items.push({dom: item.el, opacity:item.opacity, x: item.x, y: item.y, id: item.id, isHover: false})
+			this.items.push({dom: item.el, opacity:item.opacity, x: item.x, y: item.y, id: item.id, hoverValue: 0, hoverValueTemp: 0})
 			this.setWords(this.items[this.items.length - 1])
 			this.LenisScroll = store.Lenis.scroll
 			
@@ -171,16 +174,38 @@ export default class DomText extends Group{
 
 	hover(elm){
 		this.items.forEach((el) => {
-			if(el.dom === elm) {
-				el.isHover = true
+			if(el.dom === elm.el) {
+				if(elm.val === 0){
+					gsap.to(this.instance.material.uniforms.uShadow, { value: 0, duration: 0.2, onComplete: () => {
+						el.hoverValue = 0
+						this.instance.material.uniforms.uShadow.value = 1
+					}})
+				} else {
+					this.instance.material.uniforms.uShadow.value = 1
+					el.hoverValue = elm.val
+				}
 			}
 		})
+		// if(elm.val === 0){
+		// 	gsap.to(this.instance.material.uniforms.uShadow, { value: 0, duration: 0.2, onComplete: () => {
+		// 		el.hoverValue = 0
+		// 	}})
+		// } else {
+
+		// }
+		// gsap.delayedCall(0.1, () => {
+		// 	gsap.to(this.instance.material.uniforms.uHoverProgress, { value: -100, duration: 1,
+		// 		onStart: () => { this.isAnimated = true},
+		// 		onComplete: () => { this.isAnimated = false},
+		// 	})
+		// })
+		
 	}
 
 	hoverLeave(elm){
 		this.items.forEach((el) => {
-			if(el.dom === elm) {
-				el.isHover = false
+			if(el.dom === elm.el) {
+				el.hoverValueTemp =elm.val
 			}
 		})
 	}
@@ -288,10 +313,13 @@ export default class DomText extends Group{
 			this.opacityChange(e.el, e.value)
 		})
 		E.on('domCanvasHover', (e) => {
-			this.hover(e.el)
+			this.hover(e)
 		})
 		E.on('domCanvasHoverLeave', (e) => {
-			this.hoverLeave(e.el)
+			this.hoverLeave(e)
+			// gsap.to(this.instance.material.uniforms.uHoverProgress, { value: 50,
+			// 	onStart: () => { this.isAnimated = true},
+			// 	onComplete: () => { this.isAnimated = false}})
 		})
 		E.on('domCanvasLeave', (e) => {
 			this.itemLeave(e)
@@ -435,39 +463,43 @@ export default class DomText extends Group{
 
 	writeTexture = () => {
 		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		
+		this.context.globalCompositeOperation = "lighter"
 		this.items.forEach((el) => {
-			this.context.fillStyle = `rgba(255, 255, 255, ${el.opacity})`;
+			this.context.fillStyle = `rgba(0, 0, 255, ${el.opacity})`;
 			this.context.font = el.styleVal.fontStyle + " " + el.styleVal.fontWeight + " " + parseFloat(el.styleVal.fontSize) * this.pixelRatio + "px " + el.styleVal.fontFamily;
 			if(el.styleVal.textAlign === 'center') this.context.textAlign = 'center'
-			// console.log(el.isHover)
+			
 			const y = (el.position.top + parseInt(el.styleVal.marginBottom) +  parseFloat(el.styleVal.lineHeight) -  this.LenisScroll - el.adjustTopPos) * this.pixelRatio + el.y * this.pixelRatio
+			
 			el.textDrawn = this.wrapText(
 				this.context,
 				el.text,
 				el.styleVal.textAlign === 'center' ? (this.canvas.width ) * 0.5  : el.position.left * this.pixelRatio + el.x * this.pixelRatio,
 				y,
-				Math.ceil((this.canvas.width * 0.95)),
+				el.position.width * this.pixelRatio,
 				parseFloat(el.styleVal.lineHeight) * this.pixelRatio
 			)
 			// if(el.isHover){
-			// 	this.material.uniforms.uHoverValY.value = y / (store.window.h *  this.pixelRatio)
-			// 	this.material.uniforms.uHoverValH.value = parseFloat(el.styleVal.lineHeight) / (store.window.h)
-			// 	// console.log( this.material.uniforms.uHoverVal.value)
+				// el.hoverValue += (el.hoverValueTemp - el.hoverValue) * 0.01
+				// const gradient = this.context.createLinearGradient((el.position.left + el.x) * this.pixelRatio + el.position.width * this.pixelRatio * el.hoverValue - 2000, 0, (el.position.left + el.x) * this.pixelRatio + el.position.width * this.pixelRatio * el.hoverValue, 0);
+				const gradient = this.context.createLinearGradient((store.window.w + 1000) * this.pixelRatio * el.hoverValue - 1000, 0,(store.window.w + 1000) * this.pixelRatio * el.hoverValue, 0);
+				gradient.addColorStop(0, "red");
+				gradient.addColorStop(1, "black");
+				const yHover = (el.position.top + parseInt(el.styleVal.marginBottom)-  this.LenisScroll ) * this.pixelRatio + el.y * this.pixelRatio
+				this.context.beginPath()
+				this.context.rect(
+					// el.position.left * this.pixelRatio + el.x * this.pixelRatio - 10,
+					el.position.left * this.pixelRatio + el.x * this.pixelRatio - 10,
+					yHover,
+					// (el.position.width * this.pixelRatio) + 10,
+					(store.window.w * this.pixelRatio) + 1000,
+					(el.textDrawn.lineNumb * parseFloat(el.styleVal.lineHeight)) * 1.2 * this.pixelRatio
+				)
+				this.context.fillStyle = gradient;
+				this.context.fill()
+				this.context.closePath()
 			// }
 		})
-
-		for (let index = 0; index < this.items.length; index++) {
-			const el = this.items[index];
-			if(el.isHover){
-				const y = (el.position.top + parseInt(el.styleVal.marginBottom) +  parseFloat(el.styleVal.lineHeight) * el.textDrawn.lineNumb -  this.LenisScroll - el.adjustTopPos) * this.pixelRatio + el.y * this.pixelRatio
-				this.instance.material.uniforms.uHoverValY.value = y / (store.window.h *  this.pixelRatio)
-				this.instance.material.uniforms.uHoverValH.value = el.textDrawn.lineNumb * parseFloat(el.styleVal.lineHeight) / (store.window.h)
-				break
-			} else {
-				this.instance.material.uniforms.uHoverValY.value = 100
-			}
-		}
 
 		// this.items.forEach((el) => {
 		// 	if(el.isHover){
@@ -493,22 +525,21 @@ export default class DomText extends Group{
 			)
 			this.context.restore()
 		})
-		this.svg.forEach(el => {
-			if(!el.image) return
-			this.context.save()
-			this.context.globalAlpha = el.opacity
-			this.context.drawImage(
-				el.image,
-				el.position.left * this.pixelRatio + el.x * this.pixelRatio,
-				(el.position.top - this.LenisScroll ) * this.pixelRatio + el.y * this.pixelRatio,
-				el.position.width * this.pixelRatio,
-				el.position.height * this.pixelRatio,
-			)
-			this.context.restore()
-		})
+		// this.svg.forEach(el => {
+		// 	if(!el.image) return
+		// 	this.context.save()
+		// 	this.context.globalAlpha = el.opacity
+		// 	this.context.drawImage(
+		// 		el.image,
+		// 		el.position.left * this.pixelRatio + el.x * this.pixelRatio,
+		// 		(el.position.top - this.LenisScroll ) * this.pixelRatio + el.y * this.pixelRatio,
+		// 		el.position.width * this.pixelRatio,
+		// 		el.position.height * this.pixelRatio,
+		// 	)
+		// 	this.context.restore()
+		// })
 		this.CanvasTexture.needsUpdate = true
 		this.instance.material.uniforms.uScroll.value = this.LenisScroll / store.window.h
-		console.log(this.LenisScroll / store.window.h)
 	}
 
 	load() {

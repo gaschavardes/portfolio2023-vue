@@ -1,4 +1,4 @@
-import { AdditiveBlending, Color, RawShaderMaterial, Vector2 } from 'three'
+import { Color, DoubleSide, RawShaderMaterial, Vector2} from 'three'
 import { mergeDeep } from '../../utils'
 import store from '../../store'
 import vertexShader from './vert.glsl'
@@ -9,12 +9,20 @@ export default class BasicMaterial extends RawShaderMaterial {
 		options = mergeDeep(
 			{
 				uniforms: {
-					uTexture: options.uniforms.videoTexture,
+					uTexture: { value: ''},
+					uTexture1:  { value: ''},
 					uColor: { value: new Color(0xffffff) },
 					uResolution: {value: new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())},
 					uTime: store.WebGL.globalUniforms.uTime,
 					uSpriteSize: options.uniforms.spriteSize,
-					uYpos: {value: 0}
+					uYpos: {value: 0},
+					uPos1: { value: new Vector2()},
+					uPos0: { value: new Vector2()},
+					uVel: { value: new Vector2()},
+					uRotation: { value: Math.PI * 2},
+					uRotationVel: { value: 0},
+					uRotationProgress: { value: 0},
+					uMaxSize: options.uniforms.uMaxDistance
 				},
 				defines: {
 				}
@@ -27,7 +35,9 @@ export default class BasicMaterial extends RawShaderMaterial {
 			uniforms: options.uniforms,
 			defines: options.defines,
 			toneMapped: false,
-			blending: AdditiveBlending 
+			side: DoubleSide,
+			transparent: true
+			// blending: AdditiveBlending 
 		})
 
 		this.globalUniforms = options.globalUniforms

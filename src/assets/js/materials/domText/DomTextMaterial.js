@@ -15,12 +15,15 @@ export default class DomTextMaterial extends RawShaderMaterial {
 					uResolution: {value: new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio())},
 					uTime: store.WebGL.globalUniforms.uTime,
 					uSpriteSize: options.uniforms.spriteSize,
-					uHoverValY: { value: 0},
+					uHoverValY: { value: -10},
 					uHoverValH: { value: 0},
 					uYpos: {value: 0},
 					uScroll: { value: 0},
-					uMaxScroll: options.uniforms.uMaxScroll ,
-					uMaxUv: options.uniforms.uMaxUv 
+					uMaxScroll: options.uniforms.uMaxScroll,
+					uMaxWidth: options.uniforms.uMaxWidth,
+					uMaxUv: options.uniforms.uMaxUv,
+					uHoverProgress: { value: 50},
+					uShadow: { value: 1}
 				},
 				defines: {
 				}
@@ -32,9 +35,10 @@ export default class DomTextMaterial extends RawShaderMaterial {
 			fragmentShader,
 			uniforms: options.uniforms,
 			defines: options.defines,
-			toneMapped: false,
+			toneMapped: true,
 			transparent: true,
-			// blending: AdditiveBlending 
+			depthWrite: false,
+			// blending: AdditiveBlending,
 		})
 
 		this.globalUniforms = options.globalUniforms

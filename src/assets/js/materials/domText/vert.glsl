@@ -19,7 +19,19 @@ uniform vec2 uSpriteSize;
 uniform float uYpos;
 uniform float uScroll;
 uniform float uMaxScroll;
+uniform float uMaxWidth;
 uniform float uMaxUv;
+uniform float uHoverValY;
+uniform float uHoverValH;
+uniform float uHoverProgress;
+uniform sampler2D uTexture;
+varying float vHoverDisplace;
+
+#define PI 3.1415926538
+
+float elasticIn(float t) {
+  return sin(13.0 * t * PI * 0.5) * pow(2.0, 10.0 * (t - 1.0));
+}
 
 // NOISE 
 vec3 mod289(vec3 x) {
@@ -122,10 +134,11 @@ mat4 rotationMatrix(vec3 axis, float angle)
 		float c = cos(angle);
 		float oc = 1.0 - c;
 
-		return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
-														oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
-														oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
-														0.0,                                0.0,                                0.0,                                1.0);
+		return mat4(
+			oc * axis.x * axis.x + c,oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+			oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
+			oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
+			0.0,                                0.0,                                0.0,                                1.0);
 }
 mat3 rotateZ(float theta) {
     float c = cos(theta);
@@ -148,38 +161,17 @@ void main()	{
 	worldPosition = instanceMatrix * worldPosition;
 	worldPosition = modelViewMatrix * instanceMatrix * newPos;
 
-	// vec3 scrollDisplace = vec3(0., mod(uScroll,uMaxScroll * 2.), 0.);
-
-	// float noiseFact = 1. - smoothstep(10., 5., worldPosition.y) * smoothstep(-10., -5., worldPosition.y);
-	// noiseFact *= 0.;
-	// newPos.x += (1. - noiseFact) * 10.;
-
-	// float borderNoise =  smoothstep( uSpriteSize.x * 0.01, 0., aUVID.x)
-	//  + smoothstep( uSpriteSize.x * 0.99, uSpriteSize.x, aUVID.x) 
-	//  + smoothstep( uSpriteSize.y * 0.99, uSpriteSize.y, aUVID.y)
-	//  + smoothstep( uSpriteSize.y * 0.01, 0., aUVID.y);
-	// borderNoise *= 0.03;
-
-	// vec3 displacement = vec3(
-    //     pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(101.0, random, random)) * noiseStrength * 30. * (noiseFact),
-    //    - abs(pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(202.0, random, random)) * noiseStrength)  * (noiseFact) + (uScroll),
-    //     pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(202.0)) * noiseStrength * (noiseFact) * 0.1
-    // );
-	// displacement.y = mod(displacement.y,uMaxScroll * 2.);
 	mat4 instance = instanceMatrix;
 
-	// displacement *= rotateZ(sin(-uYpos * 0.1));
-	// instance *= translationMatrix(displacement);
-
-	// instance[3][1] = mod(instance[3][1] + uScroll * uMaxScroll * 0.5, uMaxScroll * 2.) - uMaxScroll;
 	instance[3][1] = mod(instance[3][1] + (uScroll + 0.5) * uMaxScroll, uMaxScroll) - uMaxScroll * 0.5 ;
 	float yPos = instance[3][1];
 	vec2 newUvId = vec2(aUVID.x, mod(aUVID.y + uScroll * uMaxUv , uMaxUv));
     vUV1 = ((uv + newUvId) / uSpriteSize);
 	vAUVID = aUVID;
 
+	vec4 displaceText = texture2D(uTexture, vUV1);
+
 	float noiseFact = 1. - smoothstep(uMaxScroll, uMaxScroll * 0.5 - uMaxScroll * .1,  yPos) * smoothstep(-uMaxScroll,-uMaxScroll * 0.5 + uMaxScroll * .1,  yPos);
-	// float noiseFact = smoothstep(-uMaxScroll * 0.5 + uMaxScroll * .1, -uMaxScroll * 0.5,  instance[3][1]);
 	noiseFact *= 0.1;
 
 	vec3 displacement = vec3(
@@ -187,9 +179,15 @@ void main()	{
         abs(pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(202.0, random, random)) * noiseStrength * 100.) * (noiseFact) * sign(yPos),
         pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, 0.), vec3(202.0)) * noiseStrength * (noiseFact) * 0.1
     );
+	vec3 hoverDisplace = vec3(
+        pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(random, uTime * noiseTime, 0.), vec3(101.0, random, random)) * 5. * sin(displaceText.r * PI),
+        pnoise(noiseFreq * instanceMatrix[3].rgb + vec3(0., uTime * noiseTime, random), vec3(202.0, random, random)) * 5. * sin(displaceText.r * PI) - instance[3][1] * sin(displaceText.r * PI) * 0.1 ,
+        sin(displaceText.r * PI) * 2.
+    );
 
-	instance *= translationMatrix(displacement);
+	instance *= translationMatrix(displacement + hoverDisplace);
 
     gl_Position = projectionMatrix * modelViewMatrix * instance * newPos;
 	// vProgress = noiseFact;
+	vHoverDisplace = displaceText.r;
 }

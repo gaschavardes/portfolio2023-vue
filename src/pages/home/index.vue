@@ -10,12 +10,12 @@
 				Don't hesitate to <LinkComponent href="mailto:chavardes.gaspard@gmail.com" text="contact me" ref="pingTitle"/><br>
 			</div>
 		</section>
-		<section class="projects" id="theprojects" ref="projectContainer">
+		<section class="projects" id="theprojects" ref="projectContainer" @mouseleave="leaveProjects">
 			<!-- <video id="videoContainer" :src="`./video/${activeVideo}.mp4`" muted playsinline loop ref="video"></video> -->
-			<div class="video_preload">
+			<!-- <div class="video_preload">
 				<video id="videoContainer" v-for="(el, id) in projects" :key='id' :src="`./video/${el.media}.mp4`" ref="videoTexture" muted playsinline loop></video>
-			</div>
-			<Counter :number="projects.length" :progress="this.projectProgress" />
+			</div> -->
+			<!-- <Counter :number="projects.length" :progress="this.projectProgress" /> -->
 			<ProjectItem v-for="(el, id) in projects" :data='el' :key='id' :id="el.slug.replace(/\s/g, '').replace(/[0-9]/g, '')" ref='projects'/>
 		</section>
 		<section class="contact" id="contact">
@@ -35,7 +35,7 @@
   <script>
   import './style.less'
   import ProjectItem from '../../components/ProjectItem'
-  import Counter from '../../components/Counter'
+//   import Counter from '../../components/Counter'
   import LinkComponent from '../../components/linkComponent'
   import ScrollCta from '../../components/ScrollCta'
   import gsap from 'gsap'
@@ -60,21 +60,27 @@
 					agency: 'Unseen Studio',
 					media: "organimo",
 					slug:'organimo',
-					link: 'https://organimo.com/'
+					link: 'https://organimo.com/',
+					line1: "Agency: Unseen",
+					line2: "Recognition: SOTD - FWA"
 				},
 				{
 					name: 'Crosswire',
 					agency: 'Unseen Studio',
 					media: "crosswire",
 					slug:'crosswire',
-					link: 'https://crosswire.unseen.co/'
+					link: 'https://crosswire.unseen.co/',
+					line1: "Agency: Unseen",
+					line2: "Recognition: SOTD - FWA"
 				},
 				{
 					name: 'Visionnaries Club',
 					agency: 'Unseen Studio',
 					media: "visionaries",
 					slug:'visionnaries',
-					link: 'https://visionaries.vc/'
+					link: 'https://visionaries.vc/',
+					line1: "Agency: Unseen",
+					line2: "Recognition: SOTD - FWA"
 				},
 				{
 					name: "Air Shifumi",
@@ -82,7 +88,9 @@
 					media: "airshifumi",
 					slug:'airshifumi',
 					agency: 'Hands Agency',
-					link: "https://airshifumi.hands.agency/"
+					link: "https://airshifumi.hands.agency/",
+					line1: "Agency: Unseen",
+					line2: "Recognition: SOTD - FWA"
 				},
 				{
 					name: "Palais de tokyo",
@@ -91,9 +99,8 @@
 					agency: 'Hands Agency',
 					slug:'palais de tokyo',
 					link: "https://palaisdetokyo.com/",
-					"content": {
-
-					}
+					line1: "Agency: Unseen",
+					line2: "Recognition: SOTD - FWA"
 				},
 				{
 					name: "Rémy Martin",
@@ -102,9 +109,8 @@
 					slug:'remy martin',
 					agency: 'Hands Agency',
 					link: "https://www.remymartin.com/collection/xo-lee-broom/",
-					"content": {
-
-					}
+					line1: "Agency: Unseen",
+					line2: "Recognition: SOTD - FWA"
 				},
 				{
 					name: "Eric Bompard",
@@ -113,9 +119,9 @@
 					slug:'bompard',
 					agency: 'Hands Agency',
 					link: "https://experience.eric-bompard.com/",
-					"content": {
-
-					}
+					line1: "Agency: Unseen",
+					line2: "Recognition: SOTD - FWA"
+				
 				},
 				{
 					name: "Jeu de paume",
@@ -124,9 +130,8 @@
 					agency: "Hands Agency",
 					slug:'jeu de paume',
 					link: "https://jeudepaume.org/",
-					"content": {
-
-					}
+					line1: "Agency: Unseen",
+					line2: "Recognition: SOTD - FWA"
 				},
 				{
 					name: "27 lisboa",
@@ -135,9 +140,8 @@
 					agency: 'Hands Agency',
 					slug:'27 lisboa',
 					link: "https://27lisboa.com/",
-					"content": {
-
-					}
+					line1: "Agency: Unseen",
+					line2: "Recognition: SOTD - FWA"
 				},
 				// {
 				// 	name: "Lab 1",
@@ -176,7 +180,7 @@
 	},
 	components: {
 		ProjectItem,
-		Counter,
+		// Counter,
 		LinkComponent,
 		ScrollCta
 	},
@@ -239,25 +243,25 @@
 						}else {
 							this.activeDestination = 'contact'
 						}
-						setTimeout(() => {
-							if(this.$refs.videoTexture[index]){
-								this.$refs.videoTexture[index].play()
-								this.$refs.videoTexture[index].currentTime = 0
-							}
-						}, 100)
+						// setTimeout(() => {
+						// 	if(this.$refs.videoTexture[index]){
+						// 		this.$refs.videoTexture[index].play()
+						// 		this.$refs.videoTexture[index].currentTime = 0
+						// 	}
+						// }, 100)
 					}
 				},
 				onLeave: () => {
 					el.leave()
 					if(el.data.media) {
-						setTimeout(() => {
-							if(this.$refs.videoTexture[index]){
-								this.$refs.videoTexture[index].play()
-								this.$refs.videoTexture[index].currentTime = 0
-							}
+						// setTimeout(() => {
+						// 	if(this.$refs.videoTexture[index]){
+						// 		this.$refs.videoTexture[index].play()
+						// 		this.$refs.videoTexture[index].currentTime = 0
+						// 	}
 							
 							
-						}, 100)
+						// }, 100)
 					}
 				},
 				onEnterBack: () => {
@@ -268,24 +272,24 @@
 						}else {
 							this.activeDestination = 'contact'
 						}
-						setTimeout(() => {
-							if(this.$refs.videoTexture[index]){
-								this.$refs.videoTexture[index].play()
-								this.$refs.videoTexture[index].currentTime = 0
-							}
-						}, 100)
+						// setTimeout(() => {
+						// 	if(this.$refs.videoTexture[index]){
+						// 		this.$refs.videoTexture[index].play()
+						// 		this.$refs.videoTexture[index].currentTime = 0
+						// 	}
+						// }, 100)
 					}
 				},
 				onLeaveBack: () => {
 					el.leave()
 					if(el.data.media) {
-						setTimeout(() => {
-							if(this.$refs.videoTexture[index]){
-								this.$refs.videoTexture[index].play()
-								this.$refs.videoTexture[index].currentTime = 0
-							}
+						// setTimeout(() => {
+						// 	if(this.$refs.videoTexture[index]){
+						// 		this.$refs.videoTexture[index].play()
+						// 		this.$refs.videoTexture[index].currentTime = 0
+						// 	}
 							
-						}, 100)
+						// }, 100)
 					}
 				},
 				onUpdate: function(self) {
@@ -342,9 +346,9 @@
 			this.introTl = gsap.timeline({
 				// yes, we can add it to an entire timeline!
 				scrollTrigger: {
-					trigger: this.$refs.projectContainer,
-					start: "top bottom", // when the top of the trigger hits the top of the viewport
-					end: "top top", // end after scrolling 500px beyond the start
+					trigger: this.$refs.intro,
+					start: "bottom bottom", // when the top of the trigger hits the top of the viewport
+					end: "bottom top", // end after scrolling 500px beyond the start
 					scrub: 1, // smooth scrubbing, takes 1 second to "catch up" to the scrollbar
 				}
 			});
@@ -352,9 +356,12 @@
 			
 		},
 		play() {
-			this.$refs.videoTexture.forEach(el => {
-				el.play()
-			})
+			// this.$refs.videoTexture.forEach(el => {
+			// 	el.play()
+			// })
+		},
+		leaveProjects(){
+			E.emit('videoTextureUpdate', { src: null, way: 'out'})
 		}
 	}
   }
