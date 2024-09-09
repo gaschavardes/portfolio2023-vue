@@ -33,5 +33,5 @@ void main() {
 	vec4 texture = texture2D(uMap, vUv);
 
     gl_FragColor = vec4(noise * (1. - noiseFact), 0., 0., 1.);
-	gl_FragColor = textureMain * (noiseFact);
+	gl_FragColor = vec4(1., 0., 0., 1.) * (noiseFact);
 }

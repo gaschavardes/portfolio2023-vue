@@ -33,19 +33,20 @@ void main()	{
 	vec4 newPos = vec4( position, 1.0);
 	vec4 worldPosition = modelMatrix * newPos;
 
+	vec3 camera = cameraPosition;
 	#ifdef REFRACT
 		vec3 cameraToVertex;
 		if ( isOrthographic ) {
 			cameraToVertex = normalize( vec3( - viewMatrix[ 0 ][ 2 ], - viewMatrix[ 1 ][ 2 ], - viewMatrix[ 2 ][ 2 ] ) );
 		}
 		else {
-			cameraToVertex = normalize( worldPosition.xyz - cameraPosition );
+			cameraToVertex = normalize( vec3(modelMatrix * newPos).xyz  - cameraPosition );
 		}
 		vec3 reflectNormal = inverseTransformDirection( normal, viewMatrix );
 		vReflect = reflect( cameraToVertex, reflectNormal );
 	#endif
 
-	eyeVector = normalize(worldPosition.xyz - cameraPosition);
+	eyeVector = normalize(vec3(modelMatrix * newPos).xyz - cameraPosition);
 	worldNormal = normalize( modelViewMatrix * vec4(objectNormal, 0.0)).xyz;
 
 	// vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);

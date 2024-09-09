@@ -234,12 +234,8 @@ void main() {
 	pos.x += translatePos.x;
 	pos.y += translatePos.y;
 
-	
 
-	
-
-
-	vec4 worldPosition = modelMatrix * vec4( pos, 1.0);
+	// vec4 worldPosition = modelMatrix * vec4( pos, 1.0);
 
 	// #ifndef REFRACT
 		vec3 cameraToVertex;
@@ -247,13 +243,13 @@ void main() {
 			cameraToVertex = normalize( vec3( - viewMatrix[ 0 ][ 2 ], - viewMatrix[ 1 ][ 2 ], - viewMatrix[ 2 ][ 2 ] ) );
 		}
 		else {
-			cameraToVertex = normalize( worldPosition.xyz - cameraPosition );
+			cameraToVertex = normalize( vec3(modelMatrix * vec4(pos, 1.)).xyz - cameraPosition );
 		}
 		vec3 reflectNormal = inverseTransformDirection( transformedNormal, viewMatrix );
 		vReflect = reflect( cameraToVertex, reflectNormal );
 	// #endif
 
-	eyeVector = normalize(worldPosition.xyz - cameraPosition);
+	eyeVector = normalize(vec3(modelMatrix * vec4(pos, 1.)).xyz - cameraPosition);
 	worldNormal = normalize( modelViewMatrix * vec4(objectNormal, 0.0)).xyz;
 
 	vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);

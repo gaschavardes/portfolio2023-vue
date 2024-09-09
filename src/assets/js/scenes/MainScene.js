@@ -95,7 +95,7 @@ export default class MainScene extends Scene {
 
 	buildPasses() {
 		this.renderScene = new RenderPass(this, this.activeCamera)
-		this.bloomPass = new UnrealBloomPass(new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio()), 1.5, 1, .8)
+		this.bloomPass = new UnrealBloomPass(new Vector2(store.window.w * store.WebGL.renderer.getPixelRatio(), store.window.h * store.WebGL.renderer.getPixelRatio()), 1., 1, .8)
 		this.bloomPass.enabled = true
 
 
