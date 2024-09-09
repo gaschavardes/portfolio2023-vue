@@ -249,7 +249,7 @@ void main() {
 
 
 	gl_FragColor = vec4(outgoingLight, 1.);
-	gl_FragColor.rgb *= 1. + sin(vAppear * 3.14) * 10.;
+	gl_FragColor.rgb *= 1. + sin(vAppear * 3.14) * 1.;
 	gl_FragColor.a = vAppear * vOpacity;
 
 	// gl_FragColor = texture2D(envMap, gl_FragCoord.xy / resolution);

@@ -254,7 +254,7 @@ void main() {
 	float appear =  smoothstep(uAppear, uAppear - 0.1, uvAppear.y);
 	float appearLight = sin(appear * 3.14159265359); 
 	gl_FragColor.a = appear;
-	gl_FragColor.rgb += appearLight * 100000.;
+	gl_FragColor.rgb += appearLight * 10.;
 	gl_FragColor = mix(gl_FragColor, vec4(1.), appearLight);
 	// gl_FragColor.rgb *= 1. - (appearLight * 5.);
 	// gl_FragColor= matcapColor;
