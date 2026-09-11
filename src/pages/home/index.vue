@@ -56,6 +56,13 @@
 			animateTimeOut: null,
 			projects: [
 				{
+					name: 'Seasgeoscience',
+					agency: 'Kota',
+					media: "seasgeoscience",
+					slug:'seasgeoscience',
+					link: 'https://seasgeoscience.com/'
+				},
+				{
 					name: 'Organimo',
 					agency: 'Unseen Studio',
 					media: "organimo",

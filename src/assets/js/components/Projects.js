@@ -1,4 +1,4 @@
-import { Group, PlaneGeometry, Color, Vector2, Object3D, InstancedMesh, InstancedBufferAttribute, VideoTexture} from 'three'
+import { Group, PlaneGeometry, Color, Vector2, Object3D, InstancedMesh, InstancedBufferAttribute, TextureLoader, VideoTexture} from 'three'
 import { ParticleMaterial } from '../materials'
 import store from '../store'
 import gsap from 'gsap'
@@ -32,9 +32,9 @@ export default class Projects extends Group {
 		const image = texture.source.data
 		// this.canvas = qs('canvas#texture')
 		this.video =  qs('video#videoContainer')
-		this.videos = qsa('.video_preload video')
+		this.videos = qsa('.video_preload > *')
 		this.videos.forEach(el => {
-			el.texture = new VideoTexture( el )
+			el.texture = el.tagName === 'VIDEO' ? new VideoTexture(el) : new TextureLoader().load(el.src)
 		})
 		// this.video.play()
 		// this.ctx = this.canvas.getContext("2d", { willReadFrequently: true})
@@ -103,11 +103,11 @@ export default class Projects extends Group {
 		store.RAFCollection.add(this.animate, 4)
 
 		this.video =  qs('video#videoContainer')
-		this.videos = qsa('.video_preload video')
+		this.videos = qsa('.video_preload > *')
 		this.videos.forEach(el => {
-			el.texture = new VideoTexture( el )
+			el.texture = el.tagName === 'VIDEO' ? new VideoTexture(el) : new TextureLoader().load(el.src)
 		})
-		this.instance.material.uniforms.videoTexture.value = this.video
+		this.instance.material.uniforms.videoTexture.value = this.videos[0].texture
 		this.createTimeline()
 
 	}
